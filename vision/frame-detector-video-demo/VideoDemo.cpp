@@ -34,7 +34,8 @@ public:
             frame_data_loaded = GetFrameData(bgr_frame, timestamp_ms);
         } while ((sampling_frame_rate > 0)
             && (timestamp_ms > 0)
-            && ((timestamp_ms - last_timestamp_ms) < 1000 / sampling_frame_rate));
+            && ((timestamp_ms - last_timestamp_ms) < 1000 / sampling_frame_rate)
+            && frame_data_loaded);
 
         last_timestamp_ms = timestamp_ms;
         return frame_data_loaded;
