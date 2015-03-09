@@ -3,6 +3,7 @@
 #include <chrono>
 #include <thread>
 #include <opencv\highgui.h>
+#include <filesystem>
 
 #include "Frame.h"
 #include "Face.h"
