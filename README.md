@@ -5,8 +5,8 @@ Welcome to our repository on GitHub! Here you will find example code to get you 
 OpenCV-webcam-demo
 ------------------
 
-Dependencies
-------------
+## Dependencies
+
 
 - OpenCV for Windows 2.4.9: http://sourceforge.net/projects/opencvlibrary/files/opencv-win/2.4.9/
 - Visual Studio 2013 or higher
