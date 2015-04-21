@@ -263,7 +263,6 @@ namespace AffdexMe
                             canvasFacePoints.Children.Clear();
                             canvasFacePoints.Width = imgAffdexFaceDisplay.ActualWidth;
                             canvasFacePoints.Height = imgAffdexFaceDisplay.ActualHeight;
-                            canvasFacePoints.UpdateLayout();
 
                             mImageXScaleFactor = imgAffdexFaceDisplay.ActualWidth / affdexImage.getWidth();
                             mImageYScaleFactor = imgAffdexFaceDisplay.ActualHeight / affdexImage.getHeight();
