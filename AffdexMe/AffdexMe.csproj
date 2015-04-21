@@ -37,10 +37,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Affdex, Version=1.0.5588.11627, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+  
+    <Reference Include="Affdex" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
       <HintPath>..\..\Program Files (x86)\Affectiva\Affdex SDK\bin\debug\Affdex.dll</HintPath>
     </Reference>
+    <Reference Include="Affdex" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+      <HintPath>..\..\Program Files (x86)\Affectiva\Affdex SDK\bin\release\Affdex.dll</HintPath>
+    </Reference>
+
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
