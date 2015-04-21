@@ -454,13 +454,11 @@ namespace AffdexMe
             {
                 try
                 {
-                    DateTime functionEnter = DateTime.Now;
                     mCurrentTimeStamp = image.getTimestamp();
 
                     // Update the Image control from the UI thread
                     //imgAffdexFaceDisplay.Source = rtb;
                     imgAffdexFaceDisplay.Source = ConstructImage(image.getBGRByteArray(), image.getWidth(), image.getHeight());
-                    var elapseTime = (DateTime.Now - functionEnter).Milliseconds;
 
                     // Allow N successive OnCapture callbacks before the FacePoint drawing canvas gets cleared.
                     if (++mFeaturePointsSkipCount > 4)
