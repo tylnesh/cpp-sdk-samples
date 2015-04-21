@@ -12,7 +12,7 @@
 #include "AffdexException.h"
 
 using namespace std;
-using namespace AFFDEX;
+using namespace affdex;
 
 float last_timestamp = -1.0f;
 float capture_fps = -1.0f;
@@ -23,7 +23,7 @@ float process_fps = -1.0f;
 class PlottingImageListener : public ImageListener
 {
 public:
-	void onImageResults(vector<Face> faces, Frame image) override {
+	void onImageResults(std::map<FaceId,Face> faces, Frame image) {
 
 		shared_ptr<byte> imgdata = image.getBGRByteArray();
 		cv::Mat img = cv::Mat(image.getHeight(), image.getWidth(), CV_8UC3, imgdata.get());
