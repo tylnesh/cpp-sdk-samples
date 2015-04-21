@@ -183,42 +183,6 @@ namespace AffdexMe
             }));
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        private String GetClassifierDataFolder()
-        {
-            String classifierPath = AFFDEX_DATA_PATH;
-            DirectoryInfo directoryInfo = new DirectoryInfo(classifierPath);
-            if (!directoryInfo.Exists)
-            {
-                ShowExceptionAndShutDown("AFFDEX_DATA_DIR (Classifier Data Directory) is set to an invalid folder location");
-            }
-
-            return classifierPath;
-        }
-
-        private String GetAffdexLicense()
-        {
-            String licenseFile = AFFDEX_LICENSE_FILE;
-            if (String.IsNullOrEmpty(licenseFile))
-            {
-                ShowExceptionAndShutDown("AFFDEX_LICENSE_DIR environment variable (Affdex License Folder) is not set");
-            }
-
-            // Test the directory
-            DirectoryInfo directoryInfo = new DirectoryInfo(licenseFile);
-            if (!directoryInfo.Exists)
-            {
-                ShowExceptionAndShutDown("AFFDEX_License_DIR (Affex License Folder) is set to an invalid folder location");
-            }
-
-            return licenseFile;
-        }
-
-
-
         public MainWindow()
         {
             InitializeComponent();
@@ -305,7 +269,8 @@ namespace AffdexMe
                             mImageYScaleFactor = imgAffdexFaceDisplay.ActualHeight / affdexImage.getHeight();
 
                             SolidColorBrush pointBrush = new SolidColorBrush(Colors.Cornsilk);
-                            foreach (var point in affdexFace.getFeaturePoints())
+                            var featurePoints = affdexFace.getFeaturePoints();
+                            foreach (var point in featurePoints)
                             {
                                 Ellipse ellipse = new Ellipse()
                                 {
@@ -320,10 +285,10 @@ namespace AffdexMe
                             }
 
                             // Draw Face Bounding Rectangle
-                            var xMax = affdexFace.getFeaturePoints().Max(r => r.x);
-                            var xMin = affdexFace.getFeaturePoints().Min(r => r.x);
-                            var yMax = affdexFace.getFeaturePoints().Max(r => r.y);
-                            var yMin = affdexFace.getFeaturePoints().Min(r => r.y);
+                            var xMax = featurePoints.Max(r => r.x);
+                            var xMin = featurePoints.Min(r => r.x);
+                            var yMax = featurePoints.Max(r => r.y);
+                            var yMin = featurePoints.Min(r => r.y);
 
                             // Adjust the x/y min to accomodate all points
                             xMin -= 2;
@@ -350,11 +315,12 @@ namespace AffdexMe
                             mFeaturePointsSkipCount = 0;
 
                             affdexFace.Dispose();
+                            affdexImage.Dispose();
                         }
                     }));
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 String message = String.IsNullOrEmpty(ex.Message) ? "AffdexMe error encountered." : ex.Message;
                 ShowExceptionAndShutDown(message);
@@ -657,7 +623,7 @@ namespace AffdexMe
             {
                 // Instantiate CameraDetector using default camera ID
                 mCameraDetector = new Affdex.CameraDetector();
-                mCameraDetector.setClassifierPath(GetClassifierDataFolder());
+                mCameraDetector.setClassifierPath(AFFDEX_DATA_PATH);
 
                 // Set the Classifiers that we are interested in tracking
                 mCameraDetector.setDetectSmile(true);
