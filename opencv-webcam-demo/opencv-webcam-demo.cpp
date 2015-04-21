@@ -70,25 +70,12 @@ int main(int argsc, char ** argsv)
 
 	try{
 		// Parse and check the data folder (with assets)
-		std::wstring DATA_FOLDER = L"data";
-		if (argsc > 1)
-		{
-			std::string user_folder(argsv[1]);
-			DATA_FOLDER.assign(user_folder.begin(), user_folder.end());
-		}
+		const std::wstring AFFDEX_DATA_DIR = L"C:\\Program Files (x86)\\Affectiva\\Affdex SDK\\data";
+		const std::wstring AFFDEX_LICENSE_FILE = L"affdex.license";
 
 		int framerate = 30;
 		int process_frame_rate = 30;
 		int buffer_length = 2;
-		if (argsc > 2)
-		{
-			framerate = stoi(argsv[2]);
-		}
-
-		if (argsc > 3)
-		{
-			process_frame_rate = stoi(argsv[3]);
-		}
 
 		FrameDetector frameDetector(buffer_length, process_frame_rate);		// Init the FrameDetector Class
 		shared_ptr<ImageListener> listenPtr(new PlottingImageListener());	// Instanciate the ImageListener class
@@ -110,7 +97,8 @@ int main(int argsc, char ** argsv)
 		frameDetector.setDetectLipCornerDepressor(true);
 		frameDetector.setDetectEngagement(true);
 		frameDetector.setDetectValence(true);
-		frameDetector.setClassifierPath(DATA_FOLDER);
+		frameDetector.setClassifierPath(AFFDEX_DATA_DIR);
+		frameDetector.setLicensePath(AFFDEX_LICENSE_FILE);
 		frameDetector.setImageListener(listenPtr.get());
 		//Start the frame detector thread.
 		frameDetector.start();
