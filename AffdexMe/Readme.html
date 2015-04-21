@@ -1,0 +1,71 @@
+<h1>AffdexMe</h1>
+<p><strong>Affdex SDK</strong> is the culmination of years of scientific research into emotion detection, validated across thousands of tests worldwide on PC platforms, and now made available as a software development kit for Windows. Affdex SDK turns your ordinary app into an extraordinary app by emotion-enabling it to respond in real-time to user emotions.</p>
+<p><strong>AffdexMe</strong> is a windows application that demonstrates the use of the Affdex SDK for Windows.  It uses the camera on your Windows PC to view, process and analyze live video of your face.
+Start the app and you will see your own face on the screen, and metrics describing your expressions.</p>
+<h4>This app includes the following command buttons:</h4>
+<ul>
+<li>Start - Starts the camera processing.</li>
+<li>Reset - Resets the context of the video frames.</li>
+<li>ShowPoints/HidePoints  - toggles the display of facial feature points, which Affdex uses to detect expressions.</li>
+<li>Stop - Stops the camera processing.</li>
+<li>Exit - exits the application.</li>
+</ul>
+<p>This application runs on Windows 7.0, 8.0 and 8.1</p>
+<h4>To use this project, you will need:</h4>
+<ul>
+<li>
+<p>Visual Studio 2013</p>
+</li>
+<li>
+<p>To download and install the Windows SDK from Affectiva
+By default, the Windows SDK is installed to the following location: C:\Program Files (x86)\Affectiva\Affdex SDK</p>
+<p>If you have installed the SDK to a location other than the default, you will have to modify the following String constants located in the MainWindow.xaml.cs file:</p>
+<ul>
+<li><strong>AFFDEX_DATA_PATH</strong> - the classifier data path</li>
+<li><strong>AFFDEX_LICENSE_FILE</strong> - the full path to the Affdex license file (including the license file name)</li>
+</ul>
+</li>
+<li>
+<p>The AffdexMe app can be built and run in either debug or release mode.</p>
+<p><strong>To build and run in Debug Mode</strong></p>
+<ul>
+<li>
+<p>Through Visual Studio select the "Debug" configuration.</p>
+</li>
+<li>
+<p>Add the following to your system path:
+C:\Program Files (x86)\Affectiva\Affdex SDK\bin\debug</p>
+</li>
+<li>
+<p>Clean, rebuild and then run the project.</p>
+</li>
+</ul>
+<p><strong>To build and run in Release Mode:</strong></p>
+<ul>
+<li>
+<p>Through Visual Studio select the "Debug" configuration.</p>
+</li>
+<li>
+<p>Add the following to your system path:
+C:\Program Files (x86)\Affectiva\Affdex SDK\bin\release</p>
+</li>
+<li>
+<p>Clean, rebuild and then run the project.</p>
+</li>
+</ul>
+<p><strong>It is important</strong> not to mix Release and Debug versions of the DLLs. If you run into issues when switching between the two different build types, check to make sure that your system path points to the matching build type.</p>
+</li>
+</ul>
+<ul>
+<li>
+<p>In order to modify the system path, from the Control Panel, navigiate to the following:
+<strong>Control Panel -&gt; Advanced System Settings -&gt; Environment Variables -&gt; System Variables -&gt; Path</strong></p>
+</li>
+<li>
+<p>Build the project</p>
+</li>
+<li>
+<p>Run the app through Visual Studio</p>
+</li>
+</ul>
+<p>Copyright (c) 2015 Affectiva. All rights reserved.</p>
