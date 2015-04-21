@@ -14,6 +14,14 @@ OpenCV-webcam-demo is a simple app that uses the camera connected to your PC to 
 
 In order to use the project, you will need to:
 - Contact Affectiva at sales@affectiva.com to obtain the SDK.
-- Copy the SDK Zip file into ${SRC_ROOT}\affdex-sdk and unzip it there.
+- Install the SDK using MSI installer.
 - Download OpenCV package and extract it into ${SRC_ROOT}\opencv
 - Use affdex-win-samples.sln to build the sample app
+
+
+AffdexMe
+--------
+
+**AffdexMe** is a windows application that demonstrates the use of the Affdex SDK for Windows. It uses the camera on your Windows PC to view, process and analyze live video of your face. Start the app and you will see your own face on the screen, and metrics describing your expressions.
+
+See AffdexMe/README.md for more information
