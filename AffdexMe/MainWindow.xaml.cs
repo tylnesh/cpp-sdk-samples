@@ -28,7 +28,7 @@ namespace AffdexMe
         /// <summary>
         /// Location of AffdexSDK Licence file
         /// </summary>
-        private const String AFFDEX_LICENSE_FILE = "C:\\Affectiva\\Build\\AffdexfaceWindows\\bin\\affdex.license";
+        private const String AFFDEX_LICENSE_FILE = "C:\\Program Files (x86)\\Affectiva\\Affdex SDK\\affdex.license";
 
         #region Member Variables and Enums
 

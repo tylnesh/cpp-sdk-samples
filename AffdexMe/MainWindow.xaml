@@ -144,8 +144,7 @@
             <StackPanel Name="stackPanelClassifiers" Orientation="Vertical" Background="Transparent" Height="130" HorizontalAlignment="Stretch" VerticalAlignment="Top" >
                 
                 <Grid Name="gridClassifierDisplay" VerticalAlignment="Stretch" Background="Transparent" Margin="0,5,0,0"
-                      Width="{Binding ElementName=stackPanelClassifiers, Path=ActualWidth}"
-                      Height="{Binding ElementName=stackPanelClassifiers, Path=ActualHeight}" >
+                      Width="auto" Height="130px" >
                     
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="0.36*" />
@@ -237,7 +236,7 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <Button Name="btnStartCamera" Style="{StaticResource CustomButtonStyle}" HorizontalAlignment="Center" Margin="0,0,5,0" VerticalAlignment="Top" Width="55" Content="Start" />
                         <Button Name="btnResetCamera" Style="{StaticResource CustomButtonStyle}" HorizontalAlignment="Center" Margin="0,0,5,0" VerticalAlignment="Top" Width="56" Content="Reset" />
-                        <Button Name="btnShowPoints" Style="{StaticResource CustomButtonStyle}" HorizontalAlignment="Center" Margin="0,0,5,0" VerticalAlignment="Top" Width="80" Content="Show Points" />
+                        <Button Name="btnShowPoints" Style="{StaticResource CustomButtonStyle}" HorizontalAlignment="Center" Margin="0,0,5,0" VerticalAlignment="Top" Width="90" Content="Show Points" />
                         <Button Name="btnStopCamera" Style="{StaticResource CustomButtonStyle}" HorizontalAlignment="Center" Margin="0,0,5,0" VerticalAlignment="Top" Width="55" Content="Stop" />
                         <Button Name="btnExit" Style="{StaticResource CustomButtonStyle}" HorizontalAlignment="Center" Margin="0,0,5,0" VerticalAlignment="Bottom" Width="55" Content="Exit" />
                     </StackPanel>
