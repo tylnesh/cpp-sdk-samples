@@ -25,39 +25,72 @@ class PlottingImageListener : public ImageListener
 public:
 	void onImageResults(std::map<FaceId,Face> faces, Frame image) {
 
+		const int spacing = 10;
+		const int left_margin = 30;
+		const int font = cv::FONT_HERSHEY_COMPLEX_SMALL;
+		float font_size = 0.5f;
+		cv::Scalar clr = cv::Scalar(0, 0, 255);
+		cv::Scalar header_clr = cv::Scalar(255, 0, 0);
 		shared_ptr<byte> imgdata = image.getBGRByteArray();
-		cv::Mat img = cv::Mat(image.getHeight(), image.getWidth(), CV_8UC3, imgdata.get());
-		for (int i = 0; i < faces.size(); i++)
+		cv::Mat mImg = cv::Mat(image.getHeight(), image.getWidth(), CV_8UC3, imgdata.get());
+
+		for (unsigned int i = 0; i < faces.size(); i++)
 		{
 			Face f = faces[i];
-			float smile_score = f.getSmileScore();
-			int n = f.getFeaturePointCount();
-			VecFeaturePoint points = f.getFeaturePoints();
-			for (auto& point : points )	//Draw face feature points.
+			VecFeaturePoint points = f.featurePoints;
+			for (auto& point : points)	//Draw face feature points.
 			{
-				cv::circle(img, cv::Point(point.x, point.y), 1.0f, cv::Scalar(0, 0, 255));
+				cv::circle(mImg, cv::Point(point.x, point.y), 1.0f, cv::Scalar(0, 0, 255));
 			}
+			Orientation headAngles = f.measurements.orientation;
+			std::string strAngles = "Pitch: " + std::to_string(headAngles.pitch) +
+				" Yaw: " + std::to_string(headAngles.yaw) +
+				" Roll: " + std::to_string(headAngles.roll) +
+				" InterOcularDist: " + std::to_string(f.measurements.interocularDistance);
 
 			//Output the results of the different classifiers.
-			cv::putText(img, "Smile: "+ std::to_string(f.getSmileScore()), cv::Point(30, 30), cv::FONT_HERSHEY_COMPLEX, 0.5f, cv::Scalar(0, 0, 255));
-			cv::putText(img, "BrowFurrow: " + std::to_string(f.getBrowFurrowScore()), cv::Point(30, 50), cv::FONT_HERSHEY_COMPLEX, 0.5f, cv::Scalar(0, 0, 255));
-			cv::putText(img, "BrowRaise: " + std::to_string(f.getBrowRaiseScore()), cv::Point(30, 70), cv::FONT_HERSHEY_COMPLEX, 0.5f, cv::Scalar(0, 0, 255));
-			cv::putText(img, "LipCornerDepressor: " + std::to_string(f.getLipCornerDepressorScore()), cv::Point(30, 90), cv::FONT_HERSHEY_COMPLEX, 0.5f, cv::Scalar(0, 0, 255));
-			cv::putText(img, "Engagement: " + std::to_string(f.getEngagementScore()), cv::Point(30, 110), cv::FONT_HERSHEY_COMPLEX, 0.5f, cv::Scalar(0, 0, 255));
-			cv::putText(img, "Valence: " + std::to_string(f.getValenceScore()), cv::Point(30, 130), cv::FONT_HERSHEY_COMPLEX, 0.5f, cv::Scalar(0, 0, 255));
+			int padding = 10;
 
+			std::vector<std::string> expressions{ "smile", "innerBrowRaise", "browRaise", "browFurrow", "noseWrinkle",
+													"upperLipRaise", "lipCornerDepressor", "chinRaise", "lipPucker", "lipPress",
+													"lipSuck", "mouthOpen", "smirk", "eyeClosure", "attention" };
 
-			//Calculate the processing framerate, output both the processing + capture framerate
-			if (process_last_timestamp >= 0.0f)
+			std::vector<std::string> emotions{ "joy", "fear", "disgust", "sadness", "anger", "surprise", "contempt", "valence", "engagement" };
+
+			cv::putText(mImg, "MEASUREMENTS", cv::Point(left_margin, padding += spacing), font, font_size, header_clr);
+
+			cv::putText(mImg, strAngles, cv::Point(left_margin, padding += spacing), font, font_size, clr);
+
+			cv::putText(mImg, "EXPRESSIONS", cv::Point(left_margin, padding += (spacing * 2)), font, font_size, header_clr);
+
+			float * values = (float *)&f.expressions;
+			for (string expression : expressions)
 			{
-				process_fps = 1.0f / (image.getTimestamp() - process_last_timestamp);
-				cv::putText(img, "capture fps: " + std::to_string(capture_fps), cv::Point(img.cols - 200, 30), cv::FONT_HERSHEY_COMPLEX, 0.5f, cv::Scalar(0, 0, 255));
-				cv::putText(img, "process fps: " + std::to_string(process_fps), cv::Point(img.cols - 200, 50), cv::FONT_HERSHEY_COMPLEX, 0.5f, cv::Scalar(0, 0, 255));
+				cv::putText(mImg, expression + ": " + std::to_string(int(*values)), cv::Point(left_margin, padding += spacing), font, font_size, clr);
+				values++;
 			}
+
+			cv::putText(mImg, "EMOTIONS", cv::Point(left_margin, padding += (spacing * 2)), font, font_size, header_clr);
+
+			values = (float *)&f.emotions;
+
+			for (string emotion : emotions)
+			{
+				cv::putText(mImg, emotion + ": " + std::to_string(int(*values)), cv::Point(left_margin, padding += spacing), font, font_size, clr);
+				values++;
+			}
+			std::cerr << "Timestamp: " << image.getTimestamp()
+				<< "," << image.getWidth()
+				<< "x" << image.getHeight()
+				<< " cfps: " << capture_fps
+				<< " pnts: " << points.size() << endl;
 			process_last_timestamp = image.getTimestamp();
+
 		}
-		cv::imshow("analyze-image", img);
-		
+		cv::putText(mImg, "capture fps: " + std::to_string(int(capture_fps)), cv::Point(mImg.cols - 110, mImg.rows - left_margin - spacing), font, font_size, clr);
+
+		cv::imshow("analyze-image", mImg);
+
 		cv::waitKey(30);
 	};
 
@@ -91,12 +124,8 @@ int main(int argsc, char ** argsv)
 		}
 
 		//Initialize detectors
-		frameDetector.setDetectSmile(true);
-		frameDetector.setDetectBrowFurrow(true);
-		frameDetector.setDetectBrowRaise(true);
-		frameDetector.setDetectLipCornerDepressor(true);
-		frameDetector.setDetectEngagement(true);
-		frameDetector.setDetectValence(true);
+		frameDetector.setDetectAllEmotions(true);
+		frameDetector.setDetectAllExpressions(true);
 		frameDetector.setClassifierPath(AFFDEX_DATA_DIR);
 		frameDetector.setLicensePath(AFFDEX_LICENSE_FILE);
 		frameDetector.setImageListener(listenPtr.get());
