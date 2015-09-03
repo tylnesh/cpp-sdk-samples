@@ -18,7 +18,7 @@ This application runs on Windows 7.0, 8.0 and 8.1
 
 *   Visual Studio 2013
 
-*   To download and install the Windows SDK from Affectiva By default, the Windows SDK is installed to the following location: C:\Program Files (x86)\Affectiva\Affdex SDK
+*   To download and install the Windows SDK (32-bit) from Affectiva By default, the Windows SDK is installed to the following location: C:\Program Files (x86)\Affectiva\Affdex SDK
 
     If you have installed the SDK to a location other than the default, you will have to modify the following String constants located in the MainWindow.xaml.cs file:
 
