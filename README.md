@@ -1,12 +1,13 @@
 #Sample Apps for Affdex SDK for Windows 
 
-Welcome to our repository on GitHub! Here you will find example code to get you started with our Affdex SDK for Windows and begin emotion-enabling you own app!
+Welcome to our repository on GitHub! Here you will find example code to get you started with our Affdex SDK 2.0 for Windows and begin emotion-enabling you own app!
 
 OpenCV-webcam-demo
 ------------------
 
 *Dependencies*
 
+- Affdex SDK 2.0 (32 bit)
 - OpenCV for Windows 2.4.9: http://sourceforge.net/projects/opencvlibrary/files/opencv-win/2.4.9/
 - Visual Studio 2013 or higher
 
