@@ -10,37 +10,20 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Collections.Specialized;
 
 using Microsoft.Win32;
+using System.Reflection;
 
 namespace AffdexMe
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, Affdex.ImageListener, Affdex.ProcessStatusListener
     {
-        /// <summary>
-        /// Location of Affdex Data files
-        /// </summary>
-        private const String AFFDEX_DATA_PATH = "C:\\Program Files (x86)\\Affectiva\\Affdex SDK\\data";
-
-        /// <summary>
-        /// Location of AffdexSDK Licence file
-        /// </summary>
-        private const String AFFDEX_LICENSE_FILE = "C:\\Program Files (x86)\\Affectiva\\Affdex SDK\\affdex.license";
 
         #region Member Variables and Enums
-
-        enum AffdexFaceClassifiers : int
-        {
-            Smile = 0,
-            BrowFurrow = 1,
-            BrowRaise = 2,
-            LipCornerDepressor = 3,
-            Engagement = 4,
-            Valence = 5
-        };
 
         /// <summary>
         /// The minimum length of the Classifier Value textbox
@@ -71,8 +54,9 @@ namespace AffdexMe
 
         private Affdex.CameraDetector mCameraDetector;
 
-        private DateTime mStartTime;
+        private StringCollection mEnabledClassifiers;
 
+        private DateTime mStartTime;
         private float mCurrentTimeStamp;
 
         /// <summary>
@@ -82,6 +66,7 @@ namespace AffdexMe
         private double mImageYScaleFactor;
 
         private bool mShowFacePoints;
+        private bool mShowMeasurements;
 
         #endregion
 
@@ -109,65 +94,34 @@ namespace AffdexMe
 
         #region Listener Implementation
 
-        /// <summary>
-        /// 
-        /// </summary>
-        class Listener : Affdex.ImageListener, Affdex.ProcessStatusListener
+	    public void onImageResults(Dictionary<int, Affdex.Face> faces, Affdex.Frame image)
         {
-            public event EventHandler<ImageCaptureDataUpdateArgs> ImageCaptureUpdate;
-            public event EventHandler<ImageResultsDataUpdateArgs> ImageResultsUpdate;
-            public event EventHandler<Affdex.AffdexException> ExceptionHandler;
-
-	        public void onImageResults(Dictionary<int, Affdex.Face> faces, Affdex.Frame image)
+            // For now only single face is supported
+            if ((faces.Count() >= 1))
             {
-                // For now only single face is supported
-                if ((faces.Count() >= 1))
-                {
-                    Affdex.Face face = faces[0];
+                Affdex.Face face = faces[0];
 
-                    if (ImageResultsUpdate != null)
-                    {
-                        ImageResultsDataUpdateArgs imageResultsData = new ImageResultsDataUpdateArgs()
-                        {
-                            Image = image,
-                            ImageResultsTimeStamp = image.getTimestamp(),
-                            Face = face
-                        };
-                        ImageResultsUpdate(this, imageResultsData);
-                    }
-                }
-	        }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="affdexImage"></param>
-	        public void onImageCapture(Affdex.Frame image) 
-	        {
-                if (ImageCaptureUpdate != null)
-                {
-                    ImageCaptureDataUpdateArgs imageCaptureData = new ImageCaptureDataUpdateArgs()
-                    {
-                        Image = image,
-                        ImageCaptureTimeStamp = image.getTimestamp()
-                    };
-                    ImageCaptureUpdate(this, imageCaptureData);
-                    
-                }
+                UpdateClassifierPanel(face);
+                DisplayFeaturePoints(image, face);
+                DisplayMeasurements(face);   
             }
+	    }
 
-            public void onProcessingException(Affdex.AffdexException ex)
-            {
-                if (ExceptionHandler != null)
-                {
-                    ExceptionHandler(this, ex);
-                }                
-            }
+	    public void onImageCapture(Affdex.Frame image) 
+	    {
+            UpdateClassifierPanel();
+            DisplayImageToOffscreenCanvas(image);
+        }
 
-            public void onProcessingFinished()
-            {
-            }
-        };
+        public void onProcessingException(Affdex.AffdexException ex)
+        {
+            String message = String.IsNullOrEmpty(ex.Message) ? "AffdexMe error encountered." : ex.Message;
+            ShowExceptionAndShutDown(message);            
+        }
+
+        public void onProcessingFinished()
+        {
+        }
          
         #endregion
 
@@ -183,6 +137,67 @@ namespace AffdexMe
             }));
         }
 
+        private String GetClassifierDataFolder()
+        {
+            // First see if we can get the Install Path from the registry 
+            RegistryKey rkCurrentUser = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+            RegistryKey rkAffdexMe = rkCurrentUser.OpenSubKey("Software\\Affectiva\\AffdexMe");
+            String classifierPath = String.Empty;
+            if (rkAffdexMe != null && !String.IsNullOrEmpty((String)rkAffdexMe.GetValue("Install Directory")))
+            {
+                classifierPath = (String)rkAffdexMe.GetValue("Install Directory") + "\\data";
+            }
+            else
+            {
+                String affdexClassifierDir = Environment.GetEnvironmentVariable("AFFDEX_DATA_DIR");
+                if (String.IsNullOrEmpty(affdexClassifierDir))
+                {
+                    ShowExceptionAndShutDown("AFFDEX_DATA_DIR environment variable (Classifier Data Directory) is not set");
+                }
+                else 
+                {
+                    classifierPath = affdexClassifierDir;
+                }
+            }
+
+            DirectoryInfo directoryInfo = new DirectoryInfo(classifierPath);
+            if (!directoryInfo.Exists)
+            {
+                ShowExceptionAndShutDown("AFFDEX_DATA_DIR (Classifier Data Directory) is set to an invalid folder location");
+            }
+
+            return classifierPath;
+        }
+
+        private String GetAffdexLicense()
+        {
+            // First see if we can get the License from the registry 
+            RegistryKey rkCurrentUser = Registry.LocalMachine;
+            RegistryKey rkAffdexMe = rkCurrentUser.OpenSubKey("Software\\Affectiva\\AffdexMe");
+            String licensePath = String.Empty;
+            if ( rkAffdexMe != null && !String.IsNullOrEmpty((string)rkAffdexMe.GetValue("Install Directory")))
+            {
+                licensePath = (String)rkAffdexMe.GetValue("Install Directory");
+            }
+            else
+            {
+                licensePath = Environment.GetEnvironmentVariable("AFFDEX_LICENSE_DIR");
+                if (String.IsNullOrEmpty(licensePath))
+                {
+                    ShowExceptionAndShutDown("AFFDEX_LICENSE_DIR environment variable (Affdex License Folder) is not set");
+                }
+            }
+
+            // Test the directory
+            DirectoryInfo directoryInfo = new DirectoryInfo(licensePath);
+            if (!directoryInfo.Exists)
+            {
+                ShowExceptionAndShutDown("AFFDEX_License_DIR (Affex License Folder) is set to an invalid folder location");
+            }
+
+            return licensePath + "\\affdex.license";
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -193,12 +208,23 @@ namespace AffdexMe
         {
             InitializeCameraApp();
 
+            mEnabledClassifiers = AffdexMe.Settings.Default.Classifiers;
             // Enable/Disable buttons on start
             btnStartCamera.IsEnabled =
             btnResetCamera.IsEnabled =
             btnShowPoints.IsEnabled =
             btnStopCamera.IsEnabled =
             btnExit.IsEnabled = true;
+
+            if (AffdexMe.Settings.Default.ShowPoints)
+            {
+                btnShowPoints_Click(null, null);
+            }
+
+            if (AffdexMe.Settings.Default.ShowMeasurements)
+            {
+                btnShowMeasurements_Click(null, null);
+            }
 
             this.ContentRendered += MainWindow_ContentRendered;
         }
@@ -248,6 +274,29 @@ namespace AffdexMe
             return null;
         }
 
+        private void DisplayMeasurements(Affdex.Face affdexFace)
+        {
+            //Update measurements
+           try
+           {
+                var result = this.Dispatcher.BeginInvoke((Action)(() =>
+                    {
+                        if (mShowMeasurements && (affdexFace != null))
+                        {
+                            interocularDistanceDisplay.Text = String.Format("Interocular Distance: {0}", affdexFace.Measurements.InterocularDistance);
+                            pitchDisplay.Text = String.Format("Pitch Angle: {0}", affdexFace.Measurements.Orientation.Pitch);
+                            yawDisplay.Text = String.Format("Yaw Angle: {0}", affdexFace.Measurements.Orientation.Yaw);
+                            rollDisplay.Text = String.Format("Roll Angle: {0}", affdexFace.Measurements.Orientation.Roll);
+                        }
+                    }));
+            }
+            catch(Exception ex)
+            {
+                String message = String.IsNullOrEmpty(ex.Message) ? "AffdexMe error encountered." : ex.Message;
+                ShowExceptionAndShutDown(message);
+            }
+        }
+
         private void DisplayFeaturePoints(Affdex.Frame affdexImage, Affdex.Face affdexFace)
         {
             try
@@ -255,7 +304,7 @@ namespace AffdexMe
                 // Plot Face Points
                 if ((mShowFacePoints) && (affdexFace != null))
                 {
-                    canvasFacePoints.Dispatcher.BeginInvoke((Action)(() =>
+                    var result = this.Dispatcher.BeginInvoke((Action)(() =>
                     {
                         if ((mCameraDetector != null) && (mCameraDetector.isRunning()))
                         {
@@ -268,7 +317,7 @@ namespace AffdexMe
                             mImageYScaleFactor = imgAffdexFaceDisplay.ActualHeight / affdexImage.getHeight();
 
                             SolidColorBrush pointBrush = new SolidColorBrush(Colors.Cornsilk);
-                            var featurePoints = affdexFace.getFeaturePoints();
+                            var featurePoints = affdexFace.FeaturePoints;
                             foreach (var point in featurePoints)
                             {
                                 Ellipse ellipse = new Ellipse()
@@ -279,15 +328,15 @@ namespace AffdexMe
                                 };
 
                                 canvasFacePoints.Children.Add(ellipse);
-                                Canvas.SetLeft(ellipse, point.x * mImageXScaleFactor);
-                                Canvas.SetTop(ellipse, point.y * mImageYScaleFactor);
+                                Canvas.SetLeft(ellipse, point.X * mImageXScaleFactor);
+                                Canvas.SetTop(ellipse, point.Y * mImageYScaleFactor);
                             }
 
                             // Draw Face Bounding Rectangle
-                            var xMax = featurePoints.Max(r => r.x);
-                            var xMin = featurePoints.Min(r => r.x);
-                            var yMax = featurePoints.Max(r => r.y);
-                            var yMin = featurePoints.Min(r => r.y);
+                            var xMax = featurePoints.Max(r => r.X);
+                            var xMin = featurePoints.Min(r => r.X);
+                            var yMax = featurePoints.Max(r => r.Y);
+                            var yMin = featurePoints.Min(r => r.Y);
 
                             // Adjust the x/y min to accomodate all points
                             xMin -= 2;
@@ -312,14 +361,11 @@ namespace AffdexMe
                             Canvas.SetTop(boundingBox, yMin * mImageYScaleFactor);
 
                             mFeaturePointsSkipCount = 0;
-
-                            affdexFace.Dispose();
-                            affdexImage.Dispose();
                         }
                     }));
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 String message = String.IsNullOrEmpty(ex.Message) ? "AffdexMe error encountered." : ex.Message;
                 ShowExceptionAndShutDown(message);
@@ -343,13 +389,19 @@ namespace AffdexMe
                     // A Face was found - this comes from ImageResults CallBack
                     if (face != null)
                     {
-                        // Convert classifier value to Integer (percentage) for display purposes
-                        mAffdexClassifierValues[(int)AffdexFaceClassifiers.Smile] = Convert.ToInt32(Math.Round(face.getSmileScore(), MidpointRounding.AwayFromZero));
-                        mAffdexClassifierValues[(int)AffdexFaceClassifiers.BrowFurrow] = Convert.ToInt32(Math.Round(face.getBrowFurrowScore(), MidpointRounding.AwayFromZero));
-                        mAffdexClassifierValues[(int)AffdexFaceClassifiers.BrowRaise] = Convert.ToInt32(Math.Round(face.getBrowRaiseScore(), MidpointRounding.AwayFromZero));
-                        mAffdexClassifierValues[(int)AffdexFaceClassifiers.LipCornerDepressor] = Convert.ToInt32(Math.Round(face.getLipCornerDepressorScore(), MidpointRounding.AwayFromZero));
-                        mAffdexClassifierValues[(int)AffdexFaceClassifiers.Engagement] = Convert.ToInt32(Math.Round(face.getEngagementScore(), MidpointRounding.AwayFromZero));
-                        mAffdexClassifierValues[(int)AffdexFaceClassifiers.Valence] = Convert.ToInt32(Math.Round(face.getValenceScore(), MidpointRounding.AwayFromZero));
+                        int index = 0;
+                        foreach (String metric in mEnabledClassifiers)
+                        {
+                            PropertyInfo info;
+                            float value = -1;
+                            if ((info = face.Expressions.GetType().GetProperty(NameMappings(metric))) != null) value = (float)info.GetValue(face.Expressions, null);
+                            else if ((info = face.Emotions.GetType().GetProperty(NameMappings(metric))) != null) value = (float)info.GetValue(face.Emotions, null);
+                           
+                            // Convert classifier value to Integer (percentage) for display purposes
+                            mAffdexClassifierValues[index] = Convert.ToInt32(Math.Round(value, MidpointRounding.AwayFromZero));
+                            index++;
+
+                        }
 
                         // Reset the cache count
                         mCachedSkipFaceResultsCount = 0;
@@ -362,12 +414,7 @@ namespace AffdexMe
                     }
                     else if (++mCachedSkipFaceResultsCount > 10)
                     {
-                        mAffdexClassifierValues[(int)AffdexFaceClassifiers.Smile] =
-                        mAffdexClassifierValues[(int)AffdexFaceClassifiers.BrowFurrow] =
-                        mAffdexClassifierValues[(int)AffdexFaceClassifiers.BrowRaise] =
-                        mAffdexClassifierValues[(int)AffdexFaceClassifiers.LipCornerDepressor] =
-                        mAffdexClassifierValues[(int)AffdexFaceClassifiers.Engagement] =
-                        mAffdexClassifierValues[(int)AffdexFaceClassifiers.Valence] = 0;
+                        for (int r = 0; r < mAffdexClassifierValues.Count(); r++) mAffdexClassifierValues[r] = 0;
 
                         // If we haven't seen a face in the past 30 frames (roughly 30/15fps seconds), don't display the classifiers
                         if (mCachedSkipFaceResultsCount >= 30)
@@ -376,21 +423,26 @@ namespace AffdexMe
                         }
                     }
 
-                    // Only display the classifiers and FacePoints if we've had a re
-                    if (displayClassifiers)
+                    var result = this.Dispatcher.BeginInvoke((Action)(() =>
                     {
-                        // Update the Classifier Display
-                        UpdateClassifier(txtSmileClassifierName, txtSmileClassifierValue, txtSmileClassifierValueBackground, AffdexFaceClassifiers.Smile);
-                        UpdateClassifier(txtFrownClassifierName, txtFrownClassifierValue, txtFrownClassifierValueBackground, AffdexFaceClassifiers.LipCornerDepressor);
-                        UpdateClassifier(txtBrowRaiseClassifierName, txtBrowRaiseClassifierValue, txtBrowRaiseClassifierValueBackground, AffdexFaceClassifiers.BrowRaise);
-                        UpdateClassifier(txtValenceClassifierName, txtValenceClassifierValue, txtValenceClassifierValueBackground, AffdexFaceClassifiers.Valence);
-                        UpdateClassifier(txtBrowLowerClassifierName, txtBrowLowerClassifierValue, txtBrowLowerClassifierValueBackground, AffdexFaceClassifiers.BrowFurrow);
-                        UpdateClassifier(txtEngagementClassifierName, txtEngagementClassifierValue, txtEngagementClassifierValueBackground, AffdexFaceClassifiers.Engagement);
-                    }
+                        // Only display the classifiers and FacePoints if we've had a re
+                        if (displayClassifiers)
+                        {
+                            int r = 0;
+                            foreach (String classifier in mEnabledClassifiers)
+                            {
+                                String stackPanelName = String.Format("stackPanel{0}", r);
+                                TextBlock ClassifierName = (TextBlock) gridClassifierDisplay.FindName(String.Format("{0}Name", stackPanelName));
+                                TextBlock ClassifierValueBackgroud = (TextBlock)gridClassifierDisplay.FindName(String.Format("{0}ValueBackgroud", stackPanelName));
+                                TextBlock ClassifierValue = (TextBlock)gridClassifierDisplay.FindName(String.Format("{0}Value", stackPanelName));
+                                // Update the Classifier Display
+                                UpdateClassifier(ClassifierName, ClassifierValue, ClassifierValueBackgroud, classifier, r);
+                                r++;
 
-                    // Update the Image control from the UI thread
-                    stackPanelClassifiers.Dispatcher.BeginInvoke((Action)(() =>
-                    {
+                            }
+                        }
+
+                        // Update the Image control from the UI thread
                         if ((mCameraDetector != null) && (mCameraDetector.isRunning()))
                         {
                             if (imgAffdexFaceDisplay.Visibility == Visibility.Hidden)
@@ -400,6 +452,10 @@ namespace AffdexMe
                                 stackPanelLogoBackground.Visibility = Visibility.Visible;
                             }
                             stackPanelClassifiers.Visibility = (displayClassifiers)?Visibility.Visible : Visibility.Hidden;
+                            interocularDistanceDisplay.Visibility = (displayClassifiers && mShowMeasurements) ? Visibility.Visible : Visibility.Hidden;
+                            pitchDisplay.Visibility = (displayClassifiers && mShowMeasurements) ? Visibility.Visible : Visibility.Hidden;
+                            yawDisplay.Visibility = (displayClassifiers && mShowMeasurements) ? Visibility.Visible : Visibility.Hidden;
+                            rollDisplay.Visibility = (displayClassifiers && mShowMeasurements) ? Visibility.Visible : Visibility.Hidden;
                         }
                     }));
                 }
@@ -411,11 +467,22 @@ namespace AffdexMe
             }
         }
 
+        private String NameMappings(String classifierName)
+        {
+            if (classifierName == "Frown")
+            {
+                return "LipCornerDepressor";
+            }
+            return classifierName;
+        }
+
         private void UpdateClassifier(TextBlock txtClassifier, TextBlock txtClassifierValue, 
-                                      TextBlock txtClassifierValueBackground, AffdexFaceClassifiers classifierIndex)
+                                      TextBlock txtClassifierValueBackground, String classifierName, int classifierIndex)
         {
             try
             {
+                UpperCaseConverter conv = new UpperCaseConverter();
+                txtClassifier.Text = (String)conv.Convert(classifierName, null, null, null);
                 int classifierValue = mAffdexClassifierValues[(int)classifierIndex];
 
                 // Calculate the width
@@ -432,13 +499,9 @@ namespace AffdexMe
                     backgroundColor = Colors.Red;
                 }
 
-                txtClassifierValue.Dispatcher.BeginInvoke((Action)(() =>
-                {
-                    txtClassifierValueBackground.Background = new SolidColorBrush(backgroundColor);
-                    txtClassifierValueBackground.Width = width;
-                    txtClassifierValue.Text = String.Format("{0}%", classifierValue);
-                }));
-
+                txtClassifierValueBackground.Background = new SolidColorBrush(backgroundColor);
+                txtClassifierValueBackground.Width = width;
+                txtClassifierValue.Text = String.Format("{0}%", classifierValue);
             }
             catch (Exception ex)
             {
@@ -450,7 +513,7 @@ namespace AffdexMe
         private void DisplayImageToOffscreenCanvas(Affdex.Frame image)
         {
             // Update the Image control from the UI thread
-            imgAffdexFaceDisplay.Dispatcher.BeginInvoke((Action)(() =>
+            var result = this.Dispatcher.BeginInvoke((Action)(() =>
             {
                 try
                 {
@@ -493,6 +556,7 @@ namespace AffdexMe
                 btnStartCamera.Click += btnStartCamera_Click;
                 btnStopCamera.Click += btnStopCamera_Click;
                 btnShowPoints.Click += btnShowPoints_Click;
+                btnShowMeasurements.Click += btnShowMeasurements_Click;
                 btnResetCamera.Click += btnResetCamera_Click;
                 btnExit.Click += btnExit_Click;
 
@@ -510,6 +574,7 @@ namespace AffdexMe
 
                 // Face Points are off by default
                 mShowFacePoints = false;
+                mShowMeasurements = false;
 
                 // Show the logo
                 imgAffdexLogoDisplay.Visibility = Visibility.Visible;
@@ -555,6 +620,44 @@ namespace AffdexMe
             }
         }
 
+        void btnShowMeasurements_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Style style;
+                String buttonText = String.Empty;
+
+                mShowMeasurements = !mShowMeasurements;
+                if (mShowMeasurements)
+                {
+                    style = this.FindResource("PointsOnButtonStyle") as Style;
+                    buttonText = "Hide Measurements";
+                    interocularDistanceDisplay.Visibility = Visibility.Visible;
+                    pitchDisplay.Visibility = Visibility.Visible;
+                    yawDisplay.Visibility = Visibility.Visible;
+                    rollDisplay.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    style = this.FindResource("CustomButtonStyle") as Style;
+                    buttonText = "Show Measurements";
+                    interocularDistanceDisplay.Visibility = Visibility.Hidden;
+                    pitchDisplay.Visibility = Visibility.Hidden;
+                    yawDisplay.Visibility = Visibility.Hidden;
+                    rollDisplay.Visibility = Visibility.Hidden;
+                }
+
+                btnShowMeasurements.Style = style;
+                btnShowMeasurements.Content = buttonText;
+
+            }
+            catch (Exception ex)
+            {
+                String message = String.IsNullOrEmpty(ex.Message) ? "AffdexMe error encountered." : ex.Message;
+                ShowExceptionAndShutDown(message);
+            }
+        }
+
         private void btnResetCamera_Click(object sender, RoutedEventArgs e)
         {
             ResetCameraProcessing();
@@ -581,7 +684,16 @@ namespace AffdexMe
 
         void btnExit_Click(object sender, RoutedEventArgs e)
         {
+            SaveSettings();
             Application.Current.Shutdown();
+        }
+
+        void SaveSettings()
+        {
+            AffdexMe.Settings.Default.ShowPoints = mShowFacePoints;
+            AffdexMe.Settings.Default.ShowMeasurements = mShowMeasurements;
+            AffdexMe.Settings.Default.Classifiers = mEnabledClassifiers;
+            AffdexMe.Settings.Default.Save();
         }
 
         private void ClearClassifiersAndPointsDisplay()
@@ -590,6 +702,12 @@ namespace AffdexMe
             imgAffdexFaceDisplay.Visibility =
             stackPanelLogoBackground.Visibility =
             stackPanelClassifiersBackground.Visibility = Visibility.Hidden;
+
+            //Clean measurements
+            interocularDistanceDisplay.Text = String.Format("Interocular Distance: {0}", 0);
+            pitchDisplay.Text = String.Format("Pitch Angle: {0}", 0);
+            yawDisplay.Text = String.Format("Yaw Angle: {0}", 0);
+            rollDisplay.Text = String.Format("Roll Angle: {0}", 0);
 
             // Hide the Classifier Panel
             stackPanelClassifiers.Visibility = Visibility.Hidden;
@@ -614,21 +732,33 @@ namespace AffdexMe
             }
         }
 
+        private void TurnOnClassifiers()
+        {
+            mCameraDetector.setDetectAllEmotions(false);
+            mCameraDetector.setDetectAllExpressions(false);
+            foreach (String metric in mEnabledClassifiers)
+            {
+                MethodInfo setMethodInfo = mCameraDetector.GetType().GetMethod(String.Format("setDetect{0}", NameMappings(metric)));
+                setMethodInfo.Invoke(mCameraDetector, new object[] { true });
+            }
+        }
+
         private void StartCameraProcessing()
         {
             try
             {
+                btnStartCamera.IsEnabled = false;
+                btnResetCamera.IsEnabled =
+                btnShowPoints.IsEnabled =
+                btnStopCamera.IsEnabled =
+                btnExit.IsEnabled = true;
+
                 // Instantiate CameraDetector using default camera ID
                 mCameraDetector = new Affdex.CameraDetector();
-                mCameraDetector.setClassifierPath(AFFDEX_DATA_PATH);
+                mCameraDetector.setClassifierPath(GetClassifierDataFolder());
 
                 // Set the Classifiers that we are interested in tracking
-                mCameraDetector.setDetectSmile(true);
-                mCameraDetector.setDetectBrowFurrow(true);
-                mCameraDetector.setDetectBrowRaise(true);
-                mCameraDetector.setDetectLipCornerDepressor(true);
-                mCameraDetector.setDetectEngagement(true);
-                mCameraDetector.setDetectValence(true);
+                TurnOnClassifiers();
 
                 // Initialize Classifier cache
                 for (int index = 0; index < mAffdexClassifierValues.Count(); index++)
@@ -637,23 +767,13 @@ namespace AffdexMe
                 }
 
                 mCachedSkipFaceResultsCount = 0;
+                mCameraDetector.setImageListener(this);
+                mCameraDetector.setProcessStatusListener(this);
 
-                Listener listener = new Listener();
-                listener.ImageCaptureUpdate += imageListener_ImageCaptureUpdate;
-                listener.ImageResultsUpdate += imageListener_ImageResultsUpdate;
-                listener.ExceptionHandler += imageListener_ExceptionHandler;
 
-                mCameraDetector.setImageListener(listener);
-                mCameraDetector.setProcessStatusListener(listener);
-
-                btnStartCamera.IsEnabled = false;
-                btnResetCamera.IsEnabled =
-                btnShowPoints.IsEnabled =
-                btnStopCamera.IsEnabled =
-                btnExit.IsEnabled = true;
 
                 // Set the License Path
-                mCameraDetector.setLicensePath(AFFDEX_LICENSE_FILE);
+                mCameraDetector.setLicensePath(GetAffdexLicense());
 
                 mStartTime = DateTime.Now;
                 mCameraDetector.start();
@@ -689,24 +809,6 @@ namespace AffdexMe
                 ShowExceptionAndShutDown(message);
             }
         }
-
-        void imageListener_ExceptionHandler(object sender, Affdex.AffdexException ex)
-        {
-            String message = String.IsNullOrEmpty(ex.Message) ? "AffdexMe error encountered." : ex.Message;
-            ShowExceptionAndShutDown(message);
-        }
-
-        void imageListener_ImageResultsUpdate(object sender, MainWindow.ImageResultsDataUpdateArgs e)
-        {
-            UpdateClassifierPanel(e.Face);
-            DisplayFeaturePoints(e.Image, e.Face);
-        }
-
-        void imageListener_ImageCaptureUpdate(object sender, MainWindow.ImageCaptureDataUpdateArgs e)
-        {
-            UpdateClassifierPanel();
-            DisplayImageToOffscreenCanvas(e.Image);
-        }           
 
         private void ResetCameraProcessing()
         {
@@ -748,7 +850,27 @@ namespace AffdexMe
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             StopCameraProcessing();
+            SaveSettings();
             Application.Current.Shutdown();
+        }
+
+        private void btnChooseWin_Click(object sender, RoutedEventArgs e)
+        {
+            Boolean wasRunning = false;
+            if ((mCameraDetector != null) && (mCameraDetector.isRunning()))
+            {
+                StopCameraProcessing();
+                ResetDisplayArea();
+                wasRunning = true;
+            }
+            
+            MetricSelectionUI w = new MetricSelectionUI(mEnabledClassifiers);
+            w.ShowDialog();
+            mEnabledClassifiers = w.Classifiers;
+            if (wasRunning)
+            {
+                StartCameraProcessing();
+            }
         }
 
     }

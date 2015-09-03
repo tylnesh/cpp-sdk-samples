@@ -37,7 +37,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Affdex, Version=1.0.5589.23093, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Affdex, Version=2.0.0.10, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>c:\Program Files (x86)\Affectiva\Affdex SDK\bin\release\Affdex.dll</HintPath>
     </Reference>
@@ -55,8 +55,14 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WpfAnimatedGif">
+      <HintPath>$(ProjectDir)packages\WpfAnimatedGif.1.4.13\lib\net\WpfAnimatedGif.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MetricSelectionUI.xaml.cs" />
+    <Compile Include="NameToResourceConverter.cs" />
+    <Compile Include="UpperCaseConverter.cs" />
     <Page Include="$(ProjectDir)MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -68,6 +74,10 @@
       <DependentUpon>$(ProjectDir)MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MetricSelectionUI.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(ProjectDir)Properties\AssemblyInfo.cs">
@@ -102,9 +112,59 @@
     <Resource Include="$(ProjectDir)Resources\AffdexMe_Logo.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="affdex-native.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="affdex-native.dll" />
+    <Resource Include="anger.jpg" />
+    <Resource Include="attention.jpg" />
+    <Resource Include="brow_furrow.jpg" />
+    <Resource Include="brow_raise.jpg" />
+    <Resource Include="chin_raise.jpg" />
+    <Resource Include="contempt.jpg" />
+    <Resource Include="disgust.jpg" />
+    <Resource Include="engagement.jpg" />
+    <Resource Include="eye_closure.jpg" />
+    <Resource Include="fear.jpg" />
+    <Resource Include="frown.jpg" />
+    <Resource Include="inner_brow_raise.jpg" />
+    <Resource Include="joy.jpg" />
+    <Resource Include="lip_press.jpg" />
+    <Resource Include="lip_pucker.jpg" />
+    <Resource Include="lip_suck.jpg" />
+    <Resource Include="mouth_open.jpg" />
+    <Resource Include="negative_valence.jpg" />
+    <Resource Include="nose_wrinkle.jpg" />
+    <Resource Include="positive_valence.jpg" />
+    <Resource Include="sadness.jpg" />
+    <Resource Include="smile.jpg" />
+    <Resource Include="smirk.jpg" />
+    <Resource Include="surprise.jpg" />
+    <Resource Include="upper_lip_raise.jpg" />
+    <Resource Include="valence.jpg" />
+    <Resource Include="anger.gif" />
+    <Resource Include="attention.gif" />
+    <Resource Include="brow_furrow.gif" />
+    <Resource Include="brow_raise.gif" />
+    <Resource Include="chin_raise.gif" />
+    <Resource Include="contempt.gif" />
+    <Resource Include="disgust.gif" />
+    <Resource Include="engagement.gif" />
+    <Resource Include="eye_closure.gif" />
+    <Resource Include="fear.gif" />
+    <Resource Include="frown.gif" />
+    <Resource Include="inner_brow_raise.gif" />
+    <Resource Include="joy.gif" />
+    <Resource Include="lip_press.gif" />
+    <Resource Include="lip_pucker.gif" />
+    <Resource Include="lip_suck.gif" />
+    <Resource Include="mouth_open.gif" />
+    <Resource Include="negative_valence.gif" />
+    <Resource Include="nose_wrinkle.gif" />
+    <Resource Include="positive_valence.gif" />
+    <Resource Include="sadness.gif" />
+    <Resource Include="smile.gif" />
+    <Resource Include="smirk.gif" />
+    <Resource Include="surprise.gif" />
+    <Resource Include="upper_lip_raise.gif" />
+    <Resource Include="valence.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

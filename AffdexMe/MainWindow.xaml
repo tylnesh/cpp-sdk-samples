@@ -28,7 +28,7 @@
             <Setter Property="Margin" Value="1"/>
             <Setter Property="Height" Value="30"/>
             <Setter Property="MinWidth" Value="20"/>
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontSize" Value="11"/>
             <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -81,7 +81,7 @@
             <Setter Property="Margin" Value="1"/>
             <Setter Property="Height" Value="30"/>
             <Setter Property="MinWidth" Value="20"/>
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontSize" Value="11"/>
             <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -103,7 +103,8 @@
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Opacity" TargetName="rectangle" Value="0.2"/>
                             </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
+                            <Trigger Property
+                                     ="IsPressed" Value="True">
                                 <Setter Property="Opacity" TargetName="rectangle" Value="0.3"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
@@ -127,13 +128,16 @@
             <StackPanel Name="stackPanelImage" Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
 
                 <Grid Name="gridAffdexFaceDisplay" VerticalAlignment="Stretch" Width="auto" Height="560" >
-                    
                     <Image Name="imgAffdexFaceDisplay" Visibility="Hidden" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="UniformToFill"/>
                     
                     <Image Name="imgAffdexLogoDisplay" Margin="40" Width="auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                            Height="auto" Source="Resources/AffectivaLogo1.png" Visibility="Visible"/>
+                            Height="auto" Source="AffectivaLogo1.png" Visibility="Visible"/>
 
                     <Canvas Name="canvasFacePoints" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <TextBlock Name="interocularDistanceDisplay" Visibility="Hidden" Text="Interocular Distance: " FontWeight="SemiBold" Foreground="White" VerticalAlignment="Center" Margin="10,131,0,413"/>
+                    <TextBlock Name="pitchDisplay" Visibility="Hidden" Text="pitch: " FontWeight="SemiBold" Foreground="White" VerticalAlignment="Center" Margin="10,131,0,380"/>
+                    <TextBlock Name="yawDisplay" Visibility="Hidden" Text="Yaw: " FontWeight="SemiBold" Foreground="White" VerticalAlignment="Center" Margin="10,131,0,347"/>
+                    <TextBlock Name="rollDisplay" Visibility="Hidden" Text="Roll: " FontWeight="SemiBold" Foreground="White" VerticalAlignment="Center" Margin="10,131,0,314"/>
 
                 </Grid>
             </StackPanel>
@@ -158,51 +162,51 @@
                         <RowDefinition Height="40" />
                     </Grid.RowDefinitions>
 
-                    <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0" Margin="0,0,0,0">
-                        <TextBlock Name="txtSmileClassifierName" Text="SMILE" Foreground="OrangeRed" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center"/>
+                    <StackPanel Name="stackPanel0" Orientation="Vertical" Grid.Row="0" Grid.Column="0" Margin="0,0,0,0">
+                        <TextBlock Name="stackPanel0Name" Text="STACKPANEL0" Foreground="OrangeRed" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center"/>
                         <Grid>
-                            <TextBlock Name="txtSmileClassifierValueBackground" Width="50" Background="LimeGreen" HorizontalAlignment="Center"/>
-                            <TextBlock Name="txtSmileClassifierValue" Width="50" TextAlignment="Center" Text="10%" FontWeight="SemiBold" Foreground="Black" HorizontalAlignment="Center"/>
+                            <TextBlock Name="stackPanel0ValueBackgroud" Width="50" Background="LimeGreen" HorizontalAlignment="Center"/>
+                            <TextBlock Name="stackPanel0Value" Width="50" TextAlignment="Center" Text="10%" FontWeight="SemiBold" Foreground="Black" HorizontalAlignment="Center"/>
                         </Grid>
                     </StackPanel>
 
-                    <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2" Margin="0,0,0,0" >
-                        <TextBlock Name="txtFrownClassifierName" Text="FROWN" Foreground="OrangeRed" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center"/>
+                    <StackPanel Name="stackPanel1" Orientation="Vertical" Grid.Row="0" Grid.Column="2" Margin="0,0,0,0" >
+                        <TextBlock Name="stackPanel1Name" Text="STACKPANEL1" Foreground="OrangeRed" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center"/>
                         <Grid>
-                            <TextBlock Name="txtFrownClassifierValueBackground" Width="50" Background="LimeGreen" HorizontalAlignment="Center" />
-                            <TextBlock Name="txtFrownClassifierValue" Width="50" TextAlignment="Center" Text="10%" FontWeight="SemiBold" Foreground="Black" HorizontalAlignment="Center" />
+                            <TextBlock Name="stackPanel1ValueBackgroud" Width="50" Background="LimeGreen" HorizontalAlignment="Center" />
+                            <TextBlock Name="stackPanel1Value" Width="50" TextAlignment="Center" Text="10%" FontWeight="SemiBold" Foreground="Black" HorizontalAlignment="Center" />
                         </Grid>
                     </StackPanel>
 
-                    <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="0" Margin="0,0,0,0" >
-                        <TextBlock Name="txtBrowRaiseClassifierName" Text="BROW RAISE" Foreground="OrangeRed" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center"/>
+                    <StackPanel Name="stackPanel2" Orientation="Vertical" Grid.Row="1" Grid.Column="0" Margin="0,0,0,0" >
+                        <TextBlock Name="stackPanel2Name" Text="STACKPANEL2" Foreground="OrangeRed" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center"/>
                         <Grid>
-                            <TextBlock Name="txtBrowRaiseClassifierValueBackground" Width="50" Background="LimeGreen" HorizontalAlignment="Center" />
-                            <TextBlock Name="txtBrowRaiseClassifierValue" Width="50" TextAlignment="Center" Text="10%" FontWeight="SemiBold" Foreground="Black" HorizontalAlignment="Center" />
+                            <TextBlock Name="stackPanel2ValueBackgroud" Width="50" Background="LimeGreen" HorizontalAlignment="Center" />
+                            <TextBlock Name="stackPanel2Value" Width="50" TextAlignment="Center" Text="10%" FontWeight="SemiBold" Foreground="Black" HorizontalAlignment="Center" />
                         </Grid>
                     </StackPanel>
 
-                    <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="2" Margin="0,0,0,0" >
-                        <TextBlock Name="txtValenceClassifierName" Text="VALENCE" Foreground="OrangeRed" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center"/>
+                    <StackPanel Name="stackPanel3" Orientation="Vertical" Grid.Row="1" Grid.Column="2" Margin="0,0,0,0" >
+                        <TextBlock Name="stackPanel3Name" Text="STACKPANEL3" Foreground="OrangeRed" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center"/>
                         <Grid>
-                            <TextBlock Name="txtValenceClassifierValueBackground" Width="50" Background="LimeGreen" HorizontalAlignment="Center" />
-                            <TextBlock Name="txtValenceClassifierValue" Width="50" TextAlignment="Center" Text="10%" FontWeight="SemiBold" Foreground="Black" HorizontalAlignment="Center"/>
+                            <TextBlock Name="stackPanel3ValueBackgroud" Width="50" Background="LimeGreen" HorizontalAlignment="Center" />
+                            <TextBlock Name="stackPanel3Value" Width="50" TextAlignment="Center" Text="10%" FontWeight="SemiBold" Foreground="Black" HorizontalAlignment="Center"/>
                         </Grid>
                     </StackPanel>
 
-                    <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="0" Margin="0,0,0,0" >
-                        <TextBlock Name="txtBrowLowerClassifierName" Text="BROW FURROW" Foreground="OrangeRed" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center"/>
+                    <StackPanel Name="stackPanel4" Orientation="Vertical" Grid.Row="2" Grid.Column="0" Margin="0,0,0,0" >
+                        <TextBlock Name="stackPanel4Name" Text="STACKPANEL4" Foreground="OrangeRed" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center"/>
                         <Grid>
-                            <TextBlock Name="txtBrowLowerClassifierValueBackground" Width="50" Background="LimeGreen" HorizontalAlignment="Center" />
-                            <TextBlock Name="txtBrowLowerClassifierValue" Width="50" TextAlignment="Center" Text="10%" FontWeight="SemiBold" Foreground="Black" HorizontalAlignment="Center" />
+                            <TextBlock Name="stackPanel4ValueBackgroud" Width="50" Background="LimeGreen" HorizontalAlignment="Center" />
+                            <TextBlock Name="stackPanel4Value" Width="50" TextAlignment="Center" Text="10%" FontWeight="SemiBold" Foreground="Black" HorizontalAlignment="Center" />
                         </Grid>
                     </StackPanel>
 
-                    <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="2" Margin="0,0,0,0" >
-                        <TextBlock Name="txtEngagementClassifierName" Text="ENGAGEMENT" Foreground="OrangeRed" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" />
+                    <StackPanel Name="stackPanel5" Orientation="Vertical" Grid.Row="2" Grid.Column="2" Margin="0,0,0,0" >
+                        <TextBlock Name="stackPanel5Name" Text="STACKPANEL5" Foreground="OrangeRed" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" />
                         <Grid>
-                            <TextBlock Name="txtEngagementClassifierValueBackground" Width="50" Background="LimeGreen" HorizontalAlignment="Center" />
-                            <TextBlock Name="txtEngagementClassifierValue" Width="50" TextAlignment="Center" Text="10%" FontWeight="SemiBold" Foreground="Black" HorizontalAlignment="Center" />
+                            <TextBlock Name="stackPanel5ValueBackgroud" Width="50" Background="LimeGreen" HorizontalAlignment="Center" />
+                            <TextBlock Name="stackPanel5Value" Width="50" TextAlignment="Center" Text="10%" FontWeight="SemiBold" Foreground="Black" HorizontalAlignment="Center" />
                         </Grid>
                     </StackPanel>
                 </Grid> 
@@ -224,7 +228,7 @@
 
                     <Image Name="imgAffdexLogoBackground" Width="auto" Grid.Column="1" Grid.Row="1"
                             HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                            Height="auto" Source="Resources/AffectivaLogo1.png" Margin="0,0,0,-34" Grid.RowSpan="2"/>
+                            Height="auto" Source="AffectivaLogo1.png" Margin="0,0,0,-34" Grid.RowSpan="2"/>
                 </Grid>
             </StackPanel>
         </Grid>
@@ -234,11 +238,13 @@
             <Grid HorizontalAlignment="Center">
                 <GroupBox Margin="0,5,0,0"  Height="40" VerticalAlignment="Stretch" BorderBrush="Transparent" BorderThickness="0">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Button Name="btnStartCamera" Style="{StaticResource CustomButtonStyle}" HorizontalAlignment="Center" Margin="0,0,5,0" VerticalAlignment="Top" Width="55" Content="Start" />
-                        <Button Name="btnResetCamera" Style="{StaticResource CustomButtonStyle}" HorizontalAlignment="Center" Margin="0,0,5,0" VerticalAlignment="Top" Width="56" Content="Reset" />
-                        <Button Name="btnShowPoints" Style="{StaticResource CustomButtonStyle}" HorizontalAlignment="Center" Margin="0,0,5,0" VerticalAlignment="Top" Width="90" Content="Show Points" />
-                        <Button Name="btnStopCamera" Style="{StaticResource CustomButtonStyle}" HorizontalAlignment="Center" Margin="0,0,5,0" VerticalAlignment="Top" Width="55" Content="Stop" />
-                        <Button Name="btnExit" Style="{StaticResource CustomButtonStyle}" HorizontalAlignment="Center" Margin="0,0,5,0" VerticalAlignment="Bottom" Width="55" Content="Exit" />
+                        <Button Name="btnStartCamera" Style="{StaticResource CustomButtonStyle}" HorizontalAlignment="Center" Margin="0,0,5,0" VerticalAlignment="Top" Width="40" Content="Start" />
+                        <Button Name="btnResetCamera" Style="{StaticResource CustomButtonStyle}" HorizontalAlignment="Center" Margin="0,0,5,0" VerticalAlignment="Top" Width="40" Content="Reset" />
+                        <Button Name="btnShowPoints" Style="{StaticResource CustomButtonStyle}" HorizontalAlignment="Center" Margin="0,0,5,0" VerticalAlignment="Top" Width="80" Content="Show Points" />
+                        <Button Name="btnShowMeasurements" Style="{StaticResource CustomButtonStyle}" HorizontalAlignment="Center" Margin="0,0,5,0" VerticalAlignment="Top" Width="120" Content="Show Measurements" />
+                        <Button Name="btnChooseWin" Style="{StaticResource CustomButtonStyle}" HorizontalAlignment="Center" Margin="0,0,5,0" VerticalAlignment="Top" Width="60" Content="Classifiers" Click="btnChooseWin_Click" />
+                        <Button Name="btnStopCamera" Style="{StaticResource CustomButtonStyle}" HorizontalAlignment="Center" Margin="0,0,5,0" VerticalAlignment="Top" Width="40" Content="Stop" />
+                        <Button Name="btnExit" Style="{StaticResource CustomButtonStyle}" HorizontalAlignment="Center" Margin="0,0,5,0" VerticalAlignment="Bottom" Width="35" Content="Exit" />
                     </StackPanel>
                 </GroupBox>
             </Grid>                    
