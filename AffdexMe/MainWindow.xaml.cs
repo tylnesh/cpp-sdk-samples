@@ -144,18 +144,14 @@ namespace AffdexMe
             {
                 ShowExceptionAndShutDown("AFFDEX_DATA_DIR environment variable (Classifier Data Directory) is not set");
             }
-            else 
-            {
-                classifierPath = affdexClassifierDir;
-            }
 
-            DirectoryInfo directoryInfo = new DirectoryInfo(classifierPath);
+            DirectoryInfo directoryInfo = new DirectoryInfo(affdexClassifierDir);
             if (!directoryInfo.Exists)
             {
                 ShowExceptionAndShutDown("AFFDEX_DATA_DIR (Classifier Data Directory) is set to an invalid folder location");
             }
 
-            return classifierPath;
+            return affdexClassifierDir;
         }
 
         private String GetAffdexLicense()
