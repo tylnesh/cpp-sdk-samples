@@ -163,13 +163,6 @@ namespace AffdexMe
                 ShowExceptionAndShutDown("AFFDEX_LICENSE_DIR environment variable (Affdex License Folder) is not set");
             }
 
-            // Test the directory
-            DirectoryInfo directoryInfo = new DirectoryInfo(licensePath);
-            if (!directoryInfo.Exists)
-            {
-                ShowExceptionAndShutDown("AFFDEX_License_DIR (Affex License Folder) is set to an invalid folder location");
-            }
-
             return licensePath;
         }
 
