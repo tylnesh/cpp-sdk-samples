@@ -139,25 +139,14 @@ namespace AffdexMe
 
         private String GetClassifierDataFolder()
         {
-            // First see if we can get the Install Path from the registry 
-            RegistryKey rkCurrentUser = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
-            RegistryKey rkAffdexMe = rkCurrentUser.OpenSubKey("Software\\Affectiva\\AffdexMe");
-            String classifierPath = String.Empty;
-            if (rkAffdexMe != null && !String.IsNullOrEmpty((String)rkAffdexMe.GetValue("Install Directory")))
+            String affdexClassifierDir = Environment.GetEnvironmentVariable("AFFDEX_DATA_DIR");
+            if (String.IsNullOrEmpty(affdexClassifierDir))
             {
-                classifierPath = (String)rkAffdexMe.GetValue("Install Directory") + "\\data";
+                ShowExceptionAndShutDown("AFFDEX_DATA_DIR environment variable (Classifier Data Directory) is not set");
             }
-            else
+            else 
             {
-                String affdexClassifierDir = Environment.GetEnvironmentVariable("AFFDEX_DATA_DIR");
-                if (String.IsNullOrEmpty(affdexClassifierDir))
-                {
-                    ShowExceptionAndShutDown("AFFDEX_DATA_DIR environment variable (Classifier Data Directory) is not set");
-                }
-                else 
-                {
-                    classifierPath = affdexClassifierDir;
-                }
+                classifierPath = affdexClassifierDir;
             }
 
             DirectoryInfo directoryInfo = new DirectoryInfo(classifierPath);
@@ -171,21 +160,11 @@ namespace AffdexMe
 
         private String GetAffdexLicense()
         {
-            // First see if we can get the License from the registry 
-            RegistryKey rkCurrentUser = Registry.LocalMachine;
-            RegistryKey rkAffdexMe = rkCurrentUser.OpenSubKey("Software\\Affectiva\\AffdexMe");
             String licensePath = String.Empty;
-            if ( rkAffdexMe != null && !String.IsNullOrEmpty((string)rkAffdexMe.GetValue("Install Directory")))
+            licensePath = Environment.GetEnvironmentVariable("AFFDEX_LICENSE_DIR");
+            if (String.IsNullOrEmpty(licensePath))
             {
-                licensePath = (String)rkAffdexMe.GetValue("Install Directory");
-            }
-            else
-            {
-                licensePath = Environment.GetEnvironmentVariable("AFFDEX_LICENSE_DIR");
-                if (String.IsNullOrEmpty(licensePath))
-                {
-                    ShowExceptionAndShutDown("AFFDEX_LICENSE_DIR environment variable (Affdex License Folder) is not set");
-                }
+                ShowExceptionAndShutDown("AFFDEX_LICENSE_DIR environment variable (Affdex License Folder) is not set");
             }
 
             // Test the directory
@@ -195,7 +174,7 @@ namespace AffdexMe
                 ShowExceptionAndShutDown("AFFDEX_License_DIR (Affex License Folder) is set to an invalid folder location");
             }
 
-            return licensePath + "\\affdex.license";
+            return licensePath;
         }
 
         public MainWindow()
