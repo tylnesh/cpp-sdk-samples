@@ -1,6 +1,6 @@
 #Sample Apps for Affdex SDK for Windows 
 
-Welcome to our repository on GitHub! Here you will find example code to get you started with our Affdex SDK 2.0 for Windows and begin emotion-enabling you own app!
+Welcome to our repository on GitHub! Here you will find example code to get you started with our Affdex SDK 2.0 for Windows and begin emotion-enabling you own app!  Documentation for the Windows SDK is at <a href=http://developer.affectiva.com/windows/>Affectiva's Developer Portal</a>.
 
 OpenCV-webcam-demo
 ------------------
