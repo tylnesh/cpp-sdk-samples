@@ -25,7 +25,7 @@ Installation
 - The additional dependencies get installed automatically by NuGet.
 
 
-OpenCV-webcam-demo (C++)
+OpenCV-webcam-demo (c++)
 ------------------
 
 Project for demoing the [FrameDetector class](http://developer.affectiva.com/v3/windows/analyze-frames/). It grabs frames from the camera, analyzes them and displays the results on screen.
