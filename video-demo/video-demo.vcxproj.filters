@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="opencv-webcam-demo.cpp">
+    <ClCompile Include="video-demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -8,9 +8,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{8DCDC209-C25D-4C61-B2AC-2FBA1775DD6B}</ProjectGuid>
+    <ProjectGuid>{5D5E4401-09DE-40D3-9E29-AFC4F2EF2C80}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>opencvwebcamdemo</RootNamespace>
+    <RootNamespace>videodemo</RootNamespace>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
@@ -29,7 +29,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
-    <NuGetPackageImportStamp>635eb584</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>5c6c3308</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -44,21 +44,22 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Affectiva\Affdex SDK\include;../common/;%(AdditionalDependencies)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\Affectiva\Affdex SDK\include;../common;%(AdditionalDependencies)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>C:\Program Files (x86)\Affectiva\Affdex SDK\lib\release\affdex-native.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\Program Files (x86)\Affectiva\Affdex SDK\lib\release\affdex-native.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /d /y "C:\Program Files (x86)\Affectiva\Affdex SDK\bin\release\affdex-native.dll" "$(OutDir)"</Command>
+      <Command>xcopy /d /y "C:\Program Files (x86)\Affectiva\Affdex SDK\bin\release\affdex-native.dll" "$(OutDir)"
+xcopy /d /y "C:\Program Files (x86)\Affectiva\Affdex SDK\bin\opencv_ffmpeg248.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="opencv-webcam-demo.cpp" />
+    <ClCompile Include="video-demo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
