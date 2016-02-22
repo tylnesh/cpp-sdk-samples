@@ -55,7 +55,8 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy /d /y "C:\Program Files (x86)\Affectiva\Affdex SDK\bin\release\affdex-native.dll" "$(OutDir)"
-xcopy /d /y "C:\Program Files (x86)\Affectiva\Affdex SDK\bin\opencv_ffmpeg248.dll" "$(OutDir)"</Command>
+xcopy /d /y "C:\Program Files (x86)\Affectiva\Affdex SDK\bin\opencv_ffmpeg248.dll" "$(OutDir)"
+xcopy /d /s /y "C:\Program Files (x86)\Affectiva\Affdex SDK\data" "$(OutDir)data\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
