@@ -36,7 +36,7 @@ Installation
 *Ubuntu*
 
 ```bashrc
-sudo apt-get install build-essential libopencv-dev libboost-dev cmake
+sudo apt-get install build-essential libopencv-dev libboost1.55-all-dev cmake
 wget http://developer.affectiva.com/downloads/linux
 mkdir affdex-sdk
 tar -xzvf affdex-cpp-sdk-3.0-linux-64bit.tar.gz -C affdex-sdk
