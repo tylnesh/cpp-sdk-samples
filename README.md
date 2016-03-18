@@ -1,6 +1,6 @@
-#Sample Apps for Affdex SDK for Windows 
+#Sample Apps for Affdex C++ SDK for Windows / Linux
 
-Welcome to our repository on GitHub! Here you will find example code to get you started with our Affdex SDK 3.0 for Windows and begin emotion-enabling you own app!  Documentation for the Windows SDK is at <a href=http://developer.affectiva.com/windows/>Affectiva's Developer Portal</a>.
+Welcome to our repository on GitHub! Here you will find example code to get you started with our Affdex SDK 3.0 and begin emotion-enabling you own app! Documentation for the SDKs is available on the <a href=http://developer.affectiva.com/>Affectiva's Developer Portal</a>.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/pn2y9h8a3nnkiw41?svg=true)]
 (https://ci.appveyor.com/project/ahamino/win-sdk-samples)
@@ -8,21 +8,45 @@ Welcome to our repository on GitHub! Here you will find example code to get you 
 Dependencies
 ------------
 
+*Windows*
 - Affdex SDK 3.0 (32 bit)
 - Visual Studio 2013 or higher
 
+*Linux*
+- Ubuntu 14.04 or higher or CentOS 7 or higher
+- Affdex SDK 3.0
+- CMake 2.8 or higher
+- GCC 4.8 or higher
 
-*Additional dependencies for the C++ projects*
+*Additional dependencies*
 
 - OpenCV 3.1
 - Boost 1.59
 
 Installation
 ------------
-- Download Affdex SDK for windows [from here](http://developer.affectiva.com/downloads)
+
+- Download Affdex SDK [from here](http://developer.affectiva.com/downloads)
 - Sign up for an evaluation license [by submitting this form](http://www.affectiva.com/45-day-free-trial/)
+
+*Windows*
 - Install the SDK using MSI installer.
 - The additional dependencies get installed automatically by NuGet.
+
+*Ubuntu*
+
+```bashrc
+sudo apt-get install build-essential libopencv-dev libboost-dev cmake
+wget http://developer.affectiva.com/downloads/linux
+mkdir affdex-sdk
+tar -xzvf affdex-cpp-sdk-3.0-linux-64bit.tar.gz -C affdex-sdk
+export AFFDEX_DATA_DIR=affdex-sdk/data
+git clone https://github.com/Affectiva/win-sdk-samples.git
+mkdir build
+cd build
+cmake -DOpenCV_DIR=/usr/local/ -DAFFDEX_DIR=../affdex-sdk ../win-sdk-samples
+make
+```
 
 
 OpenCV-webcam-demo (c++)
