@@ -38,14 +38,15 @@ Installation
 ```bashrc
 sudo apt-get install build-essential libopencv-dev libboost1.55-all-dev cmake
 wget http://developer.affectiva.com/downloads/linux
-mkdir affdex-sdk
-tar -xzvf affdex-cpp-sdk-3.0-linux-64bit.tar.gz -C affdex-sdk
-export AFFDEX_DATA_DIR=affdex-sdk/data
-git clone https://github.com/Affectiva/win-sdk-samples.git
-mkdir build
-cd build
-cmake -DOpenCV_DIR=/usr/local/ -DAFFDEX_DIR=../affdex-sdk ../win-sdk-samples
+mkdir $HOME/affdex-sdk
+tar -xzvf affdex-cpp-sdk-3.0-linux-64bit.tar.gz -C $HOME/affdex-sdk
+export AFFDEX_DATA_DIR=$HOME/affdex-sdk/data
+git clone https://github.com/Affectiva/cpp-sdk-samples.git $HOME/sdk-samples
+mkdir $HOME/build
+cd $HOME/build
+cmake -DOpenCV_DIR=/usr/ -DBOOST_ROOT=/usr/ -DAFFDEX_DIR=$HOME/affdex-sdk $HOME/sdk-samples
 make
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/affdex-sdk/lib
 ```
 
 
