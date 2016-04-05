@@ -35,11 +35,11 @@ int main(int argsc, char ** argsv)
     bool loop = false;
     unsigned int nFaces = 1;
     int faceDetectorMode = (int)FaceDetectorMode::SMALL_FACES;
-    
+
     const int precision = 2;
     std::cerr.precision(precision);
     std::cout.precision(precision);
-    
+
     namespace po = boost::program_options; // abbreviate namespace
     po::options_description description("Project for demoing the Windows SDK VideoDetector class (processing video files).");
     description.add_options()
@@ -76,7 +76,7 @@ int main(int argsc, char ** argsv)
         std::cerr << "For help, use the -h option." << std::endl << std::endl;
         return 1;
     }
-    
+
     // Parse and check the data folder (with assets)
     if (!boost::filesystem::exists(DATA_FOLDER))
     {
@@ -89,20 +89,20 @@ int main(int argsc, char ** argsv)
     {
         //Initialize the video file detector
         VideoDetector videoDetector(process_framerate, nFaces, (affdex::FaceDetectorMode) faceDetectorMode);
-        
+
         //Initialize out file
         boost::filesystem::path csvPath(videoPath);
         csvPath.replace_extension(".csv");
         std::ofstream csvFileStream(csvPath.c_str());
-        
+
         if (!csvFileStream.is_open())
         {
             std::cerr << "Unable to open csv file " << csvPath << std::endl;
             return 1;
         }
-        
-        
-        
+
+
+
         std::cout << "Max num of faces set to: " << videoDetector.getMaxNumberFaces() << std::endl;
         std::string mode;
         switch (videoDetector.getFaceDetectorMode())
@@ -116,13 +116,14 @@ int main(int argsc, char ** argsv)
             default:
                 break;
         }
-        
+
         std::cout << "Face detector mode set to: " << mode << std::endl;
         shared_ptr<PlottingImageListener> listenPtr(new PlottingImageListener(csvFileStream, draw_display));
-        
+
         //Activate all the detectors
         videoDetector.setDetectAllEmotions(true);
         videoDetector.setDetectAllExpressions(true);
+        videoDetector.setDetectAllEmojis(true);
         videoDetector.setDetectGender(true);
         videoDetector.setDetectGlasses(true);
         //Set the location of the data folder and license file
@@ -130,16 +131,16 @@ int main(int argsc, char ** argsv)
         videoDetector.setLicensePath(LICENSE_PATH);
         //Add callback functions implementations
         videoDetector.setImageListener(listenPtr.get());
-        
-        
+
+
         videoDetector.start();    //Initialize the detectors .. call only once
-        
+
         do
         {
             shared_ptr<StatusListener> videoListenPtr = std::make_shared<StatusListener>();
             videoDetector.setProcessStatusListener(videoListenPtr.get());
             videoDetector.process(videoPath); //Process a video
-            
+
             //For each frame processed
             while (videoListenPtr->isRunning())
             {
@@ -148,34 +149,34 @@ int main(int argsc, char ** argsv)
                     std::pair<Frame, std::map<FaceId, Face> > dataPoint = listenPtr->getData();
                     Frame frame = dataPoint.first;
                     std::map<FaceId, Face> faces = dataPoint.second;
-                    
-                    
+
+
                     //Draw on the GUI
                     if (draw_display)
                     {
                         listenPtr->draw(faces, frame);
                     }
-                    
+
                     std::cerr << "timestamp: " << frame.getTimestamp()
                     << " cfps: " << listenPtr->getCaptureFrameRate()
                     << " pfps: " << listenPtr->getProcessingFrameRate()
                     << " faces: "<< faces.size() << endl;
-                    
+
                     //Output metrics to file
                     listenPtr->outputToFile(faces, frame.getTimestamp());
                 }
             }
         } while(loop);
-        
+
         videoDetector.stop();
         csvFileStream.close();
-        
+
         std::cout << "Output written to file: " << csvPath << std::endl;
     }
     catch (AffdexException ex)
     {
         std::cerr << ex.what();
     }
-    
+
     return 0;
 }

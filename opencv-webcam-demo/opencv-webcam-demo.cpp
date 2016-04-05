@@ -126,6 +126,7 @@ int main(int argsc, char ** argsv)
         //Initialize detectors
         frameDetector->setDetectAllEmotions(true);
         frameDetector->setDetectAllExpressions(true);
+        frameDetector->setDetectAllEmojis(true);
         frameDetector->setDetectGender(true);
         frameDetector->setDetectGlasses(true);
         frameDetector->setClassifierPath(DATA_FOLDER);
