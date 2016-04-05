@@ -168,7 +168,7 @@ int main(int argsc, char ** argsv)
                 ((PhotoDetector *)detector.get())->process(frame); //Process an image
             }
             
-            while (!VIDEO_EXTS[fileExt] || videoListenPtr->isRunning())
+            while (VIDEO_EXTS[fileExt] && videoListenPtr->isRunning())
             {
                 if (listenPtr->getDataSize() > 0)
                 {
