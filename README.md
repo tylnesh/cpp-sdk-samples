@@ -1,4 +1,4 @@
-#Sample Apps for Affdex C++ SDK for Windows / Linux
+#Sample Apps for Affdex SDK for Windows and Linux
 
 Welcome to our repository on GitHub! Here you will find example code to get you started with our Affdex SDK 3.0 and begin emotion-enabling you own app! Documentation for the SDKs is available on the <a href=http://developer.affectiva.com/>Affectiva's Developer Portal</a>.
 
@@ -74,7 +74,7 @@ The following command line arguments can be used to run it:
 Video-demo (c++)
 ----------
 
-Project for demoing the Windows SDK [VideoDetector class](http://developer.affectiva.com/v3/windows/analyze-video/). It processs video files, displays the emotion metrics and exports the results in a csv file.
+Project for demoing the C++ SDK [VideoDetector class](http://developer.affectiva.com/v3/windows/analyze-video/). It processs video files, displays the emotion metrics and exports the results in a csv file.
 
 The following command line arguments can be used to run it:
 
