@@ -77,7 +77,7 @@ endif( DEFINED OpenCV_DIR )
 set(Boost_USE_MULTITHREADED ON)
 set( BOOST_COMPONENTS system filesystem date_time regex thread timer chrono serialization log log_setup program_options)
 
-set( BOOST_MIN_VERSION "1.55.0" CACHE STRING "Minimum version of boost you would like to link against (e.g. C:/BOOST_1_55_0 is 1.55.0" )
+set( BOOST_MIN_VERSION "1.54.0" CACHE STRING "Minimum version of boost you would like to link against (e.g. C:/BOOST_1_55_0 is 1.55.0" )
 status("")
 if( ANDROID )
     find_host_package( Boost ${BOOST_MIN_VERSION} REQUIRED COMPONENTS ${BOOST_COMPONENTS} )
