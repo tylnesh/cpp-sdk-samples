@@ -52,7 +52,7 @@ int main(int argsc, char ** argsv)
         std::cerr.precision(precision);
         std::cout.precision(precision);
 
-        po::options_description description("Project for demoing the Windows SDK CameraDetector class (grabbing and processing frames from the camera).");
+        po::options_description description("Project for demoing the Affdex SDK CameraDetector class (grabbing and processing frames from the camera).");
         description.add_options()
             ("help,h", po::bool_switch()->default_value(false), "Display this help message.")
 #ifdef _WIN32
@@ -126,6 +126,7 @@ int main(int argsc, char ** argsv)
         //Initialize detectors
         frameDetector->setDetectAllEmotions(true);
         frameDetector->setDetectAllExpressions(true);
+        frameDetector->setDetectAllEmojis(true);
         frameDetector->setDetectGender(true);
         frameDetector->setDetectGlasses(true);
         frameDetector->setClassifierPath(DATA_FOLDER);
