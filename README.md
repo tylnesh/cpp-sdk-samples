@@ -2,8 +2,9 @@
 
 Welcome to our repository on GitHub! Here you will find example code to get you started with our Affdex SDK 3.0 and begin emotion-enabling you own app! Documentation for the SDKs is available on the <a href=http://developer.affectiva.com/>Affectiva's Developer Portal</a>.
 
-[![Build status](https://ci.appveyor.com/api/projects/status/pn2y9h8a3nnkiw41?svg=true)]
+Appveyor: [![Build status](https://ci.appveyor.com/api/projects/status/pn2y9h8a3nnkiw41?svg=true)]
 (https://ci.appveyor.com/project/ahamino/win-sdk-samples)
+Travis: [![Build Status](https://travis-ci.org/Affectiva/cpp-sdk-samples.svg?branch=master)](https://travis-ci.org/Affectiva/cpp-sdk-samples)
 
 Dependencies
 ------------
