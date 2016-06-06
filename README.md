@@ -74,14 +74,14 @@ The following command line arguments can be used to run it:
 Video-demo (c++)
 ----------
 
-Project for demoing the C++ SDK [VideoDetector class](http://developer.affectiva.com/v3/windows/analyze-video/). It processs video files, displays the emotion metrics and exports the results in a csv file.
+Project for demoing the Windows SDK [VideoDetector class](http://developer.affectiva.com/v3/windows/analyze-video/) and [PhotoDetector class](http://developer.affectiva.com/v3/windows/analyze-photo/). It processs video or image files, displays the emotion metrics and exports the results in a csv file.
 
 The following command line arguments can be used to run it:
 
     -h [ --help ]                        Display this help message.
     -d [ --data ] arg (=data)            Path to the data folder
     -l [ --license ] arg (=test.license) License file.
-    -i [ --input ] arg                   Video file to processs
+    -i [ --input ] arg                   Video or photo file to process.
     --pfps arg (=30)                     Processing framerate.
     --draw arg (=1)                      Draw video on screen.
     --faceMode arg (=1)                  Face detector mode (large faces vs small
