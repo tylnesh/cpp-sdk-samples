@@ -229,7 +229,7 @@ public:
     {
         for (std::string name : names)
         {
-            if ((*first) > 5.0f)
+            if (std::abs(*first) > 5.0f)
             {
                 char m[50];
                 sprintf(m, "%s: %3.2f", name.c_str(), (*first));
