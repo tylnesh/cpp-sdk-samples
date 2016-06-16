@@ -6,6 +6,10 @@
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5D5E4401-09DE-40D3-9E29-AFC4F2EF2C80}</ProjectGuid>
@@ -22,16 +26,29 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros">
     <NuGetPackageImportStamp>5c6c3308</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -54,9 +71,34 @@
       <AdditionalDependencies>C:\Program Files (x86)\Affectiva\Affdex SDK\lib\release\affdex-native.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /d /y "C:\Program Files (x86)\Affectiva\Affdex SDK\bin\release\affdex-native.dll" "$(OutDir)"
-xcopy /d /y "C:\Program Files (x86)\Affectiva\Affdex SDK\bin\opencv_ffmpeg248.dll" "$(OutDir)"
-xcopy /d /s /y "C:\Program Files (x86)\Affectiva\Affdex SDK\data" "$(OutDir)data\"</Command>
+      <Command>xcopy /d /y "C:\Program Files\Affectiva\Affdex SDK\bin\release\affdex-native.dll" "$(OutDir)"
+xcopy /d /y "C:\Program Files\Affectiva\Affdex SDK\bin\opencv_ffmpeg248_64.dll" "$(OutDir)"
+xcopy /d /s /y "C:\Program Files\Affectiva\Affdex SDK\data" "$(OutDir)data\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Program Files\Affectiva\Affdex SDK\include;../common;%(AdditionalDependencies)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>C:\Program Files\Affectiva\Affdex SDK\lib\release\affdex-native.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /d /y "C:\Program Files\Affectiva\Affdex SDK\bin\release\affdex-native.dll" "$(OutDir)"
+xcopy /d /y "C:\Program Files\Affectiva\Affdex SDK\bin\opencv_ffmpeg248_64.dll" "$(OutDir)"
+xcopy /d /s /y "C:\Program Files\Affectiva\Affdex SDK\data" "$(OutDir)data\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -46,14 +46,16 @@ class PlottingImageListener : public ImageListener
 
     std::map<affdex::Glasses, std::string> glassesMap;
     std::map<affdex::Gender, std::string> genderMap;
+    std::map<affdex::Age, std::string> ageMap;
+    std::map<affdex::Ethnicity, std::string> ethnicityMap;
 
 public:
 
 
     PlottingImageListener(std::ofstream &csv, const bool draw_display)
-    : fStream(csv), mDrawDisplay(draw_display), mStartT(std::chrono::system_clock::now()),
-      mCaptureLastTS(-1.0f), mCaptureFPS(-1.0f),
-      mProcessLastTS(-1.0f), mProcessFPS(-1.0f)
+        : fStream(csv), mDrawDisplay(draw_display), mStartT(std::chrono::system_clock::now()),
+        mCaptureLastTS(-1.0f), mCaptureFPS(-1.0f),
+        mProcessLastTS(-1.0f), mProcessFPS(-1.0f)
     {
         expressions = {
             "smile", "innerBrowRaise", "browRaise", "browFurrow", "noseWrinkle",
@@ -71,10 +73,10 @@ public:
 
         emojis = std::vector<std::string> {
             "relaxed", "smiley", "laughing",
-            "kissing", "disappointed",
-            "rage", "smirk", "wink",
-            "stuckOutTongueWinkingEye", "stuckOutTongue",
-            "flushed", "scream"
+                "kissing", "disappointed",
+                "rage", "smirk", "wink",
+                "stuckOutTongueWinkingEye", "stuckOutTongue",
+                "flushed", "scream"
         };
 
         genderMap = std::map<affdex::Gender, std::string> {
@@ -85,15 +87,35 @@ public:
         };
 
         glassesMap = std::map<affdex::Glasses, std::string> {
-            { affdex::Glasses::Yes, "glasses" },
-            { affdex::Glasses::No, "no glasses" }
+            { affdex::Glasses::Yes, "yes" },
+            { affdex::Glasses::No, "no" }
         };
 
-        fStream << "TimeStamp,faceId,interocularDistance,glasses,gender,dominantEmoji,";
+        ageMap = std::map<affdex::Age, std::string> {
+            { affdex::Age::AGE_UNKNOWN, "unknown"},
+            { affdex::Age::AGE_UNDER_18, "under 18" },
+            { affdex::Age::AGE_18_24, "18-24" },
+            { affdex::Age::AGE_25_34, "25-34" },
+            { affdex::Age::AGE_35_44, "35-44" },
+            { affdex::Age::AGE_45_54, "45-54" },
+            { affdex::Age::AGE_55_64, "55-64" },
+            { affdex::Age::AGE_65_PLUS, "65 plus" }
+        };
+
+        ethnicityMap = std::map<affdex::Ethnicity, std::string> {
+            { affdex::Ethnicity::Unknown, "unknown"},
+            { affdex::Ethnicity::Caucasian, "caucasian" },
+            { affdex::Ethnicity::BlackAfrican, "black african" },
+            { affdex::Ethnicity::SouthAsian, "south asian" },
+            { affdex::Ethnicity::EastAsian, "east asian" },
+            { affdex::Ethnicity::Hispanic, "hispanic" }
+        };
+
+        fStream << "TimeStamp,faceId,interocularDistance,glasses,age,ethnicity,gender,dominantEmoji,";
         for (std::string angle : headAngles) fStream << angle << ",";
         for (std::string emotion : emotions) fStream << emotion << ",";
         for (std::string expression : expressions) fStream << expression << ",";
-		for (std::string emoji : emojis) fStream << emoji << ",";
+        for (std::string emoji : emojis) fStream << emoji << ",";
         fStream << std::endl;
         fStream.precision(4);
         fStream << std::fixed;
@@ -111,7 +133,7 @@ public:
         return ret;
     };
 
-    FeaturePoint maxPoint( VecFeaturePoint points)
+    FeaturePoint maxPoint(VecFeaturePoint points)
     {
         VecFeaturePoint::iterator it = points.begin();
         FeaturePoint ret = *it;
@@ -154,7 +176,7 @@ public:
     void onImageResults(std::map<FaceId, Face> faces, Frame image) override
     {
         std::lock_guard<std::mutex> lg(mMutex);
-        mDataArray.push_back(std::pair<Frame, std::map<FaceId, Face>> (image, faces) );
+        mDataArray.push_back(std::pair<Frame, std::map<FaceId, Face>>(image, faces));
         std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
         std::chrono::milliseconds milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(now - mStartT);
         double seconds = milliseconds.count() / 1000.f;
@@ -173,11 +195,11 @@ public:
     {
         if (faces.empty())
         {
-            fStream << timeStamp << "nan,nan,no glasses,unknown, unknown,";
+            fStream << timeStamp << "nan,nan,no,unknown,unknown,unknown,unknown,";
             for (std::string angle : headAngles) fStream << "nan,";
             for (std::string emotion : emotions) fStream << "nan,";
             for (std::string expression : expressions) fStream << "nan,";
-			for (std::string emoji : emojis) fStream << "nan,";
+            for (std::string emoji : emojis) fStream << "nan,";
             fStream << std::endl;
         }
         for (auto & face_id_pair : faces)
@@ -185,11 +207,13 @@ public:
             Face f = face_id_pair.second;
 
             fStream << timeStamp << ","
-            << f.id << ","
-            << f.measurements.interocularDistance << ","
-            << glassesMap[f.appearance.glasses] << ","
-            << genderMap[f.appearance.gender] << ","
-			<< affdex::EmojiToString(f.emojis.dominantEmoji) << ",";
+                << f.id << ","
+                << f.measurements.interocularDistance << ","
+                << glassesMap[f.appearance.glasses] << ","
+                << ageMap[f.appearance.age] << ","
+                << ethnicityMap[f.appearance.ethnicity] << ","
+                << genderMap[f.appearance.gender] << ","
+                << affdex::EmojiToString(f.emojis.dominantEmoji) << ",";
 
             float *values = (float *)&f.measurements.orientation;
             for (std::string angle : headAngles)
@@ -212,20 +236,20 @@ public:
                 values++;
             }
 
-			values = (float *)&f.emojis;
-			for (std::string emoji : emojis)
-			{
-				fStream << (*values) << ",";
-				values++;
-			}
+            values = (float *)&f.emojis;
+            for (std::string emoji : emojis)
+            {
+                fStream << (*values) << ",";
+                values++;
+            }
 
             fStream << std::endl;
         }
     }
 
     void drawValues(const float * first, const std::vector<std::string> names,
-                    const int x, int &padding, const cv::Scalar clr,
-                    cv::Mat img)
+        const int x, int &padding, const cv::Scalar clr,
+        cv::Mat img)
     {
         for (std::string name : names)
         {
@@ -267,14 +291,14 @@ public:
             cv::putText(img, "APPEARANCE", cv::Point(br.x, padding += (spacing * 2)), font, font_size, header_clr);
             cv::putText(img, genderMap[f.appearance.gender], cv::Point(br.x, padding += spacing), font, font_size, clr);
             cv::putText(img, glassesMap[f.appearance.glasses], cv::Point(br.x, padding += spacing), font, font_size, clr);
-
-
+            cv::putText(img, ageMap[f.appearance.age], cv::Point(br.x, padding += spacing), font, font_size, clr);
+            cv::putText(img, ethnicityMap[f.appearance.ethnicity], cv::Point(br.x, padding += spacing), font, font_size, clr);
 
             Orientation headAngles = f.measurements.orientation;
 
             char strAngles[100];
             sprintf(strAngles, "Pitch: %3.2f Yaw: %3.2f Roll: %3.2f Interocular: %3.2f",
-                    headAngles.pitch, headAngles.yaw, headAngles.roll, f.measurements.interocularDistance);
+                headAngles.pitch, headAngles.yaw, headAngles.roll, f.measurements.interocularDistance);
 
 
 
@@ -289,7 +313,7 @@ public:
             cv::putText(img, "EMOJIS", cv::Point(br.x, padding += (spacing * 2)), font, font_size, header_clr);
 
             cv::putText(img, "dominantEmoji: " + affdex::EmojiToString(f.emojis.dominantEmoji),
-                        cv::Point(br.x, padding += spacing), font, font_size, clr);
+                cv::Point(br.x, padding += spacing), font, font_size, clr);
 
             drawValues((float *)&f.emojis, emojis, br.x, padding, clr, img);
 
@@ -309,7 +333,7 @@ public:
         cv::putText(img, fps_str, cv::Point(img.cols - 110, img.rows - left_margin), font, font_size, clr);
 
         cv::imshow("analyze video", img);
-        cv::waitKey(5);
+        cv::waitKey(30);
     }
 
 };
