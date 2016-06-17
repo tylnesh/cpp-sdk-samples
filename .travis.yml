@@ -4,7 +4,7 @@ compiler:
   - gcc-4.8
 before_script:
   - sudo apt-get install  -y gcc-4.8 g++-4.8 libopencv-dev libboost1.55-all-dev cmake
-  - wget http://affdex-sdk-dist.s3-website-us-east-1.amazonaws.com/linux/download_sdk.html -O /tmp/affdex-sdk.tar.gz
+  - wget http://affdex-sdk-dist.s3-website-us-east-1.amazonaws.com/linux/affdex-cpp-sdk-3.1-315-linux-64bit.tar.gz -O /tmp/affdex-sdk.tar.gz
   - mkdir /tmp/affdex-sdk
   - tar -xzvf /tmp/affdex-sdk.tar.gz -C /tmp/affdex-sdk
   - mkdir build
