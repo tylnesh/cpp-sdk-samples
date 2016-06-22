@@ -189,7 +189,7 @@ int main(int argsc, char ** argsv)
 
                     listenPtr->outputToFile(faces, frame.getTimestamp());
                 }
-            } while(VIDEO_EXTS[fileExt] && videoListenPtr->isRunning());
+            } while (VIDEO_EXTS[fileExt] && (videoListenPtr->isRunning() || listenPtr->getDataSize() > 0));
         } while(loop);
 
         detector->stop();
