@@ -15,7 +15,7 @@ Dependencies
 - Visual Studio 2013 or higher
 
 *Linux*
-- Ubuntu 14.04 or higher or CentOS 7 or higher
+- Ubuntu 14.04 or CentOS 7 or higher
 - Affdex SDK 3.0
 - CMake 2.8 or higher
 - GCC 4.8 or higher
@@ -39,7 +39,7 @@ Installation
 
 ```bashrc
 sudo apt-get install build-essential libopencv-dev libboost1.55-all-dev cmake
-wget http://developer.affectiva.com/downloads/linux
+wget https://download.affectiva.com/linux/affdex-cpp-sdk-3.0-298-linux-64bit.tar.gz
 mkdir $HOME/affdex-sdk
 tar -xzvf affdex-cpp-sdk-3.0-linux-64bit.tar.gz -C $HOME/affdex-sdk
 export AFFDEX_DATA_DIR=$HOME/affdex-sdk/data
