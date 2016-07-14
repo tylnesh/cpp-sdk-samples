@@ -140,8 +140,7 @@ int main(int argsc, char ** argsv)
         detector->setDetectAllEmotions(true);
         detector->setDetectAllExpressions(true);
 		detector->setDetectAllEmojis(true);
-        detector->setDetectGender(true);
-        detector->setDetectGlasses(true);
+        detector->setDetectAllAppearances(true);
         detector->setClassifierPath(DATA_FOLDER);
         detector->setLicensePath(LICENSE_PATH);
         detector->setImageListener(listenPtr.get());

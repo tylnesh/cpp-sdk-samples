@@ -127,8 +127,7 @@ int main(int argsc, char ** argsv)
         frameDetector->setDetectAllEmotions(true);
         frameDetector->setDetectAllExpressions(true);
         frameDetector->setDetectAllEmojis(true);
-        frameDetector->setDetectGender(true);
-        frameDetector->setDetectGlasses(true);
+        frameDetector->setDetectAllAppearances(true);
         frameDetector->setClassifierPath(DATA_FOLDER);
         frameDetector->setLicensePath(LICENSE_PATH);
         frameDetector->setImageListener(listenPtr.get());

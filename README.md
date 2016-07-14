@@ -1,6 +1,6 @@
 #Sample Apps for Affdex SDK for Windows and Linux
 
-Welcome to our repository on GitHub! Here you will find example code to get you started with our Affdex SDK 3.0 and begin emotion-enabling you own app! Documentation for the SDKs is available on the <a href=http://developer.affectiva.com/>Affectiva's Developer Portal</a>.
+Welcome to our repository on GitHub! Here you will find example code to get you started with our Affdex SDK 3.1 and begin emotion-enabling you own app! Documentation for the SDKs is available on the <a href=http://developer.affectiva.com/>Affectiva's Developer Portal</a>.
 
 *Build Status*
 - Windows: [![Build status](https://ci.appveyor.com/api/projects/status/pn2y9h8a3nnkiw41?svg=true)]
@@ -11,7 +11,7 @@ Dependencies
 ------------
 
 *Windows*
-- Affdex SDK 3.0 (32 bit)
+- Affdex SDK 3.1 (64 bit)
 - Visual Studio 2013 or higher
 
 *Linux*
