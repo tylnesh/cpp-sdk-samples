@@ -29,7 +29,6 @@ Installation
 ------------
 
 - Download Affdex SDK [from here](http://developer.affectiva.com/downloads)
-- Sign up for an evaluation license [by submitting this form](http://www.affectiva.com/45-day-free-trial/)
 
 *Windows*
 - Install the SDK using MSI installer.
@@ -61,7 +60,6 @@ The following command line arguments can be used to run it:
 
     -h [ --help ]                        Display this help message.
     -d [ --data ] arg (=data)            Path to the data folder
-    -l [ --license ] arg (=test.license) License file.
     -r [ --resolution ] arg (=640 480)   Resolution in pixels (2-values): width
                                          height
     --pfps arg (=30)                     Processing framerate.
@@ -82,7 +80,6 @@ The following command line arguments can be used to run it:
 
     -h [ --help ]                        Display this help message.
     -d [ --data ] arg (=data)            Path to the data folder
-    -l [ --license ] arg (=test.license) License file.
     -i [ --input ] arg                   Video or photo file to process.
     --pfps arg (=30)                     Processing framerate.
     --draw arg (=1)                      Draw video on screen.

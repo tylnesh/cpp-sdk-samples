@@ -33,8 +33,8 @@ int main(int argsc, char ** argsv)
                                                             {boost::filesystem::path(".wmv"), 1},
                                                             {boost::filesystem::path(".mp4"), 1} };
     affdex::path DATA_FOLDER;
-    affdex::path LICENSE_PATH;
     affdex::path videoPath;
+
     int process_framerate = 30;
     bool draw_display = true;
     bool loop = false;
@@ -51,11 +51,9 @@ int main(int argsc, char ** argsv)
     ("help,h", po::bool_switch()->default_value(false), "Display this help message.")
 #ifdef _WIN32
     ("data,d", po::wvalue< affdex::path >(&DATA_FOLDER)->default_value(affdex::path(L"data"), std::string("data")), "Path to the data folder")
-    ("license,l", po::wvalue< affdex::path >(&LICENSE_PATH)->default_value(affdex::path(L"test.license"), std::string("test.license")), "License file.")
     ("input,i", po::wvalue< affdex::path >(&videoPath)->required(), "Video file to processs")
 #else // _WIN32
     ("data,d", po::value< affdex::path >(&DATA_FOLDER)->default_value(affdex::path("data"), std::string("data")), "Path to the data folder")
-    ("license,l", po::value< affdex::path >(&LICENSE_PATH)->default_value(affdex::path("test.license"), std::string("test.license")), "License file.")
     ("input,i", po::value< affdex::path >(&videoPath)->required(), "Video file to processs")
 #endif // _WIN32
     ("pfps", po::value< int >(&process_framerate)->default_value(30), "Processing framerate.")
@@ -142,7 +140,6 @@ int main(int argsc, char ** argsv)
 		detector->setDetectAllEmojis(true);
         detector->setDetectAllAppearances(true);
         detector->setClassifierPath(DATA_FOLDER);
-        detector->setLicensePath(LICENSE_PATH);
         detector->setImageListener(listenPtr.get());
 
 

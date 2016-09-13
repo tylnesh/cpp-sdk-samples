@@ -34,7 +34,6 @@ int main(int argsc, char ** argsv)
         const std::vector<int> DEFAULT_RESOLUTION{ 640, 480 };
 
         affdex::path DATA_FOLDER;
-        affdex::path LICENSE_PATH;
 
         std::vector<int> resolution;
         int process_framerate = 30;
@@ -57,10 +56,8 @@ int main(int argsc, char ** argsv)
             ("help,h", po::bool_switch()->default_value(false), "Display this help message.")
 #ifdef _WIN32
             ("data,d", po::wvalue< affdex::path >(&DATA_FOLDER)->default_value(affdex::path(L"data"), std::string("data")), "Path to the data folder")
-            ("license,l", po::wvalue< affdex::path >(&LICENSE_PATH)->default_value(affdex::path(L"test.license"), std::string("test.license")), "License file.")
 #else //  _WIN32
             ("data,d", po::value< affdex::path >(&DATA_FOLDER)->default_value(affdex::path("data"), std::string("data")), "Path to the data folder")
-            ("license,l", po::value< affdex::path >(&LICENSE_PATH)->default_value(affdex::path("test.license"), std::string("test.license")), "License file.")
 #endif // _WIN32
             ("resolution,r", po::value< std::vector<int> >(&resolution)->default_value(DEFAULT_RESOLUTION, "640 480")->multitoken(), "Resolution in pixels (2-values): width height")
             ("pfps", po::value< int >(&process_framerate)->default_value(30), "Processing framerate.")
@@ -96,14 +93,6 @@ int main(int argsc, char ** argsv)
             std::cerr << description << std::endl;
             return 1;
         }
-        if (!boost::filesystem::exists(LICENSE_PATH))
-        {
-            std::cerr << "License file " << std::string(LICENSE_PATH.begin(), LICENSE_PATH.end()) << " doesnt exist." << std::endl << std::endl;;
-            std::cerr << "Try specifying the folder through the command line" << std::endl;
-            std::cerr << description << std::endl;
-            return 1;
-        }
-
         if (resolution.size() != 2)
         {
             std::cerr << "Only two numbers must be specified for resolution." << std::endl;
@@ -129,7 +118,6 @@ int main(int argsc, char ** argsv)
         frameDetector->setDetectAllEmojis(true);
         frameDetector->setDetectAllAppearances(true);
         frameDetector->setClassifierPath(DATA_FOLDER);
-        frameDetector->setLicensePath(LICENSE_PATH);
         frameDetector->setImageListener(listenPtr.get());
         frameDetector->setFaceListener(faceListenPtr.get());
         frameDetector->setProcessStatusListener(videoListenPtr.get());
