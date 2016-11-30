@@ -38,9 +38,9 @@ Installation
 
 ```bashrc
 sudo apt-get install build-essential libopencv-dev libboost1.55-all-dev cmake
-wget https://download.affectiva.com/linux/affdex-cpp-sdk-3.1-396-linux-64bit.tar.gz
+wget https://download.affectiva.com/linux/affdex-cpp-sdk-3.1.1-2802-linux-64bit.tar.gz
 mkdir $HOME/affdex-sdk
-tar -xzvf affdex-cpp-sdk-3.1-396-linux-64bit.tar.gz -C $HOME/affdex-sdk
+tar -xzvf affdex-cpp-sdk-3.1.1-2802-linux-64bit.tar.gz -C $HOME/affdex-sdk
 export AFFDEX_DATA_DIR=$HOME/affdex-sdk/data
 git clone https://github.com/Affectiva/cpp-sdk-samples.git $HOME/sdk-samples
 mkdir $HOME/build
@@ -54,7 +54,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/affdex-sdk/lib
 OpenCV-webcam-demo (c++)
 ------------------
 
-Project for demoing the [FrameDetector class](http://developer.affectiva.com/v3_1/windows/analyze-frames/). It grabs frames from the camera, analyzes them and displays the results on screen.
+Project for demoing the [FrameDetector class](http://developer.affectiva.com/v3_1_1/windows/analyze-frames/). It grabs frames from the camera, analyzes them and displays the results on screen.
 
 The following command line arguments can be used to run it:
 
@@ -74,7 +74,7 @@ The following command line arguments can be used to run it:
 Video-demo (c++)
 ----------
 
-Project for demoing the Windows SDK [VideoDetector class](http://developer.affectiva.com/v3_1/windows/analyze-video/) and [PhotoDetector class](http://developer.affectiva.com/v3_1/windows/analyze-photo/). It processs video or image files, displays the emotion metrics and exports the results in a csv file.
+Project for demoing the Windows SDK [VideoDetector class](http://developer.affectiva.com/v3_1_1/windows/analyze-video/) and [PhotoDetector class](http://developer.affectiva.com/v3_1_1/windows/analyze-photo/). It processs video or image files, displays the emotion metrics and exports the results in a csv file.
 
 The following command line arguments can be used to run it:
 
