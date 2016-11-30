@@ -54,7 +54,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/affdex-sdk/lib
 OpenCV-webcam-demo (c++)
 ------------------
 
-Project for demoing the [FrameDetector class](http://developer.affectiva.com/v3_1/windows/analyze-frames/). It grabs frames from the camera, analyzes them and displays the results on screen.
+Project for demoing the [FrameDetector class](http://developer.affectiva.com/v3_1_1/windows/analyze-frames/). It grabs frames from the camera, analyzes them and displays the results on screen.
 
 The following command line arguments can be used to run it:
 
@@ -74,7 +74,7 @@ The following command line arguments can be used to run it:
 Video-demo (c++)
 ----------
 
-Project for demoing the Windows SDK [VideoDetector class](http://developer.affectiva.com/v3_1/windows/analyze-video/) and [PhotoDetector class](http://developer.affectiva.com/v3_1/windows/analyze-photo/). It processs video or image files, displays the emotion metrics and exports the results in a csv file.
+Project for demoing the Windows SDK [VideoDetector class](http://developer.affectiva.com/v3_1_1/windows/analyze-video/) and [PhotoDetector class](http://developer.affectiva.com/v3_1_1/windows/analyze-photo/). It processs video or image files, displays the emotion metrics and exports the results in a csv file.
 
 The following command line arguments can be used to run it:
 
