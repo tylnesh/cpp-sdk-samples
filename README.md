@@ -1,6 +1,6 @@
 #Sample Apps for Affdex SDK for Windows and Linux
 
-Welcome to our repository on GitHub! Here you will find example code to get you started with our Affdex SDK 3.1 and begin emotion-enabling you own app! Documentation for the SDKs is available on the <a href=http://developer.affectiva.com/>Affectiva's Developer Portal</a>.
+Welcome to our repository on GitHub! Here you will find example code to get you started with our Affdex Linux SDK 3.2, Affdex Windows SDK 3.4 and begin emotion-enabling you own app! Documentation for the SDKs is available on the <a href=http://developer.affectiva.com/>Affectiva's Developer Portal</a>.
 
 *Build Status*
 - Windows: [![Build status](https://ci.appveyor.com/api/projects/status/pn2y9h8a3nnkiw41?svg=true)]
@@ -11,12 +11,12 @@ Dependencies
 ------------
 
 *Windows*
-- Affdex SDK 3.1 (64 bit)
+- Affdex SDK 3.4 (64 bit)
 - Visual Studio 2013 or higher
 
 *Linux*
 - Ubuntu 14.04 or CentOS 7
-- Affdex SDK 3.1
+- Affdex SDK 3.2
 - CMake 2.8 or higher
 - GCC 4.8
 
@@ -24,6 +24,9 @@ Dependencies
 
 - OpenCV 2.4
 - Boost 1.59
+- libuuid
+- libcurl
+- libopenssl
 
 Installation
 ------------
@@ -37,10 +40,10 @@ Installation
 *Ubuntu*
 
 ```bashrc
-sudo apt-get install build-essential libopencv-dev libboost1.55-all-dev cmake
-wget https://download.affectiva.com/linux/affdex-cpp-sdk-3.1.1-2802-linux-64bit.tar.gz
+sudo apt-get install build-essential libopencv-dev libboost1.55-all-dev libcurl-dev uuid-dev cmake
+wget https://download.affectiva.com/linux/affdex-cpp-sdk-3.2-20-ubuntu-xenial-xerus-64bit.tar.gz
 mkdir $HOME/affdex-sdk
-tar -xzvf affdex-cpp-sdk-3.1.1-2802-linux-64bit.tar.gz -C $HOME/affdex-sdk
+tar -xzvf affdex-cpp-sdk-3.2-20-ubuntu-xenial-xerus-64bit.tar.gz -C $HOME/affdex-sdk
 export AFFDEX_DATA_DIR=$HOME/affdex-sdk/data
 git clone https://github.com/Affectiva/cpp-sdk-samples.git $HOME/sdk-samples
 mkdir $HOME/build
@@ -50,11 +53,31 @@ make
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/affdex-sdk/lib
 ```
 
+*CentOS*
+
+```bashrc
+sudo yum install libcurl-devel.x86_64 libuuid-devel.x86_64 opencv-devel cmake.x86_64
+wget https://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz/download -O boost_1_55_0.tar.gz
+tar -xzvf boost_1_55_0.tar.gz -C $HOME
+cd boost_1_55
+./bootstrap.sh --with-libraries=log,serialization,system,date_time,filesystem,regex,timer,chrono,thread,program_options
+sudo ./b2 link=static install
+wget https://download.affectiva.com/linux/affdex-cpp-sdk-3.2-2893-centos-7-64bit.tar.gz
+mkdir $HOME/affdex-sdk
+tar -xzvf affdex-cpp-sdk-3.2-2893-centos-7-64bit.tar.gz -C $HOME/affdex-sdk
+export AFFDEX_DATA_DIR=$HOME/affdex-sdk/data
+git clone https://github.com/Affectiva/cpp-sdk-samples.git $HOME/sdk-samples
+mkdir $HOME/build
+cd $HOME/build
+cmake -DOpenCV_DIR=/usr/ -DBOOST_ROOT=/usr/ -DAFFDEX_DIR=$HOME/affdex-sdk $HOME/sdk-samples
+make
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/affdex-sdk/lib
+```
 
 OpenCV-webcam-demo (c++)
 ------------------
 
-Project for demoing the [FrameDetector class](http://developer.affectiva.com/v3_1_1/windows/analyze-frames/). It grabs frames from the camera, analyzes them and displays the results on screen.
+Project for demoing the [FrameDetector class](http://developer.affectiva.com/v3_2/cpp/analyze-frames/). It grabs frames from the camera, analyzes them and displays the results on screen.
 
 The following command line arguments can be used to run it:
 
@@ -74,7 +97,7 @@ The following command line arguments can be used to run it:
 Video-demo (c++)
 ----------
 
-Project for demoing the Windows SDK [VideoDetector class](http://developer.affectiva.com/v3_1_1/windows/analyze-video/) and [PhotoDetector class](http://developer.affectiva.com/v3_1_1/windows/analyze-photo/). It processs video or image files, displays the emotion metrics and exports the results in a csv file.
+Project for demoing the Windows SDK [VideoDetector class](http://developer.affectiva.com/v3_2/cpp/analyze-video/) and [PhotoDetector class](http://developer.affectiva.com/v3_2/cpp/analyze-photo/). It processs video or image files, displays the emotion metrics and exports the results in a csv file.
 
 The following command line arguments can be used to run it:
 
