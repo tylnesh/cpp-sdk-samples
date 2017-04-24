@@ -40,7 +40,7 @@ Installation
 *Ubuntu*
 
 ```bashrc
-sudo apt-get install build-essential libopencv-dev libboost1.55-all-dev libcurl-dev uuid-dev cmake
+sudo apt-get install build-essential libopencv-dev libboost1.55-all-dev libcurl4-openssl uuid-dev cmake
 wget https://download.affectiva.com/linux/affdex-cpp-sdk-3.2-20-ubuntu-xenial-xerus-64bit.tar.gz
 mkdir $HOME/affdex-sdk
 tar -xzvf affdex-cpp-sdk-3.2-20-ubuntu-xenial-xerus-64bit.tar.gz -C $HOME/affdex-sdk
