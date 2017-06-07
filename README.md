@@ -55,6 +55,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/affdex-sdk/lib
 ```
 
 *CentOS*
+- Download Affdex SDK [from here](https://knowledge.affectiva.com/docs/getting-started-with-the-affectiva-sdk-for-linux)
 
 ```bashrc
 sudo yum install libcurl-devel.x86_64 libuuid-devel.x86_64 opencv-devel cmake.x86_64
