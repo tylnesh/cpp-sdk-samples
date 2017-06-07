@@ -33,12 +33,12 @@ Installation
 
 
 *Windows*
-- Download Affdex SDK [from here](https://affectiva.readme.io/docs/getting-started-with-the-emotion-sdk-for-windows)
+- Download Affdex SDK [from here](https://knowledge.affectiva.com/docs/getting-started-with-the-emotion-sdk-for-windows)
 - Install the SDK using MSI installer.
 - The additional dependencies get installed automatically by NuGet.
 
 *Ubuntu*
-- Download Affdex SDK [from here](https://affectiva.readme.io/docs/getting-started-with-the-affectiva-sdk-for-linux)
+- Download Affdex SDK [from here](https://knowledge.affectiva.com/docs/getting-started-with-the-affectiva-sdk-for-linux)
 
 ```bashrc
 sudo apt-get install build-essential libopencv-dev libboost1.55-all-dev libcurl4-openssl uuid-dev cmake
