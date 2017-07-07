@@ -23,7 +23,7 @@ Dependencies
 *Additional dependencies*
 
 - OpenCV 2.4
-- Boost 1.59
+- Boost 1.55
 - libuuid
 - libcurl
 - libopenssl
@@ -79,7 +79,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/affdex-sdk/lib
 OpenCV-webcam-demo (c++)
 ------------------
 
-Project for demoing the [FrameDetector class](http://developer.affectiva.com/v3_2/cpp/analyze-frames/). It grabs frames from the camera, analyzes them and displays the results on screen.
+Project for demoing the [FrameDetector class](https://knowledge.affectiva.com/docs/analyze-a-video-frame-stream-3). It grabs frames from the camera, analyzes them and displays the results on screen.
 
 The following command line arguments can be used to run it:
 
@@ -99,7 +99,7 @@ The following command line arguments can be used to run it:
 Video-demo (c++)
 ----------
 
-Project for demoing the Windows SDK [VideoDetector class](http://developer.affectiva.com/v3_2/cpp/analyze-video/) and [PhotoDetector class](http://developer.affectiva.com/v3_2/cpp/analyze-photo/). It processs video or image files, displays the emotion metrics and exports the results in a csv file.
+Project for demoing the Windows SDK [VideoDetector class](https://knowledge.affectiva.com/docs/analyze-a-recorded-video-file) and [PhotoDetector class](https://knowledge.affectiva.com/docs/analyze-a-photo-4). It processs video or image files, displays the emotion metrics and exports the results in a csv file.
 
 The following command line arguments can be used to run it:
 
