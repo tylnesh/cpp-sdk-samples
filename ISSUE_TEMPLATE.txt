@@ -6,7 +6,7 @@ solutions more quickly.
 https://stackoverflow.com/questions/tagged/affdex-sdk
 
 
-For more general discussion about our SDKs, please leverage our SDK forum:
+For more general discussion about our SDKs, please use our SDK forum:
 
 https://discuss.affectiva.com/c/emotion-sdk
 
