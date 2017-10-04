@@ -13,10 +13,10 @@ build:
   parallel: true
   verbosity: detailed
 artifacts:
-- path: '\x64\Release'
+- path: 'bin\x64\Release'
 deploy:
 - provider: GitHub
-  release: 3.1
+  release: 3.4
   auth_token:
     secure: sjCE8t4b8ME8j2D6e0kRpNib8STOljgGVPdexj4n0gXU/nYxFkdaI9GXRukRHri5
   artifact: Release.zip
