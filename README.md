@@ -32,7 +32,9 @@ Dependencies
 Installation
 ------------
 
-- Download Affdex SDK [from here](http://developer.affectiva.com/downloads)
+- Download Affdex SDK for Linux [from here](https://affectiva.readme.io/docs/getting-started-with-the-affectiva-sdk-for-linux#section-1-download-and-extract-the-sdk-archive)
+- - Download Affdex SDK for Windows [from here](https://affectiva.readme.io/docs/getting-started-with-the-emotion-sdk-for-windows#section-1-download-and-run-the-sdk-installer)
+
 
 ##### Windows
 - Install the SDK using MSI installer.
@@ -123,7 +125,7 @@ The following command line arguments can be used to run it:
 Video-demo (c++)
 ----------
 
-Project for demoing the Windows SDK [VideoDetector class](http://developer.affectiva.com/v3_2/cpp/analyze-video/) and [PhotoDetector class](http://developer.affectiva.com/v3_2/cpp/analyze-photo/). It processs video or image files, displays the emotion metrics and exports the results in a csv file.
+Project for demoing the Windows SDK [VideoDetector class](http://developer.affectiva.com/v3_2/cpp/analyze-video/) and [PhotoDetector class](http://developer.affectiva.com/v3_2/cpp/analyze-photo/). It process video or image files, displays the emotion metrics and exports the results in a csv file.
 
 The following command line arguments can be used to run it:
 
@@ -143,4 +145,4 @@ For an example of how to use Affdex in a C# application .. please refer to [Affd
 Docker Build Instructions
 -------------------------
 
-Please check out the Dockerfiles in the docker directory to follow the build and run steps to create and run the image.
+The Dockerfile's are located in the docker directory. To build the docker image please refer to the files for instructions.
