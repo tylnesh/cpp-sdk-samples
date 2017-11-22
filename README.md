@@ -1,8 +1,9 @@
-#Sample Apps for Affdex SDK for Windows and Linux
+# Sample Apps for Affdex SDK for Windows and Linux
 
-Welcome to our repository on GitHub! Here you will find example code to get you started with our Affdex Linux SDK 3.2, Affdex Windows SDK 3.4 and begin emotion-enabling you own app! Documentation for the SDKs is available on the <a href=http://developer.affectiva.com/>Affectiva's Developer Portal</a>.
+Welcome to our repository on GitHub! Here you will find example code to get you started with our Affdex Linux SDK 4.0.0, Affdex Windows SDK 3.4 and begin emotion-enabling you own app! Documentation for the SDKs is available on the <a href=http://developer.affectiva.com/>Affectiva's Developer Portal</a>.
 
-*Build Status*
+Build Status
+-------------
 - Windows: [![Build status](https://ci.appveyor.com/api/projects/status/pn2y9h8a3nnkiw41?svg=true)]
 (https://ci.appveyor.com/project/ahamino/win-sdk-samples)
 - Ubuntu: [![Build Status](https://travis-ci.org/Affectiva/cpp-sdk-samples.svg?branch=master)](https://travis-ci.org/Affectiva/cpp-sdk-samples)
@@ -10,20 +11,20 @@ Welcome to our repository on GitHub! Here you will find example code to get you 
 Dependencies
 ------------
 
-*Windows*
+##### Windows
 - Affdex SDK 3.4 (64 bit)
 - Visual Studio 2013 or higher
 
-*Linux*
-- Ubuntu 14.04 or CentOS 7
-- Affdex SDK 3.2
-- CMake 2.8 or higher
-- GCC 4.8
+##### Linux
+- Ubuntu 16.04 with GCC v5.4.1
+- CentOS 7 with GCC v4.8.x
+- Affdex SDK 4.0.0
+- CMake 3.5 or higher
 
-*Additional dependencies*
+##### Additional dependencies
 
 - OpenCV 2.4
-- Boost 1.59
+- Boost 1.63
 - libuuid
 - libcurl
 - libopenssl
@@ -33,17 +34,47 @@ Installation
 
 - Download Affdex SDK [from here](http://developer.affectiva.com/downloads)
 
-*Windows*
+##### Windows
 - Install the SDK using MSI installer.
 - The additional dependencies get installed automatically by NuGet.
+
+##### Linux
+
+*Installation Guide for CMake v3.5 and Boost v1.63 for CentOS 7 and Ubuntu 16.04*
+
+- Boost
+
+```
+$ wget https://sourceforge.net/projects/boost/files/boost/1.63.0/boost_1_63_0.tar.gz
+$ tar -xzvf boost_1_63_0.tar.gz -C $HOME
+$ cd boost_1_63_0
+$ ./bootstrap.sh
+$ sudo ./b2 -j $(nproc) cxxflags=-fPIC threading=multi runtime-link=shared \
+      --with-log --with-serialization --with-system --with-date_time \
+      --with-filesystem --with-regex --with-timer --with-chrono --with-thread \
+      --with-program_options install
+```
+
+- CMAKE
+
+```
+$ wget https://cmake.org/files/v3.8/cmake-3.8.1.tar.gz \
+$ tar -xvf cmake-3.8.1.tar.gz && rm cmake-3.8.1.tar.gz
+$ cd $SRC_DIR/cmake-3.8.1/
+$ ./bootstrap --system-curl && \
+    make -j$(nproc) && \
+    make install && \
+    rm -rf $SRC_DIR/cmake-3.8.1
+
+```
 
 *Ubuntu*
 
 ```bashrc
-sudo apt-get install build-essential libopencv-dev libboost1.55-all-dev libcurl4-openssl uuid-dev cmake
-wget https://download.affectiva.com/linux/affdex-cpp-sdk-3.2-20-ubuntu-xenial-xerus-64bit.tar.gz
+sudo apt-get install build-essential libopencv-dev libcurl4-openssl uuid-dev
+wget https://download.affectiva.com/linux/gcc-5.4/affdex-cpp-sdk-4.0-75-ubuntu-xenial-xerus-x86_64bit.tar.gz
 mkdir $HOME/affdex-sdk
-tar -xzvf affdex-cpp-sdk-3.2-20-ubuntu-xenial-xerus-64bit.tar.gz -C $HOME/affdex-sdk
+tar -xzvf affdex-cpp-sdk-4.0-75-ubuntu-xenial-xerus-x86_64bit.tar.gz -C $HOME/affdex-sdk
 export AFFDEX_DATA_DIR=$HOME/affdex-sdk/data
 git clone https://github.com/Affectiva/cpp-sdk-samples.git $HOME/sdk-samples
 mkdir $HOME/build
@@ -56,22 +87,17 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/affdex-sdk/lib
 *CentOS*
 
 ```bashrc
-sudo yum install libcurl-devel.x86_64 libuuid-devel.x86_64 opencv-devel cmake.x86_64
-wget https://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz/download -O boost_1_55_0.tar.gz
-tar -xzvf boost_1_55_0.tar.gz -C $HOME
-cd boost_1_55
-./bootstrap.sh --with-libraries=log,serialization,system,date_time,filesystem,regex,timer,chrono,thread,program_options
-sudo ./b2 link=static install
-wget https://download.affectiva.com/linux/affdex-cpp-sdk-3.2-2893-centos-7-64bit.tar.gz
-mkdir $HOME/affdex-sdk
-tar -xzvf affdex-cpp-sdk-3.2-2893-centos-7-64bit.tar.gz -C $HOME/affdex-sdk
-export AFFDEX_DATA_DIR=$HOME/affdex-sdk/data
-git clone https://github.com/Affectiva/cpp-sdk-samples.git $HOME/sdk-samples
-mkdir $HOME/build
-cd $HOME/build
-cmake -DOpenCV_DIR=/usr/ -DBOOST_ROOT=/usr/ -DAFFDEX_DIR=$HOME/affdex-sdk $HOME/sdk-samples
-make
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/affdex-sdk/lib
+$ sudo yum install libcurl-devel.x86_64 libuuid-devel.x86_64 opencv-devel
+$ wget https://download.affectiva.com/linux/centos-4.8/affdex-cpp-sdk-4.0-2941-centos-7-x86_64bit.tar.gz
+$ mkdir $HOME/affdex-sdk
+$ tar -xzvf affdex-cpp-sdk-4.0-2941-centos-7-x86_64bit.tar.gz -C $HOME/affdex-sdk
+$ export AFFDEX_DATA_DIR=$HOME/affdex-sdk/data
+$ git clone https://github.com/Affectiva/cpp-sdk-samples.git $HOME/sdk-samples
+$ mkdir $HOME/build
+$ cd $HOME/build
+$ cmake -DOpenCV_DIR=/usr/ -DBOOST_ROOT=/usr/ -DAFFDEX_DIR=$HOME/affdex-sdk $HOME/sdk-samples
+$ make
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/affdex-sdk/lib
 ```
 
 OpenCV-webcam-demo (c++)
@@ -113,3 +139,8 @@ The following command line arguments can be used to run it:
 
 
 For an example of how to use Affdex in a C# application .. please refer to [AffdexMe](https://github.com/affectiva/affdexme-win)
+
+Docker Build Instructions
+-------------------------
+
+Please check out the Dockerfiles in the docker directory to follow the build and run steps to create and run the image.
