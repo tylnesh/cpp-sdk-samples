@@ -42,7 +42,7 @@ Installation
 
 ##### Linux
 
-*Installation Guide for CMake v3.5 and Boost v1.63 for CentOS 7 and Ubuntu 16.04*
+*Installation Guide for dependencies CMake v3.8.1 and Boost v1.63 for CentOS 7 and Ubuntu 16.04*
 
 - Boost
 
@@ -70,7 +70,7 @@ $ ./bootstrap --system-curl && \
 
 ```
 
-*Ubuntu*
+- Building the SDK on Ubuntu 16.04
 
 ```bashrc
 sudo apt-get install build-essential libopencv-dev libcurl4-openssl uuid-dev
@@ -86,7 +86,7 @@ make
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/affdex-sdk/lib
 ```
 
-*CentOS*
+- Building the SDK on CentOS 7
 
 ```bashrc
 $ sudo yum install libcurl-devel.x86_64 libuuid-devel.x86_64 opencv-devel
