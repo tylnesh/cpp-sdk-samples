@@ -16,19 +16,19 @@ before_script:
   - wget https://cmake.org/files/v3.8/cmake-3.8.1.tar.gz -O /tmp/cmake.tar.gz
   - mkdir /tmp/cmake
   - tar -xvf /tmp/cmake.tar.gz -C /tmp/cmake
-  - cd /tmp/cmake && \
-      ./bootstrap --system-curl > /dev/null 2>&1 && \
-      make -j$(nproc) > /dev/null 2>&1 && \
-      sudo make install > /dev/null 2>&1
+  - cd /tmp/cmake
+  - ./bootstrap --system-curl
+  - make -j$(nproc) 2> /dev/null
+  - sudo make install 2> /dev/null
   - wget https://sourceforge.net/projects/boost/files/boost/1.63.0/boost_1_63_0.tar.gz -O /tmp/boost.tar.gz
   - mkdir /tmp/boost
   - tar -xvf /tmp/boost.tar.gz -C /tmp/boost
-  - cd /tmp/boost && \
-      ./bootstrap.sh > /dev/null 2>&1 &&\
-      sudo ./b2 -j $(nproc) cxxflags=-fPIC threading=multi runtime-link=shared \
+  - cd /tmp/boost
+  - ./bootstrap.sh
+  - sudo ./b2 -j $(nproc) cxxflags=-fPIC threading=multi runtime-link=shared \
            --with-log --with-serialization --with-system --with-date_time \
            --with-filesystem --with-regex --with-timer --with-chrono --with-thread \
-           --with-program_options install > /dev/null 2>&1
+           --with-program_options install 2> /dev/null
   - wget https://download.affectiva.com/linux/gcc-5.4/affdex-cpp-sdk-4.0-75-ubuntu-xenial-xerus-x86_64bit.tar.gz -O /tmp/affdex-sdk.tar.gz
   - mkdir /tmp/affdex-sdk
   - tar -xzvf /tmp/affdex-sdk.tar.gz -C /tmp/affdex-sdk
