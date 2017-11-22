@@ -33,7 +33,7 @@ Installation
 ------------
 
 - Download Affdex SDK for Linux [from here](https://affectiva.readme.io/docs/getting-started-with-the-affectiva-sdk-for-linux#section-1-download-and-extract-the-sdk-archive)
-- - Download Affdex SDK for Windows [from here](https://affectiva.readme.io/docs/getting-started-with-the-emotion-sdk-for-windows#section-1-download-and-run-the-sdk-installer)
+- Download Affdex SDK for Windows [from here](https://affectiva.readme.io/docs/getting-started-with-the-emotion-sdk-for-windows#section-1-download-and-run-the-sdk-installer)
 
 
 ##### Windows
