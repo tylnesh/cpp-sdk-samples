@@ -1,9 +1,18 @@
 dist: trusty
+sudo: require
 language: cpp
-compiler:
-  - gcc-5
+compiler: gcc
+
+before_install:
+  # C++11
+  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+  - sudo apt-get update -qq
+
+install:
+  # C++11
+  - sudo apt-get install -qq gcc-5 g++-5 libopencv-dev libcurl4-openssl-dev libssl-dev
+
 before_script:
-  - sudo apt-get install  -y gcc-5 g++-5 libopencv-dev make libcurl4-openssl-dev libssl-dev
   - wget https://cmake.org/files/v3.8/cmake-3.8.1.tar.gz -O /tmp/cmake.tar.gz
   - mkdir /tmp/cmake
   - tar -xvf cmake.tar.gz -C /tmp/cmake
@@ -27,5 +36,6 @@ before_script:
   - mkdir build
   - cd build
   - cmake -DBOOST_ROOT=/usr/ -DOpenCV_DIR=/usr/ -DAFFDEX_DIR=/tmp/affdex-sdk ..
+
 script:
   - make
