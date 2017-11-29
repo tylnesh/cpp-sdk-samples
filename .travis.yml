@@ -23,7 +23,7 @@ before_script:
   - wget https://sourceforge.net/projects/boost/files/boost/1.63.0/boost_1_63_0.tar.gz -O /tmp/boost.tar.gz
   - mkdir /tmp/boost
   - tar -xzf /tmp/boost.tar.gz -C /tmp/boost
-  - cd /tmp/boost
+  - cd /tmp/boost/boost_1_63_0
   - ./bootstrap.sh
   - sudo ./b2 -j $(nproc) cxxflags=-fPIC threading=multi runtime-link=shared \
            --with-log --with-serialization --with-system --with-date_time \
