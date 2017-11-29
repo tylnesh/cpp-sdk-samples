@@ -25,10 +25,7 @@ before_script:
   - tar -xzf /tmp/boost.tar.gz -C /tmp/boost
   - cd /tmp/boost/boost_1_63_0
   - ./bootstrap.sh
-  - sudo ./b2 -j $(nproc) cxxflags=-fPIC threading=multi runtime-link=shared \
-           --with-log --with-serialization --with-system --with-date_time \
-           --with-filesystem --with-regex --with-timer --with-chrono --with-thread \
-           --with-program_options install
+  - sudo ./b2 -j $(nproc) cxxflags=-fPIC threading=multi runtime-link=shared --with-log --with-serialization --with-system --with-date_time --with-filesystem --with-regex --with-timer --with-chrono --with-thread --with-program_options install > /dev/null
   - wget https://download.affectiva.com/linux/gcc-5.4/affdex-cpp-sdk-4.0-75-ubuntu-xenial-xerus-x86_64bit.tar.gz -O /tmp/affdex-sdk.tar.gz
   - mkdir /tmp/affdex-sdk
   - tar -xzf /tmp/affdex-sdk.tar.gz -C /tmp/affdex-sdk
