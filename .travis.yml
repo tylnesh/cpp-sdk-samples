@@ -3,4 +3,4 @@ services:
   - docker
 language: ruby
 before_install:
-  - docker build --file=docker/Dockerfile-Ubuntu --tag=v4.0.0:affdex
+  - docker build --file=docker/Dockerfile-Ubuntu --tag=v4.0.0:affdex .
