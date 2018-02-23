@@ -48,7 +48,7 @@ RUN cd $SRC_DIR/cmake-3.8.1/ && \
 
 #### BOOST ####
 WORKDIR $SRC_DIR
-RUN wget https://sourceforge.net/projects/boost/files/boost/1.63.0/boost_1_63_0.tar.gz && \
+RUN wget https://sourceforge.net/projects/boost/files/boost/1.63.0/boost_1_63_0.tar.gz --no-check-certificate && \
     tar -xvf boost_1_63_0.tar.gz && \
     rm boost_1_63_0.tar.gz && \
     cd $SRC_DIR/boost_1_63_0 && \
