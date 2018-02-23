@@ -1,40 +1,9 @@
 dist: trusty
-sudo: require
-language: cpp
-compiler: gcc
+sudo: required
+language: ruby
+services:
+  - docker
 
 before_install:
-  # C++11
-  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update -qq
-
-install:
-  # C++11
-  - sudo apt-get install -qq gcc-5 g++-5 libopencv-dev libcurl4-openssl-dev libssl-dev
-
-before_script:
-  - mkdir build
-  - export BUILD_DIR=$PWD/build
-  - export CC=/usr/bin/gcc-5
-  - export CXX=/usr/bin/g++-5
-  - wget https://cmake.org/files/v3.8/cmake-3.8.1.tar.gz -O /tmp/cmake.tar.gz
-  - mkdir /tmp/cmake
-  - tar -xzf /tmp/cmake.tar.gz -C /tmp/cmake
-  - cd /tmp/cmake/cmake-3.8.1
-  - ./bootstrap --system-curl
-  - make -j$(nproc) > /dev/null
-  - sudo make install > /dev/null
-  - wget https://sourceforge.net/projects/boost/files/boost/1.63.0/boost_1_63_0.tar.gz -O /tmp/boost.tar.gz
-  - mkdir /tmp/boost
-  - tar -xzf /tmp/boost.tar.gz -C /tmp/boost
-  - cd /tmp/boost/boost_1_63_0
-  - ./bootstrap.sh
-  - sudo ./b2 -j $(nproc) cxxflags=-fPIC threading=multi runtime-link=shared --with-log --with-serialization --with-system --with-date_time --with-filesystem --with-regex --with-timer --with-chrono --with-thread --with-program_options install > /dev/null
-  - wget https://download.affectiva.com/linux/gcc-5.4/affdex-cpp-sdk-4.0-75-ubuntu-xenial-xerus-x86_64bit.tar.gz -O /tmp/affdex-sdk.tar.gz
-  - mkdir /tmp/affdex-sdk
-  - tar -xzf /tmp/affdex-sdk.tar.gz -C /tmp/affdex-sdk
-  - cd $BUILD_DIR
-  - cmake -DBOOST_ROOT=/usr/ -DOpenCV_DIR=/usr/ -DAFFDEX_DIR=/tmp/affdex-sdk ..
-
-script:
-  - make
+  - docker build --file=docker/Dockerfile-Ubuntu --tag=v4.0.0:affdex .
+  - docker run v4.0.0:affdex
