@@ -1,6 +1,6 @@
 sudo: required
 services:
   - docker
-language: ruby
+language: generic
 before_install:
   - docker build --file=docker/Dockerfile-Ubuntu --tag=v4.0.0:affdex .
