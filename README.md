@@ -73,17 +73,25 @@ $ ./bootstrap --system-curl && \
 - Building the SDK on Ubuntu 16.04
 
 ```bashrc
-sudo apt-get install build-essential libopencv-dev libcurl4-openssl uuid-dev
-wget https://download.affectiva.com/linux/gcc-5.4/affdex-cpp-sdk-4.0-75-ubuntu-xenial-xerus-x86_64bit.tar.gz
-mkdir $HOME/affdex-sdk
-tar -xzvf affdex-cpp-sdk-4.0-75-ubuntu-xenial-xerus-x86_64bit.tar.gz -C $HOME/affdex-sdk
-export AFFDEX_DATA_DIR=$HOME/affdex-sdk/data
-git clone https://github.com/Affectiva/cpp-sdk-samples.git $HOME/sdk-samples
-mkdir $HOME/build
-cd $HOME/build
-cmake -DOpenCV_DIR=/usr/ -DBOOST_ROOT=/usr/ -DAFFDEX_DIR=$HOME/affdex-sdk $HOME/sdk-samples
-make
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/affdex-sdk/lib
+$ sudo apt-get install build-essential libopencv-dev libcurl4-openssl uuid-dev
+$ wget https://download.affectiva.com/linux/gcc-5.4/affdex-cpp-sdk-4.0-75-ubuntu-xenial-xerus-x86_64bit.tar.gz
+$ mkdir $HOME/affdex-sdk
+$ tar -xzvf affdex-cpp-sdk-4.0-75-ubuntu-xenial-xerus-x86_64bit.tar.gz -C $HOME/affdex-sdk
+$ export AFFDEX_DATA_DIR=$HOME/affdex-sdk/data
+$ git clone https://github.com/Affectiva/cpp-sdk-samples.git $HOME/sdk-samples
+$ mkdir $HOME/build
+$ cd $HOME/build
+$ cmake -DOpenCV_DIR=/usr/ -DBOOST_ROOT=/usr/ -DAFFDEX_DIR=$HOME/affdex-sdk $HOME/sdk-samples
+$ make
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/affdex-sdk/lib
+
+# The SDK statically links a forked version of OpenCV, so if you run into double free or corruption error
+# then you will need to preload the OpenCV library installed from package manager
+# Use this command to find the path of libopencv_core.so.2.4
+
+$ ldconfig -p | grep libopencv_core.so.2.4
+$ export LD_PRELOAD=/path/to/libopencv_core.so.2.4
+
 ```
 
 - Building the SDK on CentOS 7
@@ -100,6 +108,13 @@ $ cd $HOME/build
 $ cmake -DOpenCV_DIR=/usr/ -DBOOST_ROOT=/usr/ -DAFFDEX_DIR=$HOME/affdex-sdk $HOME/sdk-samples
 $ make
 $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/affdex-sdk/lib
+
+# The SDK statically links a forked version of OpenCV, so if you run into double free or corruption error
+# then you will need to preload the OpenCV library installed from package manager
+# Use this command to find the path of libopencv_core.so.2.4
+
+$ ldconfig -p | grep libopencv_core.so.2.4
+$ export LD_PRELOAD=/path/to/libopencv_core.so.2.4
 ```
 
 OpenCV-webcam-demo (c++)
@@ -145,4 +160,4 @@ For an example of how to use Affdex in a C# application .. please refer to [Affd
 Docker Build Instructions
 -------------------------
 
-The Dockerfile's are located in the docker directory. To build the docker image please refer to the files for instructions.
+The Dockerfile's are located in the [docker](docker) directory. To build the docker image please refer to the files for instructions.
