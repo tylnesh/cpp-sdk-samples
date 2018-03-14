@@ -18,8 +18,9 @@ else()
 endif()
 set(COMMON_HDRS "${PARENT_DIR}/common/")
 file(GLOB COMMON_HDRS_FILES ${COMMON_HDRS}/*.h*)
+file(GLOB COMMON_CPP_FILES ${COMMON_HDRS}/*.c*)
 
-add_executable(${subProject} ${SRCS} ${HDRS} ${COMMON_HDRS_FILES})
+add_executable(${subProject} ${SRCS} ${HDRS} ${COMMON_HDRS_FILES} ${COMMON_CPP_FILES})
 
 target_include_directories(${subProject} PRIVATE ${Boost_INCLUDE_DIRS} ${AFFDEX_INCLUDE_DIR} ${COMMON_HDRS})
 

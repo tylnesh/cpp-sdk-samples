@@ -31,7 +31,7 @@ int main(int argsc, char ** argsv)
 
     try{
 
-        const std::vector<int> DEFAULT_RESOLUTION{ 640, 480 };
+        const std::vector<int> DEFAULT_RESOLUTION{ 	1280, 720 };
 
         affdex::path DATA_FOLDER;
 

@@ -7,17 +7,12 @@
 #include <thread>
 #include <mutex>
 #include <fstream>
-#include <map>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/timer/timer.hpp>
-#include <boost/program_options.hpp>
-#include <boost/algorithm/string.hpp>
 
-
-
+#include "Visualizer.h"
 #include "ImageListener.h"
+#include "typedefs.h"
 
 
 using namespace affdex;
@@ -35,19 +30,10 @@ class PlottingImageListener : public ImageListener
     std::ofstream &fStream;
     std::chrono::time_point<std::chrono::system_clock> mStartT;
     const bool mDrawDisplay;
-    const int spacing = 10;
+    const int spacing = 20;
     const float font_size = 0.5f;
     const int font = cv::FONT_HERSHEY_COMPLEX_SMALL;
-
-    std::vector<std::string> expressions;
-    std::vector<std::string> emotions;
-    std::vector<std::string> emojis;
-    std::vector<std::string> headAngles;
-
-    std::map<affdex::Glasses, std::string> glassesMap;
-    std::map<affdex::Gender, std::string> genderMap;
-    std::map<affdex::Age, std::string> ageMap;
-    std::map<affdex::Ethnicity, std::string> ethnicityMap;
+    Visualizer viz;
 
 public:
 
@@ -57,72 +43,18 @@ public:
         mCaptureLastTS(-1.0f), mCaptureFPS(-1.0f),
         mProcessLastTS(-1.0f), mProcessFPS(-1.0f)
     {
-        expressions = {
-            "smile", "innerBrowRaise", "browRaise", "browFurrow", "noseWrinkle",
-            "upperLipRaise", "lipCornerDepressor", "chinRaise", "lipPucker", "lipPress",
-            "lipSuck", "mouthOpen", "smirk", "eyeClosure", "attention", "eyeWiden", "cheekRaise",
-            "lidTighten", "dimpler", "lipStretch", "jawDrop"
-        };
-
-        emotions = {
-            "joy", "fear", "disgust", "sadness", "anger",
-            "surprise", "contempt", "valence", "engagement"
-        };
-
-        headAngles = { "pitch", "yaw", "roll" };
-
-
-        emojis = std::vector<std::string> {
-            "relaxed", "smiley", "laughing",
-                "kissing", "disappointed",
-                "rage", "smirk", "wink",
-                "stuckOutTongueWinkingEye", "stuckOutTongue",
-                "flushed", "scream"
-        };
-
-        genderMap = std::map<affdex::Gender, std::string> {
-            { affdex::Gender::Male, "male" },
-            { affdex::Gender::Female, "female" },
-            { affdex::Gender::Unknown, "unknown" },
-
-        };
-
-        glassesMap = std::map<affdex::Glasses, std::string> {
-            { affdex::Glasses::Yes, "yes" },
-            { affdex::Glasses::No, "no" }
-        };
-
-        ageMap = std::map<affdex::Age, std::string> {
-            { affdex::Age::AGE_UNKNOWN, "unknown"},
-            { affdex::Age::AGE_UNDER_18, "under 18" },
-            { affdex::Age::AGE_18_24, "18-24" },
-            { affdex::Age::AGE_25_34, "25-34" },
-            { affdex::Age::AGE_35_44, "35-44" },
-            { affdex::Age::AGE_45_54, "45-54" },
-            { affdex::Age::AGE_55_64, "55-64" },
-            { affdex::Age::AGE_65_PLUS, "65 plus" }
-        };
-
-        ethnicityMap = std::map<affdex::Ethnicity, std::string> {
-            { affdex::Ethnicity::UNKNOWN, "unknown"},
-            { affdex::Ethnicity::CAUCASIAN, "caucasian" },
-            { affdex::Ethnicity::BLACK_AFRICAN, "black african" },
-            { affdex::Ethnicity::SOUTH_ASIAN, "south asian" },
-            { affdex::Ethnicity::EAST_ASIAN, "east asian" },
-            { affdex::Ethnicity::HISPANIC, "hispanic" }
-        };
 
         fStream << "TimeStamp,faceId,interocularDistance,glasses,age,ethnicity,gender,dominantEmoji,";
-        for (std::string angle : headAngles) fStream << angle << ",";
-        for (std::string emotion : emotions) fStream << emotion << ",";
-        for (std::string expression : expressions) fStream << expression << ",";
-        for (std::string emoji : emojis) fStream << emoji << ",";
+        for (std::string angle : viz.HEAD_ANGLES) fStream << angle << ",";
+        for (std::string emotion : viz.EMOTIONS) fStream << emotion << ",";
+        for (std::string expression : viz.EXPRESSIONS) fStream << expression << ",";
+        for (std::string emoji : viz.EMOJIS) fStream << emoji << ",";
         fStream << std::endl;
         fStream.precision(4);
         fStream << std::fixed;
     }
 
-    FeaturePoint minPoint(VecFeaturePoint points)
+    cv::Point2f minPoint(VecFeaturePoint points)
     {
         VecFeaturePoint::iterator it = points.begin();
         FeaturePoint ret = *it;
@@ -131,10 +63,10 @@ public:
             if (it->x < ret.x) ret.x = it->x;
             if (it->y < ret.y) ret.y = it->y;
         }
-        return ret;
+        return cv::Point2f(ret.x, ret.y);
     };
 
-    FeaturePoint maxPoint(VecFeaturePoint points)
+    cv::Point2f maxPoint(VecFeaturePoint points)
     {
         VecFeaturePoint::iterator it = points.begin();
         FeaturePoint ret = *it;
@@ -143,7 +75,7 @@ public:
             if (it->x > ret.x) ret.x = it->x;
             if (it->y > ret.y) ret.y = it->y;
         }
-        return ret;
+        return cv::Point2f(ret.x, ret.y);
     };
 
 
@@ -197,10 +129,10 @@ public:
         if (faces.empty())
         {
             fStream << timeStamp << ",nan,nan,no,unknown,unknown,unknown,unknown,";
-            for (std::string angle : headAngles) fStream << "nan,";
-            for (std::string emotion : emotions) fStream << "nan,";
-            for (std::string expression : expressions) fStream << "nan,";
-            for (std::string emoji : emojis) fStream << "nan,";
+            for (std::string angle : viz.HEAD_ANGLES) fStream << "nan,";
+            for (std::string emotion : viz.EMOTIONS) fStream << "nan,";
+            for (std::string expression : viz.EXPRESSIONS) fStream << "nan,";
+            for (std::string emoji : viz.EMOJIS) fStream << "nan,";
             fStream << std::endl;
         }
         for (auto & face_id_pair : faces)
@@ -210,35 +142,35 @@ public:
             fStream << timeStamp << ","
                 << f.id << ","
                 << f.measurements.interocularDistance << ","
-                << glassesMap[f.appearance.glasses] << ","
-                << ageMap[f.appearance.age] << ","
-                << ethnicityMap[f.appearance.ethnicity] << ","
-                << genderMap[f.appearance.gender] << ","
+                << viz.GLASSES_MAP[f.appearance.glasses] << ","
+                << viz.AGE_MAP[f.appearance.age] << ","
+                << viz.ETHNICITY_MAP[f.appearance.ethnicity] << ","
+                << viz.GENDER_MAP[f.appearance.gender] << ","
                 << affdex::EmojiToString(f.emojis.dominantEmoji) << ",";
 
             float *values = (float *)&f.measurements.orientation;
-            for (std::string angle : headAngles)
+            for (std::string angle : viz.HEAD_ANGLES)
             {
                 fStream << (*values) << ",";
                 values++;
             }
 
             values = (float *)&f.emotions;
-            for (std::string emotion : emotions)
+            for (std::string emotion : viz.EMOTIONS)
             {
                 fStream << (*values) << ",";
                 values++;
             }
 
             values = (float *)&f.expressions;
-            for (std::string expression : expressions)
+            for (std::string expression : viz.EXPRESSIONS)
             {
                 fStream << (*values) << ",";
                 values++;
             }
 
             values = (float *)&f.emojis;
-            for (std::string emoji : emojis)
+            for (std::string emoji : viz.EMOTIONS)
             {
                 fStream << (*values) << ",";
                 values++;
@@ -248,94 +180,57 @@ public:
         }
     }
 
-    void drawValues(const float * first, const std::vector<std::string> names,
-        const int x, int &padding, const cv::Scalar clr,
-        cv::Mat img)
+    std::vector<cv::Point2f> CalculateBoundingBox(VecFeaturePoint points)
     {
-        for (std::string name : names)
-        {
-            if (std::abs(*first) > 5.0f)
-            {
-                char m[50];
-                sprintf(m, "%s: %3.2f", name.c_str(), (*first));
-                cv::putText(img, m, cv::Point(x, padding += spacing), font, font_size, clr);
-            }
-            first++;
-        }
+
+        std::vector<cv::Point2f> ret;
+
+        //Top Left
+        ret.push_back(minPoint(points));
+
+        //Bottom Right
+        ret.push_back(maxPoint(points));
+
+        //Top Right
+        ret.push_back(cv::Point2f(ret[1].x,
+                                  ret[0].y));
+        //Bottom Left
+        ret.push_back(cv::Point2f(ret[0].x,
+                                  ret[1].y));
+
+        return ret;
     }
 
     void draw(const std::map<FaceId, Face> faces, Frame image)
     {
-        std::shared_ptr<byte> imgdata = image.getBGRByteArray();
-        cv::Mat img = cv::Mat(image.getHeight(), image.getWidth(), CV_8UC3, imgdata.get());
 
         const int left_margin = 30;
 
-
         cv::Scalar clr = cv::Scalar(0, 0, 255);
         cv::Scalar header_clr = cv::Scalar(255, 0, 0);
+
+        std::shared_ptr<byte> imgdata = image.getBGRByteArray();
+        cv::Mat img = cv::Mat(image.getHeight(), image.getWidth(), CV_8UC3, imgdata.get());
+        viz.updateImage(img);
 
         for (auto & face_id_pair : faces)
         {
             Face f = face_id_pair.second;
             VecFeaturePoint points = f.featurePoints;
-            for (auto& point : points)    //Draw face feature points.
-            {
-                cv::circle(img, cv::Point(point.x, point.y), 2.0f, cv::Scalar(0, 0, 255));
-            }
-            FeaturePoint tl = minPoint(points);
-            FeaturePoint br = maxPoint(points);
+            std::vector<cv::Point2f> bounding_box = CalculateBoundingBox(points);
 
-            //Output the results of the different classifiers.
-            int padding = tl.y + 10;
+            // Draw Facial Landmarks Points
+            //viz.drawPoints(points);
 
-            cv::putText(img, "APPEARANCE", cv::Point(br.x, padding += (spacing * 2)), font, font_size, header_clr);
-            cv::putText(img, genderMap[f.appearance.gender], cv::Point(br.x, padding += spacing), font, font_size, clr);
-            cv::putText(img, glassesMap[f.appearance.glasses], cv::Point(br.x, padding += spacing), font, font_size, clr);
-            cv::putText(img, ageMap[f.appearance.age], cv::Point(br.x, padding += spacing), font, font_size, clr);
-            cv::putText(img, ethnicityMap[f.appearance.ethnicity], cv::Point(br.x, padding += spacing), font, font_size, clr);
+            // Draw bounding box
+            viz.drawBoundingBox(bounding_box[0], bounding_box[1], f.emotions.valence);
 
-            Orientation headAngles = f.measurements.orientation;
-
-            char strAngles[100];
-            sprintf(strAngles, "Pitch: %3.2f Yaw: %3.2f Roll: %3.2f Interocular: %3.2f",
-                headAngles.pitch, headAngles.yaw, headAngles.roll, f.measurements.interocularDistance);
-
-
-
-            char fId[10];
-            sprintf(fId, "ID: %i", f.id);
-            cv::putText(img, fId, cv::Point(br.x, padding += spacing), font, font_size, clr);
-
-            cv::putText(img, "MEASUREMENTS", cv::Point(br.x, padding += (spacing * 2)), font, font_size, header_clr);
-
-            cv::putText(img, strAngles, cv::Point(br.x, padding += spacing), font, font_size, clr);
-
-            cv::putText(img, "EMOJIS", cv::Point(br.x, padding += (spacing * 2)), font, font_size, header_clr);
-
-            cv::putText(img, "dominantEmoji: " + affdex::EmojiToString(f.emojis.dominantEmoji),
-                cv::Point(br.x, padding += spacing), font, font_size, clr);
-
-            drawValues((float *)&f.emojis, emojis, br.x, padding, clr, img);
-
-            cv::putText(img, "EXPRESSIONS", cv::Point(br.x, padding += (spacing * 2)), font, font_size, header_clr);
-
-            drawValues((float *)&f.expressions, expressions, br.x, padding, clr, img);
-
-            cv::putText(img, "EMOTIONS", cv::Point(br.x, padding += (spacing * 2)), font, font_size, header_clr);
-
-            drawValues((float *)&f.emotions, emotions, br.x, padding, clr, img);
-
+            // Draw a face on screen
+            viz.drawFaceMetrics(f, bounding_box);
         }
-        char fps_str[50];
-        sprintf(fps_str, "capture fps: %2.0f", mCaptureFPS);
-        cv::putText(img, fps_str, cv::Point(img.cols - 110, img.rows - left_margin - spacing), font, font_size, clr);
-        sprintf(fps_str, "process fps: %2.0f", mProcessFPS);
-        cv::putText(img, fps_str, cv::Point(img.cols - 110, img.rows - left_margin), font, font_size, clr);
 
-        cv::imshow("analyze video", img);
+        viz.showImage();
         std::lock_guard<std::mutex> lg(mMutex);
-        cv::waitKey(30);
     }
 
 };
