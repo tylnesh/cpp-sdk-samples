@@ -207,7 +207,7 @@ public:
         cv::Scalar clr = cv::Scalar(0, 0, 255);
         cv::Scalar header_clr = cv::Scalar(255, 0, 0);
 
-        std::shared_ptr<affdex::byte> imgdata = image.getBGRByteArray();
+        std::shared_ptr<unsigned char> imgdata = image.getBGRByteArray();
         cv::Mat img = cv::Mat(image.getHeight(), image.getWidth(), CV_8UC3, imgdata.get());
         viz.updateImage(img);
 
