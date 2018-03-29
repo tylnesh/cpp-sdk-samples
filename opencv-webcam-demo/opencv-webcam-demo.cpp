@@ -111,13 +111,13 @@ int main(int argsc, char ** argsv)
         shared_ptr<PlottingImageListener> listenPtr(new PlottingImageListener(csvFileStream, draw_display));    // Instanciate the ImageListener class
         shared_ptr<StatusListener> videoListenPtr(new StatusListener());
         frameDetector = make_shared<FrameDetector>(buffer_length, process_framerate, nFaces, (affdex::FaceDetectorMode) faceDetectorMode);        // Init the FrameDetector Class
+        frameDetector->setClassifierPath(DATA_FOLDER);
 
         //Initialize detectors
         frameDetector->setDetectAllEmotions(true);
         frameDetector->setDetectAllExpressions(true);
         frameDetector->setDetectAllEmojis(true);
         frameDetector->setDetectAllAppearances(true);
-        frameDetector->setClassifierPath(DATA_FOLDER);
         frameDetector->setImageListener(listenPtr.get());
         frameDetector->setFaceListener(faceListenPtr.get());
         frameDetector->setProcessStatusListener(videoListenPtr.get());

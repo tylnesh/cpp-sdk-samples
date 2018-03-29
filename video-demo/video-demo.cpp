@@ -112,11 +112,7 @@ int main(int argsc, char ** argsv)
         {
             detector = std::make_shared<PhotoDetector>(nFaces, (affdex::FaceDetectorMode) faceDetectorMode);
         }
-
-
-        //VideoDetector videoDetector(process_framerate, nFaces, (affdex::FaceDetectorMode) faceDetectorMode);
-
-
+        detector->setClassifierPath(DATA_FOLDER);
 
         std::cout << "Max num of faces set to: " << detector->getMaxNumberFaces() << std::endl;
         std::string mode;
@@ -139,7 +135,6 @@ int main(int argsc, char ** argsv)
         detector->setDetectAllExpressions(true);
 		detector->setDetectAllEmojis(true);
         detector->setDetectAllAppearances(true);
-        detector->setClassifierPath(DATA_FOLDER);
         detector->setImageListener(listenPtr.get());
 
 
