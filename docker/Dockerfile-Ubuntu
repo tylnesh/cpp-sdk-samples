@@ -34,7 +34,7 @@ ENV ARTIFACT_DIR /opt/testapp-artifact
 ###### Clone Sample App Repo ######
 #################################
 
-RUN git clone https://github.com/Affectiva/cpp-sdk-samples.git $SRC_DIR/sdk-samples
+RUN git clone -b auto https://github.com/Affectiva/cpp-sdk-samples.git $SRC_DIR/sdk-samples
 
 #### CMAKE ####
 WORKDIR $SRC_DIR
