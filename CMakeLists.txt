@@ -26,14 +26,14 @@ if( MSVC )
     else()
         set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4" )
     endif()
-elseif( CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX )
+elseif( CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
     # Update if necessary
     set( CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} ${CXX_COMPILER_WARNINGS}" )
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    status("Updating compiler to make use of C++14")
-    set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++14")
+    status("Updating compiler to make use of C++11")
+    set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++11")
     set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
 endif()
 
@@ -98,11 +98,11 @@ endif( NOT Boost_FOUND )
 
 set (AFFDEX_FOUND FALSE)
 
-if( DEFINED AFFDEX_DIR ) 
+if( DEFINED AFFDEX_DIR )
    find_path(AFFDEX_INCLUDE_DIR FrameDetector.h
              HINTS "${AFFDEX_DIR}/include" )
 
-   find_library(AFFDEX_LIBRARY NAMES affdex-native
+   find_library(AFFDEX_LIBRARY NAMES affectiva-vision-sdk
                HINTS "${AFFDEX_DIR}/lib" )
 
    set(AFFDEX_INCLUDE_DIRS "${AFFDEX_INCLUDE_DIR}")
@@ -125,7 +125,8 @@ endif (DEFINED AFFDEX_DIR)
 
 
 add_subdirectory(opencv-webcam-demo)
-add_subdirectory(video-demo)
+# Commenting out video-demo for auto use case
+#add_subdirectory(video-demo)
 
 # --------------------
 # SUMMARY
