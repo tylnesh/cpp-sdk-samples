@@ -168,7 +168,7 @@ public:
             }
 
             values = (float *)&f.emojis;
-            for (std::string emoji : viz.EMOTIONS)
+            for (std::string emoji : viz.EMOJIS)
             {
                 fStream << (*values) << ",";
                 values++;
