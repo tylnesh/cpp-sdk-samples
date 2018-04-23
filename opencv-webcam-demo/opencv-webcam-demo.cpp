@@ -31,6 +31,14 @@ int main(int argsc, char ** argsv)
 
     try{
 
+
+        std::vector<float> smile_values;
+        float last_timestamp_since_reset;
+        const int CELLING_VALUE = 80;
+        const int BOTTOM_VALUE = 50;
+        const float DURATION = 5.0f;
+        bool record_road_view = false;
+
         const std::vector<int> DEFAULT_RESOLUTION{ 	1280, 720 };
 
         affdex::path DATA_FOLDER;
@@ -40,6 +48,7 @@ int main(int argsc, char ** argsv)
         int camera_framerate = 15;
         int buffer_length = 2;
         int camera_id = 0;
+        int road_camera_id = 0;
         unsigned int nFaces = 1;
         bool draw_display = true;
         int faceDetectorMode = (int)FaceDetectorMode::LARGE_FACES;
@@ -63,7 +72,8 @@ int main(int argsc, char ** argsv)
             ("pfps", po::value< int >(&process_framerate)->default_value(30), "Processing framerate.")
             ("cfps", po::value< int >(&camera_framerate)->default_value(30), "Camera capture framerate.")
             ("bufferLen", po::value< int >(&buffer_length)->default_value(30), "process buffer size.")
-            ("cid", po::value< int >(&camera_id)->default_value(0), "Camera ID.")
+            ("cid", po::value< int >(&camera_id)->default_value(0), "Face Camera ID.")
+            ("rid", po::value< int >(&road_camera_id)->default_value(1), "RoadView Camera ID.")
             ("faceMode", po::value< int >(&faceDetectorMode)->default_value((int)FaceDetectorMode::LARGE_FACES), "Face detector mode (large faces vs small faces).")
             ("numFaces", po::value< unsigned int >(&nFaces)->default_value(1), "Number of faces to be tracked.")
             ("draw", po::value< bool >(&draw_display)->default_value(true), "Draw metrics on screen.")
@@ -127,7 +137,14 @@ int main(int argsc, char ** argsv)
         webcam.set(CV_CAP_PROP_FPS, camera_framerate);    //Set webcam framerate.
         webcam.set(CV_CAP_PROP_FRAME_WIDTH, resolution[0]);
         webcam.set(CV_CAP_PROP_FRAME_HEIGHT, resolution[1]);
-        std::cerr << "Setting the webcam frame rate to: " << camera_framerate << std::endl;
+        std::cerr << "Setting the face webcam frame rate to: " << camera_framerate << std::endl;
+
+        cv::VideoCapture road_webcam(road_camera_id);    //Connect to the second webcam
+        road_webcam.set(CV_CAP_PROP_FPS, camera_framerate);    //Set webcam framerate.
+        road_webcam.set(CV_CAP_PROP_FRAME_WIDTH, resolution[0]);
+        road_webcam.set(CV_CAP_PROP_FRAME_HEIGHT, resolution[1]);
+        std::cerr << "Setting the road webcam frame rate to: " << camera_framerate << std::endl;
+
         auto start_time = std::chrono::system_clock::now();
         if (!webcam.isOpened())
         {
@@ -155,7 +172,14 @@ int main(int argsc, char ** argsv)
 
         do{
             cv::Mat img;
+            cv::Mat road_img;
             if (!webcam.read(img))    //Capture an image from the camera
+            {
+                std::cerr << "Failed to read frame from webcam! " << std::endl;
+                break;
+            }
+
+            if (!road_webcam.read(road_img))    //Capture an image from the camera
             {
                 std::cerr << "Failed to read frame from webcam! " << std::endl;
                 break;
@@ -172,6 +196,7 @@ int main(int argsc, char ** argsv)
             frameDetector->process(f);  //Pass the frame to detector
 
             // For each frame processed
+            float joy_value = 0;
             if (listenPtr->getDataSize() > 0)
             {
 
@@ -179,11 +204,44 @@ int main(int argsc, char ** argsv)
                 Frame frame = dataPoint.first;
                 std::map<FaceId, Face> faces = dataPoint.second;
 
-                // Draw metrics to the GUI
-                if (draw_display)
+
+
+                if (faces.size() > 0)
                 {
-                    listenPtr->draw(faces, frame);
+                  joy_value = faces[0].emotions.joy;
+                  smile_values.push_back(joy_value);
+
+                  if ((joy_value <= BOTTOM_VALUE ) || (seconds - last_timestamp_since_reset > DURATION))
+                  {
+                    record_road_view = false;
+                  }
+
+                  if (joy_value > CELLING_VALUE)
+                  {
+                    record_road_view = true;
+                  }
                 }
+
+                Visualizer viz;
+                viz.updateImage(road_img);
+                // Draw metrics to the GUI
+                if (record_road_view)
+                {
+                    /*Visualizer viz;
+                    int padding = 50;
+                    std::vector<cv::Point2f> bounding_box = listenPtr->CalculateBoundingBox(faces[0].featurePoints);
+                    cv::Mat roi_face = img(cv::Rect(bounding_box[0].x-padding, bounding_box[0].y-padding,
+                                                    bounding_box[1].y-bounding_box[0].y+padding,
+                                                    bounding_box[1].x-bounding_box[0].x+padding));
+                    cv::Mat roi = road_img(cv::Rect(10, roi_face.rows, roi_face.cols, roi_face.rows));
+                    roi_face.copyTo(roi);*/
+
+
+                    cv::putText(road_img, "Recording highlight!", cv::Point(20, 50), cv::FONT_HERSHEY_SIMPLEX, 1.0f, cv::Scalar(0,0,255), 3);
+                }
+                viz.drawClassifierOutput("joy", joy_value, cv::Point(20, road_img.rows - 80), false, 115, 80);
+                cv::imshow("road view", viz.img);
+                listenPtr->draw(faces, frame);
 
                 std::cerr << "timestamp: " << frame.getTimestamp()
                     << " cfps: " << listenPtr->getCaptureFrameRate()

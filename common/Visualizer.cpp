@@ -76,8 +76,12 @@ void Visualizer::drawFaceMetrics(affdex::Face face, std::vector<cv::Point2f> bou
 
     //Draw Right side metrics
     int padding = bounding_box[0].y; //Top left Y
-    drawValues((float *)&face.expressions, EXPRESSIONS,
-               bounding_box[2].x + spacing, padding, white_color, false);
+    drawClassifierOutput("smile", face.expressions.smile, cv::Point(bounding_box[2].x, padding += spacing), false);
+    drawClassifierOutput("brow raise", face.expressions.browRaise, cv::Point(bounding_box[2].x, padding += spacing), false);
+    drawClassifierOutput("brow furrow", face.expressions.browFurrow, cv::Point(bounding_box[2].x, padding += spacing), false);
+    drawClassifierOutput("mouth open", face.expressions.mouthOpen, cv::Point(bounding_box[2].x, padding += spacing), false);
+    drawClassifierOutput("nose wrinkle", face.expressions.noseWrinkle, cv::Point(bounding_box[2].x, padding += spacing), false);
+    drawClassifierOutput("upper lip raise", face.expressions.upperLipRaise, cv::Point(bounding_box[2].x, padding += spacing), false);
 
     padding = bounding_box[2].y;  //Top left Y
     //Draw Head Angles
@@ -85,11 +89,12 @@ void Visualizer::drawFaceMetrics(affdex::Face face, std::vector<cv::Point2f> bou
                         bounding_box[0].x - spacing, padding);
 
     //Draw Appearance
-    drawAppearance(face.appearance, bounding_box[0].x - spacing, padding);
+    //drawAppearance(face.appearance, bounding_box[0].x - spacing, padding);
 
     //Draw Left side metrics
-    drawValues((float *)&face.emotions, EMOTIONS,
-               bounding_box[0].x - spacing, padding, white_color, true);
+    drawClassifierOutput("joy", face.emotions.joy, cv::Point(bounding_box[0].x, padding += spacing), true);
+    drawClassifierOutput("anger", face.emotions.anger, cv::Point(bounding_box[0].x, padding += spacing), true);
+    drawClassifierOutput("surprise", face.emotions.surprise, cv::Point(bounding_box[0].x, padding += spacing), true);
 
 }
 
@@ -174,7 +179,7 @@ void Visualizer::drawText(const std::string& name, const std::string& value,
  * @param align_right -- Whether to right or left justify the text
  */
 void Visualizer::drawClassifierOutput(const std::string& classifier,
-                                      const float value, const cv::Point2f& loc, bool align_right)
+                                      const float value, const cv::Point2f& loc, bool align_right, int block_width, int block_height)
 {
 
     static const ColorgenLinear white_yellow_generator( 0, 100, cv::Scalar(255,255,255), cv::Scalar(0, 255, 255));
@@ -200,14 +205,14 @@ void Visualizer::drawClassifierOutput(const std::string& classifier,
     {
         equalizer_magnitude = std::fabs(value);
     }
-    drawEqualizer(classifier, equalizer_magnitude, loc, align_right, color );
+    drawEqualizer(classifier, equalizer_magnitude, loc, align_right, color, block_width, block_height);
 }
 
 void Visualizer::drawEqualizer(const std::string& name, const float value, const cv::Point2f& loc,
-                               bool align_right, cv::Scalar color)
+                               bool align_right, cv::Scalar color, int block_width, int block_height)
 {
-    const int block_width = 8;
-    const int block_height = 10;
+    //const int block_width = 115;
+    //const int block_height = 10;
     const int margin = 2;
     const int block_size = 10;
     const int max_blocks = 100/block_size;

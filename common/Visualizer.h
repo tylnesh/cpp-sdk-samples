@@ -83,7 +83,7 @@ public:
   std::map<affdex::Age, std::string> AGE_MAP;
   std::map<affdex::Ethnicity, std::string> ETHNICITY_MAP;
 
-private:
+  cv::Mat img;
 
   /** @brief DrawClassifierOutput Displays a classifier and associated value
   * @param name        -- Name of the classifier
@@ -92,7 +92,9 @@ private:
   * @param align_right -- Whether to right or left justify the text
   */
   void drawClassifierOutput(const std::string& classifier, const float value,
-                            const cv::Point2f& loc, bool align_right=false );
+                            const cv::Point2f& loc, bool align_right=false, int block_width=8, int block_height=10 );
+
+private:
   /** @brief DrawValues displays a list of classifiers and associated values
   * @param names       -- Names of the classifiers to show
   * @param value       -- Value we are trying to display
@@ -112,7 +114,7 @@ private:
   * @param color       -- Color
   */
   void drawEqualizer(const std::string& name, const float value, const cv::Point2f& loc,
-                     bool align_right, cv::Scalar color);
+                     bool align_right, cv::Scalar color, int block_width=8, int block_height=10);
 
   /** @brief DrawText displays an text on screen either right or left justified at the anchor location (loc)
   * @param name        -- Name of the classifier
@@ -125,7 +127,6 @@ private:
                 const cv::Point2f loc, bool align_right=false, cv::Scalar color=cv::Scalar(255,255,255));
 
 
-  cv::Mat img;
   cv::Mat logo;
   bool logo_resized;
   const int spacing = 20;
