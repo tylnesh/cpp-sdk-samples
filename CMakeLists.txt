@@ -32,8 +32,9 @@ elseif( CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX )
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    status("Updating compiler to make use of C++14")
-    set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++14")
+    status("Updating compiler to make use of C++11")
+    set(CMAKE_CXX_FLAGS "-std=c++11")
+    set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++11")
     set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
 endif()
 
@@ -98,11 +99,11 @@ endif( NOT Boost_FOUND )
 
 set (AFFDEX_FOUND FALSE)
 
-if( DEFINED AFFDEX_DIR ) 
+if( DEFINED AFFDEX_DIR )
    find_path(AFFDEX_INCLUDE_DIR FrameDetector.h
              HINTS "${AFFDEX_DIR}/include" )
 
-   find_library(AFFDEX_LIBRARY NAMES affdex-native
+   find_library(AFFDEX_LIBRARY NAMES affectiva-vision
                HINTS "${AFFDEX_DIR}/lib" )
 
    set(AFFDEX_INCLUDE_DIRS "${AFFDEX_INCLUDE_DIR}")
