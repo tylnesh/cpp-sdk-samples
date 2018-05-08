@@ -1,27 +1,11 @@
-# Sample Apps for Affdex SDK for Windows and Linux
-
-Welcome to our repository on GitHub! Here you will find example code to get you started with our Affdex Linux SDK 4.0.0, Affdex Windows SDK 3.4 and begin emotion-enabling you own app! Documentation for the SDKs is available on the <a href=http://developer.affectiva.com/>Affectiva's Developer Portal</a>.
+# Sample app for analyzing facial emotion using Automotive SDK for Linux
 
 Build Status
 -------------
-- Windows: [![Build status](https://ci.appveyor.com/api/projects/status/pn2y9h8a3nnkiw41?svg=true)]
-(https://ci.appveyor.com/project/ahamino/win-sdk-samples)
-- Ubuntu: [![Build Status](https://travis-ci.org/Affectiva/cpp-sdk-samples.svg?branch=master)](https://travis-ci.org/Affectiva/cpp-sdk-samples)
+- Ubuntu: [![Build Status](https://travis-ci.org/Affectiva/cpp-sdk-samples.svg?branch=auto-speech)](https://travis-ci.org/Affectiva/cpp-sdk-samples)
 
-Dependencies
+Additional Dependencies
 ------------
-
-##### Windows
-- Affdex SDK 3.4 (64 bit)
-- Visual Studio 2013 or higher
-
-##### Linux
-- Ubuntu 16.04 with GCC v5.4.1
-- CentOS 7 with GCC v4.8.x
-- Affdex SDK 4.0.0
-- CMake 3.5 or higher
-
-##### Additional dependencies
 
 - OpenCV 2.4
 - Boost 1.63
@@ -31,18 +15,7 @@ Dependencies
 
 Installation
 ------------
-
-- Download Affdex SDK for Linux [from here](https://affectiva.readme.io/docs/getting-started-with-the-affectiva-sdk-for-linux#section-1-download-and-extract-the-sdk-archive)
-- Download Affdex SDK for Windows [from here](https://affectiva.readme.io/docs/getting-started-with-the-emotion-sdk-for-windows#section-1-download-and-run-the-sdk-installer)
-
-
-##### Windows
-- Install the SDK using MSI installer.
-- The additional dependencies get installed automatically by NuGet.
-
-##### Linux
-
-*Installation Guide for dependencies CMake v3.8.1 and Boost v1.63 for CentOS 7 and Ubuntu 16.04*
+*Installation Guide for dependencies CMake v3.8.1 and Boost v1.63 for Ubuntu 16.04*
 
 - Boost
 
@@ -74,16 +47,13 @@ $ ./bootstrap --system-curl && \
 
 ```bashrc
 $ sudo apt-get install build-essential libopencv-dev libcurl4-openssl uuid-dev
-$ wget https://download.affectiva.com/linux/gcc-5.4/affdex-cpp-sdk-4.0-75-ubuntu-xenial-xerus-x86_64bit.tar.gz
-$ mkdir $HOME/affdex-sdk
-$ tar -xzvf affdex-cpp-sdk-4.0-75-ubuntu-xenial-xerus-x86_64bit.tar.gz -C $HOME/affdex-sdk
-$ export AFFDEX_DATA_DIR=$HOME/affdex-sdk/data
+$ export AFFDEX_DATA_DIR=$HOME/auto-sdk/data/vision
 $ git clone https://github.com/Affectiva/cpp-sdk-samples.git $HOME/sdk-samples
 $ mkdir $HOME/build
 $ cd $HOME/build
-$ cmake -DOpenCV_DIR=/usr/ -DBOOST_ROOT=/usr/ -DAFFDEX_DIR=$HOME/affdex-sdk $HOME/sdk-samples
+$ cmake -DOpenCV_DIR=/usr/ -DBOOST_ROOT=/usr/ -DAFFDEX_DIR=$HOME/auto-sdk $HOME/sdk-samples
 $ make
-$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/affdex-sdk/lib
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/auto-sdk/lib
 
 # The SDK statically links a forked version of OpenCV, so if you run into double free or corruption error
 # then you will need to preload the OpenCV library installed from package manager
@@ -92,35 +62,12 @@ $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/affdex-sdk/lib
 $ ldconfig -p | grep libopencv_core.so.2.4
 $ export LD_PRELOAD=/path/to/libopencv_core.so.2.4
 
-```
-
-- Building the SDK on CentOS 7
-
-```bashrc
-$ sudo yum install libcurl-devel.x86_64 libuuid-devel.x86_64 opencv-devel
-$ wget https://download.affectiva.com/linux/centos-4.8/affdex-cpp-sdk-4.0-2941-centos-7-x86_64bit.tar.gz
-$ mkdir $HOME/affdex-sdk
-$ tar -xzvf affdex-cpp-sdk-4.0-2941-centos-7-x86_64bit.tar.gz -C $HOME/affdex-sdk
-$ export AFFDEX_DATA_DIR=$HOME/affdex-sdk/data
-$ git clone https://github.com/Affectiva/cpp-sdk-samples.git $HOME/sdk-samples
-$ mkdir $HOME/build
-$ cd $HOME/build
-$ cmake -DOpenCV_DIR=/usr/ -DBOOST_ROOT=/usr/ -DAFFDEX_DIR=$HOME/affdex-sdk $HOME/sdk-samples
-$ make
-$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/affdex-sdk/lib
-
-# The SDK statically links a forked version of OpenCV, so if you run into double free or corruption error
-# then you will need to preload the OpenCV library installed from package manager
-# Use this command to find the path of libopencv_core.so.2.4
-
-$ ldconfig -p | grep libopencv_core.so.2.4
-$ export LD_PRELOAD=/path/to/libopencv_core.so.2.4
 ```
 
 Frame-detector-webcam-demo (c++)
 ------------------
 
-Project for demoing the [FrameDetector class](http://developer.affectiva.com/v3_2/cpp/analyze-frames/). It grabs frames from the camera, analyzes them and displays the results on screen.
+Project for demoing the [FrameDetector class](https://auto.affectiva.com/docs/vision-create-detector). It grabs frames from the camera, analyzes them and displays the results on screen.
 
 The following command line arguments can be used to run it:
 
@@ -136,8 +83,6 @@ The following command line arguments can be used to run it:
                                         faces).
     --numFaces arg (=1)                  Number of faces to be tracked.
     --draw arg (=1)                      Draw metrics on screen.
-
-For an example of how to use Affdex in a C# application .. please refer to [AffdexMe](https://github.com/affectiva/affdexme-win)
 
 Docker Build Instructions
 -------------------------

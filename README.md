@@ -1,3 +1,16 @@
-# Sample Apps for Automotive SDK
+# Sample Apps for Affectiva's Automotive SDK
 
-Welcome to our repository on GitHub! Here you will find example code to get you started with our Automotive Linux SDK 1.0 and begin emotion-enabling you own app! Documentation for the SDKs is available on the <a href=http://developer.affectiva.com/>Affectiva's Developer Portal</a>.
+Welcome to our repository on GitHub! Here you will find example code to get you started with our Automotive Linux SDK 1.0. Documentation for the SDKs is available on the <a href=https://auto.affectiva.com/>Affectiva's Developer Portal</a>.
+
+Dependencies
+------------
+
+##### Linux
+- Ubuntu 16.04 with GCC v5.4.1
+- Affectiva's Automotive SDK 1.0
+- CMake 3.5 or higher
+
+Installation
+------------
+
+The Automotive SDK is available upon request. To get access, please contact us

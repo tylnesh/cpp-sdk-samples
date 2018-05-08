@@ -1,4 +1,4 @@
-## Affectiva Speech SDK Samples
+# Sample apps for analyzing speaker emotion using Automotive SDK for Linux
 
 ## Dependencies
 
@@ -66,16 +66,11 @@ For building under Linux, type the following command:
 
 	cmake . -DCMAKE_BUILD_TYPE=[Release,Debug] <other cmake args, see above>
 
-This will generate the Makefile used to later build the samples.
-
-
-* CentOS Build Instruction
-
 ```
 # Setup BUILD
-AffdexSpeech_INCLUDE=$WORKSPACE/speech-sdk/include
+AffdexSpeech_INCLUDE=$WORKSPACE/auto-sdk/include
 BOOST_DIR=$WORKSPACE/boost
-AffdexSpeech_LIBRARY=$WORKSPACE/speech-sdk/lib/libaffectiva-speech.so
+AffdexSpeech_LIBRARY=$WORKSPACE/auto-sdk/lib/libaffectiva-speech.so
 PortAudio_INCLUDE=/usr/include
 PortAudio_LIBRARY=/usr/lib64/libportaudio.so
 LibSndFile_INCLUDE=/usr/include
@@ -84,7 +79,9 @@ LibSndFile_LIBRARY=/usr/lib64/libsndfile.so
 CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release \
 -DBOOST_ROOT=$BOOST_DIR \
 -DAffdexSpeech_INCLUDE=$AffdexSpeech_INCLUDE -DAffdexSpeech_LIBRARY=$AffdexSpeech_LIBRARY \
+-DBUILD_MIC=ON \
 -DPortAudio_INCLUDE=$PortAudio_INCLUDE -DPortAudio_LIBRARY=$PortAudio_LIBRARY \
+-DBUILD_WAV=ON \
 -DLibSndFile_INCLUDE=$LibSndFile_INCLUDE -DLibSndFile_LIBRARY=$LibSndFile_LIBRARY \
 -DCMAKE_INSTALL_PREFIX=$WORKSPACE/install "
 
@@ -94,9 +91,3 @@ cmake $CMAKE_ARGS -DCMAKE_CXX_FLAGS="-pthread" $WORKSPACE/src
 make -j4
 make install
 ```
-
-#### Windows
-
-    cmake . -G "Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=[Release,Debug] <other cmake args, see above>
-
-This will generate a .sln file capable of building the samples.
