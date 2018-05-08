@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="opencv-webcam-demo.cpp">
+    <ClCompile Include="frame-detector-webcam-demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\Visualizer.cpp">
+    <ClCompile Include="Visualizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -26,19 +26,19 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\common\AFaceListener.hpp">
+    <ClInclude Include="AFaceListener.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\PlottingImageListener.hpp">
+    <ClInclude Include="PlottingImageListener.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\StatusListener.hpp">
+    <ClInclude Include="StatusListener.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\Visualizer.h">
+    <ClInclude Include="Visualizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\affdex_small_logo.h">
+    <ClInclude Include="affdex_small_logo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

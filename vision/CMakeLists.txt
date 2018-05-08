@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 2.6)
 
-set(rootProject cpp-sdk-samples)
+set(rootProject vision-samples)
 project(${rootProject})
 
 # CMake includes
-include(cmake_modules/Macros.cmake)         # Some custom macros we have writtens
+include(../cmake_modules/Macros.cmake)         # Some custom macros we have writtens
 
 # -------------------
 # CMAKE - ENVIRONMENT
@@ -102,7 +102,7 @@ if( DEFINED AFFDEX_DIR )
    find_path(AFFDEX_INCLUDE_DIR FrameDetector.h
              HINTS "${AFFDEX_DIR}/include" )
 
-   find_library(AFFDEX_LIBRARY NAMES affectiva-vision-sdk
+   find_library(AFFDEX_LIBRARY NAMES affectiva-vision
                HINTS "${AFFDEX_DIR}/lib" )
 
    set(AFFDEX_INCLUDE_DIRS "${AFFDEX_INCLUDE_DIR}")
@@ -124,7 +124,7 @@ else (DEFINED AFFDEX_DIR)
 endif (DEFINED AFFDEX_DIR)
 
 
-add_subdirectory(opencv-webcam-demo)
+add_subdirectory(frame-detector-webcam-demo)
 # Commenting out video-demo for auto use case
 #add_subdirectory(video-demo)
 

@@ -10,7 +10,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8DCDC209-C25D-4C61-B2AC-2FBA1775DD6B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>opencvwebcamdemo</RootNamespace>
+    <RootNamespace>framedetectorwebcamdemo</RootNamespace>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
@@ -44,7 +44,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files\Affectiva\AffdexSDK\include;../common/;%(AdditionalDependencies)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\Affectiva\AffdexSDK\include;%(AdditionalDependencies)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -59,18 +59,18 @@ xcopy /d /s /y "C:\Program Files\Affectiva\AffdexSDK\data" "$(OutDir)data\"</Com
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\common\Visualizer.cpp" />
-    <ClCompile Include="opencv-webcam-demo.cpp" />
+    <ClCompile Include="Visualizer.cpp" />
+    <ClCompile Include="frame-detector-webcam-demo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\common\Visualizer.h" />
-    <ClInclude Include="..\common\affdex_small_logo.h" />
-    <ClInclude Include="..\common\AFaceListener.hpp" />
-    <ClInclude Include="..\common\PlottingImageListener.hpp" />
-    <ClInclude Include="..\common\StatusListener.hpp" />
+    <ClInclude Include="Visualizer.h" />
+    <ClInclude Include="affdex_small_logo.h" />
+    <ClInclude Include="AFaceListener.hpp" />
+    <ClInclude Include="PlottingImageListener.hpp" />
+    <ClInclude Include="StatusListener.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,7 +4,7 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-set(subProject opencv-webcam-demo)
+set(subProject frame-detector-webcam-demo)
 
 PROJECT(${subProject})
 
@@ -16,13 +16,10 @@ if( ${CMAKE_VERSION} VERSION_GREATER 2.8.11 )
 else()
     get_filename_component(PARENT_DIR ${PROJECT_SOURCE_DIR} PATH)
 endif()
-set(COMMON_HDRS "${PARENT_DIR}/common/")
-file(GLOB COMMON_HDRS_FILES ${COMMON_HDRS}/*.h*)
-file(GLOB COMMON_CPP_FILES ${COMMON_HDRS}/*.c*)
 
-add_executable(${subProject} ${SRCS} ${HDRS} ${COMMON_HDRS_FILES} ${COMMON_CPP_FILES})
+add_executable(${subProject} ${SRCS} ${HDRS})
 
-target_include_directories(${subProject} PRIVATE ${Boost_INCLUDE_DIRS} ${AFFDEX_INCLUDE_DIR} ${COMMON_HDRS})
+target_include_directories(${subProject} PRIVATE ${Boost_INCLUDE_DIRS} ${AFFDEX_INCLUDE_DIR})
 
 target_link_libraries( ${subProject} ${AFFDEX_LIBRARIES} ${OpenCV_LIBS} ${Boost_LIBRARIES} )
 
