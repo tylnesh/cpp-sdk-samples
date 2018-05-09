@@ -13,4 +13,4 @@ Dependencies
 Installation
 ------------
 
-The Automotive SDK is available upon request. To get access, please contact us
+The Automotive SDK is available upon request. To get access, please contact us at <a href=https://auto.affectiva.com/>Affectiva's Developer Portal</a>.
