@@ -49,7 +49,7 @@ Specify the the following CMake variables to identify the locations of various d
 Note: for the \_LIBRARY and \_LIBRARY_DEBUG values, you only need to provide one or the other, as appropriate to the type of build you're doing (i.e. Release or Debug, as indicated by CMAKE_BUILD_TYPE).  On Windows, if you omit CMAKE_BUILD_TYPE and specify both values, CMake will produce a .sln file capable of building both Debug and Release modes.
 
 - **BUILD_MIC**: Build the `mic` sample app.
-- **BUILD_WAV**: Build the `wac` sample app.
+- **BUILD_WAV**: Build the `wav` sample app.
 - **AFFECTIVA_SDK_DIR**: path to the folder where the Automotive SDK is installed
 - **PortAudio_INCLUDE**: path to the folder containing the PortAudio header files
 - **PortAudio_LIBRARY**: path to the release mode PortAudio library
