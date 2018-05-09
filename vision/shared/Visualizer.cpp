@@ -1,14 +1,15 @@
 #include "Visualizer.h"
 #include <boost/format.hpp>
-#include "affdex_small_logo.h"
 #include <algorithm>
+#include "AffectivaLogo.h"
+#include <opencv2/highgui/highgui.hpp>
 
 Visualizer::Visualizer():
   GREEN_COLOR_CLASSIFIERS({
     "joy"
   }),
   RED_COLOR_CLASSIFIERS({
-    "anger", "disgust", "sadness", "fear", "contempt"
+    "anger"
   })
 {
     logo_resized = false;
@@ -16,77 +17,26 @@ Visualizer::Visualizer():
 
     EXPRESSIONS = {
         {affdex::vision::Expression::SMILE, "smile"},
-        {affdex::vision::Expression::INNER_BROW_RAISE, "innerBrowRaise"},
         {affdex::vision::Expression::BROW_RAISE, "browRaise"},
         {affdex::vision::Expression::BROW_FURROW, "browFurrow"},
         {affdex::vision::Expression::NOSE_WRINKLE, "noseWrinkle"},
         {affdex::vision::Expression::UPPER_LIP_RAISE, "upperLipRaise"},
-        {affdex::vision::Expression::LIP_CORNER_DEPRESSOR, "lipCornerDepressor"},
-        {affdex::vision::Expression::CHIN_RAISE, "chinRaise"},
-        {affdex::vision::Expression::LIP_PUCKER, "lipPucker"},
-        {affdex::vision::Expression::LIP_PRESS, "lipPress"},
-        {affdex::vision::Expression::LIP_SUCK, "lipSuck"},
         {affdex::vision::Expression::MOUTH_OPEN, "mouthOpen"},
-        {affdex::vision::Expression::SMIRK, "smirk"},
         {affdex::vision::Expression::EYE_CLOSURE, "eyeClosure"},
-        {affdex::vision::Expression::ATTENTION, "attention"},
-        {affdex::vision::Expression::EYE_WIDEN, "eyeWiden"},
-        {affdex::vision::Expression::CHEEK_RAISE, "cheekRaise"},
-        {affdex::vision::Expression::LID_TIGHTEN, "lidTighten"},
-        {affdex::vision::Expression::DIMPLER, "dimpler"},
-        {affdex::vision::Expression::LIP_STRETCH, "lipStretch"},
-        {affdex::vision::Expression::JAW_DROP, "jawDrop"}
+        {affdex::vision::Expression::CHEEK_RAISE, "cheekRaise"}
     };
 
     EMOTIONS = {
         {affdex::vision::Emotion::JOY, "joy"},
-        {affdex::vision::Emotion::FEAR, "fear"},
-        {affdex::vision::Emotion::DISGUST, "disgust"},
-        {affdex::vision::Emotion::SADNESS, "sadness"},
         {affdex::vision::Emotion::ANGER, "anger"},
         {affdex::vision::Emotion::SURPRISE, "surprise"},
-        {affdex::vision::Emotion::CONTEMPT, "contempt"},
         {affdex::vision::Emotion::VALENCE, "valence"},
-        {affdex::vision::Emotion::ENGAGEMENT, "engagement"}
     };
 
     HEAD_ANGLES = {
         {affdex::vision::Measurement::PITCH, "pitch"},
         {affdex::vision::Measurement::YAW, "yaw"},
         {affdex::vision::Measurement::ROLL, "roll"}
-    };
-
-
-    GENDER_MAP = std::map<affdex::vision::Gender, std::string> {
-        { affdex::vision::Gender::MALE, "male" },
-        { affdex::vision::Gender::FEMALE, "female" },
-        { affdex::vision::Gender::UNKNOWN, "unknown" },
-
-    };
-
-    GLASSES_MAP = std::map<bool, std::string> {
-        { true, "yes" },
-        { false, "no" }
-    };
-
-    AGE_MAP = std::map<affdex::vision::Age, std::string> {
-        { affdex::vision::Age::AGE_UNKNOWN, "unknown"},
-        { affdex::vision::Age::AGE_UNDER_18, "under 18" },
-        { affdex::vision::Age::AGE_18_24, "18-24" },
-        { affdex::vision::Age::AGE_25_34, "25-34" },
-        { affdex::vision::Age::AGE_35_44, "35-44" },
-        { affdex::vision::Age::AGE_45_54, "45-54" },
-        { affdex::vision::Age::AGE_55_64, "55-64" },
-        { affdex::vision::Age::AGE_65_PLUS, "65 plus" }
-    };
-
-    ETHNICITY_MAP = std::map<affdex::vision::Ethnicity, std::string> {
-        { affdex::vision::Ethnicity::UNKNOWN, "unknown"},
-        { affdex::vision::Ethnicity::CAUCASIAN, "caucasian" },
-        { affdex::vision::Ethnicity::BLACK_AFRICAN, "black african" },
-        { affdex::vision::Ethnicity::SOUTH_ASIAN, "south asian" },
-        { affdex::vision::Ethnicity::EAST_ASIAN, "east asian" },
-        { affdex::vision::Ethnicity::HISPANIC, "hispanic" }
     };
 }
 
@@ -102,9 +52,6 @@ void Visualizer::drawFaceMetrics(affdex::vision::Face face, std::vector<affdex::
     padding = bounding_box[0].y;  //Top right Y
     //Draw Head Angles
     drawHeadOrientation(face.getMeasurements(), bounding_box[0].x - spacing, padding);
-
-    //Draw Appearance
-    drawAppearance(face.getAppearances(), bounding_box[0].x - spacing, padding);
 
     //Draw Left side metrics
     auto emotions = face.getEmotions();
@@ -267,15 +214,6 @@ void Visualizer::drawHeadOrientation(std::map<affdex::vision::Measurement, float
         std::string valueStr = boost::str(boost::format("%3.1f") % headAngles.at(h.first));
         drawText(h.second, valueStr, cv::Point(x, padding += spacing), align_right, color );
     }
-}
-
-void Visualizer::drawAppearance(affdex::vision::Appearances appearance, const int x, int &padding,
-                              bool align_right, cv::Scalar color)
-{
-    drawText("gender", GENDER_MAP[appearance.gender], cv::Point(x, padding += spacing), align_right, color );
-    drawText("age", AGE_MAP[appearance.age], cv::Point(x, padding += spacing), align_right, color );
-    drawText("ethnicity", ETHNICITY_MAP[appearance.ethnicity], cv::Point(x, padding += spacing), align_right, color );
-
 }
 
 void Visualizer::showImage()

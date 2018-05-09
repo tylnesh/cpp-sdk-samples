@@ -1,4 +1,4 @@
-set(subProject frame-detector-webcam-demo)
+set(subProject frame-detector-video-demo)
 
 PROJECT(${subProject})
 
