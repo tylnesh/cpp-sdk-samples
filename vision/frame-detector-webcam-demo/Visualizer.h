@@ -20,14 +20,14 @@ public:
   /** @brief DrawPoints displays the landmark points on the image
   * @param points  -- The landmark points
   */
-  void drawPoints(affdex::VecFeaturePoint points);
+  void drawPoints(std::map<affdex::vision::FacePoint, affdex::vision::Point> points);
 
   /** @brief DrawBoundingBox displays the bounding box
   * @param top_left      -- The top left point
   * @param bottom_right  -- The bottom right point
   * @param valence       -- The valence value
   */
-  void drawBoundingBox(cv::Point2f top_left, cv::Point2f bottom_right, float valence);
+  void drawBoundingBox(std::vector<affdex::vision::Point>bounding_box, float valence);
 
   /** @brief DrawHeadOrientation Displays head orientation and associated value
   * @param name        -- Name of the classifier
@@ -37,7 +37,7 @@ public:
   * @param align_right -- Whether to right or left justify the text
   * @param color       -- Color
   */
-  void drawHeadOrientation(affdex::Orientation headAngles, const int x, int &padding,
+  void drawHeadOrientation(std::map<affdex::vision::Measurement, float> headAngles, const int x, int &padding,
                            bool align_right=true, cv::Scalar color=cv::Scalar(255,255,255));
 
   /** @brief DrawAppearance Draws appearance metrics on screen
@@ -48,7 +48,7 @@ public:
   * @param align_right -- Whether to right or left justify the text
   * @param color       -- Color
   */
-  void drawAppearance(affdex::Appearance appearance, const int x, int &padding,
+  void drawAppearance(affdex::vision::Appearances appearance, const int x, int &padding,
                       bool align_right=true, cv::Scalar color=cv::Scalar(255,255,255));
 
 
@@ -56,7 +56,7 @@ public:
   * @param face         -- The affdex::Face object to display
   * @param bounding_box -- The bounding box coordinates
   */
-  void drawFaceMetrics(affdex::Face face, std::vector<cv::Point2f> bounding_box);
+  void drawFaceMetrics(affdex::vision::Face face);
 
   /** @brief ShowImage displays image on screen
   */
@@ -74,14 +74,13 @@ public:
 
   std::set<std::string> GREEN_COLOR_CLASSIFIERS;
   std::set<std::string> RED_COLOR_CLASSIFIERS;
-  std::vector<std::string> EXPRESSIONS;
-  std::vector<std::string> EMOTIONS;
-  std::vector<std::string> EMOJIS;
-  std::vector<std::string> HEAD_ANGLES;
-  std::map<affdex::Glasses, std::string> GLASSES_MAP;
-  std::map<affdex::Gender, std::string> GENDER_MAP;
-  std::map<affdex::Age, std::string> AGE_MAP;
-  std::map<affdex::Ethnicity, std::string> ETHNICITY_MAP;
+  std::vector<std::pair<affdex::vision::Expression, std::string>> EXPRESSIONS;
+  std::vector<std::pair<affdex::vision::Emotion, std::string>> EMOTIONS;
+  std::vector<std::pair<affdex::vision::Measurement, std::string>> HEAD_ANGLES;
+  std::map<bool, std::string> GLASSES_MAP;
+  std::map<affdex::vision::Gender, std::string> GENDER_MAP;
+  std::map<affdex::vision::Age, std::string> AGE_MAP;
+  std::map<affdex::vision::Ethnicity, std::string> ETHNICITY_MAP;
 
 private:
 
@@ -93,16 +92,6 @@ private:
   */
   void drawClassifierOutput(const std::string& classifier, const float value,
                             const cv::Point2f& loc, bool align_right=false );
-  /** @brief DrawValues displays a list of classifiers and associated values
-  * @param names       -- Names of the classifiers to show
-  * @param value       -- Value we are trying to display
-  * @param x           -- The x value of the location
-  * @param padding     -- The padding value
-  * @param align_right -- Whether to right or left justify the text
-  */
-  void drawValues(const float * first, const std::vector<std::string> names,
-                  const int x, int &padding, const cv::Scalar clr, const bool align_right);
-
 
   /** @brief DrawEqualizer displays an equalizer on screen either right or left justified at the anchor location (loc)
   * @param name        -- Name of the classifier

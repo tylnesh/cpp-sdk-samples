@@ -15,92 +15,102 @@ Visualizer::Visualizer():
     logo = cv::imdecode(cv::InputArray(small_logo), CV_LOAD_IMAGE_UNCHANGED);
 
     EXPRESSIONS = {
-        "smile", "innerBrowRaise", "browRaise", "browFurrow", "noseWrinkle",
-        "upperLipRaise", "lipCornerDepressor", "chinRaise", "lipPucker", "lipPress",
-        "lipSuck", "mouthOpen", "smirk", "eyeClosure", "attention", "eyeWiden", "cheekRaise",
-        "lidTighten", "dimpler", "lipStretch", "jawDrop"
+        {affdex::vision::Expression::SMILE, "smile"},
+        {affdex::vision::Expression::INNER_BROW_RAISE, "innerBrowRaise"},
+        {affdex::vision::Expression::BROW_RAISE, "browRaise"},
+        {affdex::vision::Expression::BROW_FURROW, "browFurrow"},
+        {affdex::vision::Expression::NOSE_WRINKLE, "noseWrinkle"},
+        {affdex::vision::Expression::UPPER_LIP_RAISE, "upperLipRaise"},
+        {affdex::vision::Expression::LIP_CORNER_DEPRESSOR, "lipCornerDepressor"},
+        {affdex::vision::Expression::CHIN_RAISE, "chinRaise"},
+        {affdex::vision::Expression::LIP_PUCKER, "lipPucker"},
+        {affdex::vision::Expression::LIP_PRESS, "lipPress"},
+        {affdex::vision::Expression::LIP_SUCK, "lipSuck"},
+        {affdex::vision::Expression::MOUTH_OPEN, "mouthOpen"},
+        {affdex::vision::Expression::SMIRK, "smirk"},
+        {affdex::vision::Expression::EYE_CLOSURE, "eyeClosure"},
+        {affdex::vision::Expression::ATTENTION, "attention"},
+        {affdex::vision::Expression::EYE_WIDEN, "eyeWiden"},
+        {affdex::vision::Expression::CHEEK_RAISE, "cheekRaise"},
+        {affdex::vision::Expression::LID_TIGHTEN, "lidTighten"},
+        {affdex::vision::Expression::DIMPLER, "dimpler"},
+        {affdex::vision::Expression::LIP_STRETCH, "lipStretch"},
+        {affdex::vision::Expression::JAW_DROP, "jawDrop"}
     };
 
     EMOTIONS = {
-        "joy", "fear", "disgust", "sadness", "anger",
-        "surprise", "contempt", "valence", "engagement"
+        {affdex::vision::Emotion::JOY, "joy"},
+        {affdex::vision::Emotion::FEAR, "fear"},
+        {affdex::vision::Emotion::DISGUST, "disgust"},
+        {affdex::vision::Emotion::SADNESS, "sadness"},
+        {affdex::vision::Emotion::ANGER, "anger"},
+        {affdex::vision::Emotion::SURPRISE, "surprise"},
+        {affdex::vision::Emotion::CONTEMPT, "contempt"},
+        {affdex::vision::Emotion::VALENCE, "valence"},
+        {affdex::vision::Emotion::ENGAGEMENT, "engagement"}
     };
 
-    HEAD_ANGLES = { "pitch", "yaw", "roll" };
-
-
-    EMOJIS = std::vector<std::string> {
-        "relaxed", "smiley", "laughing",
-            "kissing", "disappointed",
-            "rage", "smirk", "wink",
-            "stuckOutTongueWinkingEye", "stuckOutTongue",
-            "flushed", "scream"
+    HEAD_ANGLES = {
+        {affdex::vision::Measurement::PITCH, "pitch"},
+        {affdex::vision::Measurement::YAW, "yaw"},
+        {affdex::vision::Measurement::ROLL, "roll"}
     };
 
-    GENDER_MAP = std::map<affdex::Gender, std::string> {
-        { affdex::Gender::Male, "male" },
-        { affdex::Gender::Female, "female" },
-        { affdex::Gender::Unknown, "unknown" },
+
+    GENDER_MAP = std::map<affdex::vision::Gender, std::string> {
+        { affdex::vision::Gender::MALE, "male" },
+        { affdex::vision::Gender::FEMALE, "female" },
+        { affdex::vision::Gender::UNKNOWN, "unknown" },
 
     };
 
-    GLASSES_MAP = std::map<affdex::Glasses, std::string> {
-        { affdex::Glasses::Yes, "yes" },
-        { affdex::Glasses::No, "no" }
+    GLASSES_MAP = std::map<bool, std::string> {
+        { true, "yes" },
+        { false, "no" }
     };
 
-    AGE_MAP = std::map<affdex::Age, std::string> {
-        { affdex::Age::AGE_UNKNOWN, "unknown"},
-        { affdex::Age::AGE_UNDER_18, "under 18" },
-        { affdex::Age::AGE_18_24, "18-24" },
-        { affdex::Age::AGE_25_34, "25-34" },
-        { affdex::Age::AGE_35_44, "35-44" },
-        { affdex::Age::AGE_45_54, "45-54" },
-        { affdex::Age::AGE_55_64, "55-64" },
-        { affdex::Age::AGE_65_PLUS, "65 plus" }
+    AGE_MAP = std::map<affdex::vision::Age, std::string> {
+        { affdex::vision::Age::AGE_UNKNOWN, "unknown"},
+        { affdex::vision::Age::AGE_UNDER_18, "under 18" },
+        { affdex::vision::Age::AGE_18_24, "18-24" },
+        { affdex::vision::Age::AGE_25_34, "25-34" },
+        { affdex::vision::Age::AGE_35_44, "35-44" },
+        { affdex::vision::Age::AGE_45_54, "45-54" },
+        { affdex::vision::Age::AGE_55_64, "55-64" },
+        { affdex::vision::Age::AGE_65_PLUS, "65 plus" }
     };
 
-    ETHNICITY_MAP = std::map<affdex::Ethnicity, std::string> {
-        { affdex::Ethnicity::UNKNOWN, "unknown"},
-        { affdex::Ethnicity::CAUCASIAN, "caucasian" },
-        { affdex::Ethnicity::BLACK_AFRICAN, "black african" },
-        { affdex::Ethnicity::SOUTH_ASIAN, "south asian" },
-        { affdex::Ethnicity::EAST_ASIAN, "east asian" },
-        { affdex::Ethnicity::HISPANIC, "hispanic" }
+    ETHNICITY_MAP = std::map<affdex::vision::Ethnicity, std::string> {
+        { affdex::vision::Ethnicity::UNKNOWN, "unknown"},
+        { affdex::vision::Ethnicity::CAUCASIAN, "caucasian" },
+        { affdex::vision::Ethnicity::BLACK_AFRICAN, "black african" },
+        { affdex::vision::Ethnicity::SOUTH_ASIAN, "south asian" },
+        { affdex::vision::Ethnicity::EAST_ASIAN, "east asian" },
+        { affdex::vision::Ethnicity::HISPANIC, "hispanic" }
     };
 }
 
-void Visualizer::drawFaceMetrics(affdex::Face face, std::vector<cv::Point2f> bounding_box)
+void Visualizer::drawFaceMetrics(affdex::vision::Face face)
 {
-    cv::Scalar white_color = cv::Scalar(255, 255, 255);
-
+    std::vector<affdex::vision::Point> bounding_box = face.getBoundingBox();
     //Draw Right side metrics
     int padding = bounding_box[0].y; //Top left Y
-    drawValues((float *)&face.expressions, EXPRESSIONS,
-               bounding_box[2].x + spacing, padding, white_color, false);
+    auto expressions = face.getExpressions();
+    for (auto& exp : EXPRESSIONS) {
+        drawClassifierOutput(exp.second, expressions.at(exp.first), cv::Point(bounding_box[1].x, padding += spacing), false);
+    }
 
-    padding = bounding_box[2].y;  //Top left Y
+    padding = bounding_box[0].y;  //Top right Y
     //Draw Head Angles
-    drawHeadOrientation(face.measurements.orientation,
-                        bounding_box[0].x - spacing, padding);
+    drawHeadOrientation(face.getMeasurements(), bounding_box[0].x - spacing, padding);
 
     //Draw Appearance
-    drawAppearance(face.appearance, bounding_box[0].x - spacing, padding);
+    drawAppearance(face.getAppearances(), bounding_box[0].x - spacing, padding);
 
     //Draw Left side metrics
-    drawValues((float *)&face.emotions, EMOTIONS,
-               bounding_box[0].x - spacing, padding, white_color, true);
-
-}
-
-void Visualizer::drawValues(const float * first, const std::vector<std::string> names,
-                            const int x, int &padding, const cv::Scalar clr, const bool align_right)
-{
-
-    for (std::string name : names)
-    {
-        drawClassifierOutput(name, (*first), cv::Point(x, padding += spacing), align_right);
-        first++;
+    auto emotions = face.getEmotions();
+    for (auto& emo : EMOTIONS) {
+        drawClassifierOutput(emo.second, emotions.at(emo.first), cv::Point(bounding_box[0].x, padding += spacing), true);
     }
 }
 
@@ -119,18 +129,20 @@ void Visualizer::updateImage(cv::Mat output_img)
   overlayImage(logo, roi, cv::Point(0, 0));
 }
 
-void Visualizer::drawPoints(affdex::VecFeaturePoint points)
+void Visualizer::drawPoints(std::map<affdex::vision::FacePoint, affdex::vision::Point> points)
 {
     for (auto& point : points)    //Draw face feature points.
     {
-        cv::circle(img, cv::Point(point.x, point.y), 2.0f, cv::Scalar(255, 255, 255));
+        cv::circle(img, cv::Point(point.second.x, point.second.y), 2.0f, cv::Scalar(255, 255, 255));
     }
 }
 
-void Visualizer::drawBoundingBox(cv::Point2f top_left, cv::Point2f bottom_right, float valence)
+void Visualizer::drawBoundingBox(std::vector<affdex::vision::Point> bounding_box, float valence)
 {
     //Draw bounding box
     const ColorgenRedGreen valence_color_generator( -100, 100 );
+    cv::Point top_left(bounding_box[0].x, bounding_box[0].y);
+    cv::Point bottom_right(bounding_box[1].x, bounding_box[1].y);
     cv::rectangle( img, top_left, bottom_right,
                    valence_color_generator(valence), 3);
 
@@ -249,18 +261,16 @@ void Visualizer::drawEqualizer(const std::string& name, const float value, const
 
 }
 
-void Visualizer::drawHeadOrientation(affdex::Orientation headAngles, const int x, int &padding,
+void Visualizer::drawHeadOrientation(std::map<affdex::vision::Measurement, float> headAngles, const int x, int &padding,
                                      bool align_right, cv::Scalar color)
 {
-    std::string valueStr = boost::str(boost::format("%3.1f") % headAngles.pitch);
-    drawText("pitch", valueStr, cv::Point(x, padding += spacing), align_right, color );
-    valueStr = boost::str(boost::format("%3.1f") % headAngles.yaw);
-    drawText("yaw", valueStr, cv::Point(x, padding += spacing), align_right, color );
-    valueStr = boost::str(boost::format("%3.1f") % headAngles.roll);
-    drawText("roll", valueStr, cv::Point(x, padding += spacing), align_right, color );
+    for (auto& h: HEAD_ANGLES) {
+        std::string valueStr = boost::str(boost::format("%3.1f") % headAngles.at(h.first));
+        drawText(h.second, valueStr, cv::Point(x, padding += spacing), align_right, color );
+    }
 }
 
-void Visualizer::drawAppearance(affdex::Appearance appearance, const int x, int &padding,
+void Visualizer::drawAppearance(affdex::vision::Appearances appearance, const int x, int &padding,
                               bool align_right, cv::Scalar color)
 {
     drawText("gender", GENDER_MAP[appearance.gender], cv::Point(x, padding += spacing), align_right, color );

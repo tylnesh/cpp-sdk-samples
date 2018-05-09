@@ -27,7 +27,7 @@ int main(int argsc, char ** argsv)
     namespace po = boost::program_options; // abbreviate namespace
 
     std::cerr << "Hit ESCAPE key to exit app.." << endl;
-    shared_ptr<FrameDetector> frameDetector;
+    shared_ptr<vision::FrameDetector> frameDetector;
 
     try{
 
@@ -38,11 +38,9 @@ int main(int argsc, char ** argsv)
         std::vector<int> resolution;
         int process_framerate = 30;
         int camera_framerate = 15;
-        int buffer_length = 2;
         int camera_id = 0;
         unsigned int nFaces = 1;
         bool draw_display = true;
-        int faceDetectorMode = (int)FaceDetectorMode::LARGE_FACES;
 
         float last_timestamp = -1.0f;
         float capture_fps = -1.0f;
@@ -62,9 +60,7 @@ int main(int argsc, char ** argsv)
             ("resolution,r", po::value< std::vector<int> >(&resolution)->default_value(DEFAULT_RESOLUTION, "640 480")->multitoken(), "Resolution in pixels (2-values): width height")
             ("pfps", po::value< int >(&process_framerate)->default_value(30), "Processing framerate.")
             ("cfps", po::value< int >(&camera_framerate)->default_value(30), "Camera capture framerate.")
-            ("bufferLen", po::value< int >(&buffer_length)->default_value(30), "process buffer size.")
             ("cid", po::value< int >(&camera_id)->default_value(0), "Camera ID.")
-            ("faceMode", po::value< int >(&faceDetectorMode)->default_value((int)FaceDetectorMode::LARGE_FACES), "Face detector mode (large faces vs small faces).")
             ("numFaces", po::value< unsigned int >(&nFaces)->default_value(1), "Number of faces to be tracked.")
             ("draw", po::value< bool >(&draw_display)->default_value(true), "Draw metrics on screen.")
             ;
@@ -107,17 +103,16 @@ int main(int argsc, char ** argsv)
         std::ofstream csvFileStream;
 
         std::cerr << "Initializing Affdex FrameDetector" << endl;
-        shared_ptr<FaceListener> faceListenPtr(new AFaceListener());
-        shared_ptr<PlottingImageListener> listenPtr(new PlottingImageListener(csvFileStream, draw_display));    // Instanciate the ImageListener class
+        shared_ptr<vision::FaceListener> faceListenPtr(new AFaceListener());
+        shared_ptr<PlottingImageListener> listenPtr(new PlottingImageListener(csvFileStream));    // Instanciate the ImageListener class
         shared_ptr<StatusListener> videoListenPtr(new StatusListener());
-        frameDetector = make_shared<FrameDetector>(buffer_length, process_framerate, nFaces, (affdex::FaceDetectorMode) faceDetectorMode);        // Init the FrameDetector Class
-        frameDetector->setClassifierPath(DATA_FOLDER);
+        frameDetector = make_shared<vision::FrameDetector>(DATA_FOLDER, process_framerate, nFaces);        // Init the FrameDetector Class
 
         //Initialize detectors
-        frameDetector->setDetectAllEmotions(true);
-        frameDetector->setDetectAllExpressions(true);
-        frameDetector->setDetectAllEmojis(true);
-        frameDetector->setDetectAllAppearances(true);
+        frameDetector->enable(vision::Feature::EMOTIONS);
+        frameDetector->enable(vision::Feature::EXPRESSIONS);
+        frameDetector->enable(vision::Feature::EMOJI);
+        frameDetector->enable(vision::Feature::APPEARANCES);
         frameDetector->setImageListener(listenPtr.get());
         frameDetector->setFaceListener(faceListenPtr.get());
         frameDetector->setProcessStatusListener(videoListenPtr.get());
@@ -134,20 +129,7 @@ int main(int argsc, char ** argsv)
             return 1;
         }
 
-        std::cout << "Max num of faces set to: " << frameDetector->getMaxNumberFaces() << std::endl;
-        std::string mode;
-        switch (frameDetector->getFaceDetectorMode())
-        {
-        case FaceDetectorMode::LARGE_FACES:
-            mode = "LARGE_FACES";
-            break;
-        case FaceDetectorMode::SMALL_FACES:
-            mode = "SMALL_FACES";
-            break;
-        default:
-            break;
-        }
-        std::cout << "Face detector mode set to: " << mode << std::endl;
+        std::cout << "Max num of faces set to: " << nFaces << std::endl;
 
         //Start the frame detector thread.
         frameDetector->start();
@@ -165,7 +147,7 @@ int main(int argsc, char ** argsv)
             const double seconds = milliseconds.count() / 1000.f;
 
             // Create a frame
-            Frame f(img.size().width, img.size().height, img.data, Frame::COLOR_FORMAT::BGR, seconds);
+            vision::Frame f(img.size().width, img.size().height, img.data, vision::Frame::ColorFormat::BGR, milliseconds.count());
             capture_fps = 1.0f / (seconds - last_timestamp);
             last_timestamp = seconds;
             frameDetector->process(f);  //Pass the frame to detector
@@ -174,9 +156,9 @@ int main(int argsc, char ** argsv)
             if (listenPtr->getDataSize() > 0)
             {
 
-                std::pair<Frame, std::map<FaceId, Face> > dataPoint = listenPtr->getData();
-                Frame frame = dataPoint.first;
-                std::map<FaceId, Face> faces = dataPoint.second;
+                auto dataPoint = listenPtr->getData();
+                vision::Frame frame = dataPoint.first;
+                std::map<vision::FaceId, vision::Face> faces = dataPoint.second;
 
                 // Draw metrics to the GUI
                 if (draw_display)
@@ -184,13 +166,13 @@ int main(int argsc, char ** argsv)
                     listenPtr->draw(faces, frame);
                 }
 
-                std::cerr << "timestamp: " << frame.getTimestamp()
+                std::cout << "timestamp: " << frame.getTimestamp()
                     << " cfps: " << listenPtr->getCaptureFrameRate()
                     << " pfps: " << listenPtr->getProcessingFrameRate()
                     << " faces: " << faces.size() << endl;
 
                 //Output metrics to the file
-                //listenPtr->outputToFile(faces, frame.getTimestamp());
+//                listenPtr->outputToFile(faces, frame.getTimestamp());
             }
 
 

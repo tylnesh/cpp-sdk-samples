@@ -4,7 +4,7 @@
 
 using namespace affdex;
 
-class AFaceListener : public FaceListener
+class AFaceListener : public vision::FaceListener
 {
     void onFaceFound(float timestamp, FaceId faceId)
     {

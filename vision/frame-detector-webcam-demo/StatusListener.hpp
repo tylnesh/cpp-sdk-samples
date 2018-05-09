@@ -17,13 +17,13 @@
 
 using namespace affdex;
 
-class StatusListener : public ProcessStatusListener
+class StatusListener : public vision::ProcessStatusListener
 {
 public:
     
     StatusListener():mIsRunning(true) {};
     
-    void onProcessingException(AffdexException ex)
+    void onProcessingException(Exception ex)
     {
         std::cerr << "Encountered an exception while processing: " << ex.what() << std::endl;
         m.lock();
