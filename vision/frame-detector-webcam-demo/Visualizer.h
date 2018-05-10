@@ -54,7 +54,6 @@ public:
 
   /** @brief DrawFaceMetrics Displays all facial metrics and associated value
   * @param face         -- The affdex::Face object to display
-  * @param bounding_box -- The bounding box coordinates
   */
   void drawFaceMetrics(affdex::vision::Face face);
 

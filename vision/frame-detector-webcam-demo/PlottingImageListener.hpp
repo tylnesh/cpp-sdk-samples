@@ -136,6 +136,46 @@ public:
         }
     }
 
+    vision::Point minPoint(std::vector<vision::Point> points) {
+        auto it = points.begin();
+        vision::Point ret = *it;
+        for (; it != points.end(); it++)
+        {
+            if (it->x < ret.x) ret.x = it->x;
+            if (it->y < ret.y) ret.y = it->y;
+        }
+        return ret;
+    };
+
+    vision::Point maxPoint(std::vector<vision::Point> points) {
+        auto it = points.begin();
+        vision::Point ret = *it;
+        for (; it != points.end(); it++)
+        {
+            if (it->x > ret.x) ret.x = it->x;
+            if (it->y > ret.y) ret.y = it->y;
+        }
+        return ret;
+    };
+
+    std::vector<vision::Point> calculateBoundingBox(std::map<vision::FacePoint, vision::Point> points)
+    {
+
+        std::vector<vision::Point> ret;
+
+        std::vector<vision::Point> allpoints;
+        for (auto pair : points) {
+            allpoints.push_back(pair.second);
+        }
+        //Top Left
+        ret.push_back(minPoint(allpoints));
+
+        //Bottom Right
+        ret.push_back(maxPoint(allpoints));
+
+        return ret;
+    }
+
     void draw(const std::map<vision::FaceId, vision::Face> faces, vision::Frame image)
     {
         std::shared_ptr<unsigned char> imgdata = image.getBGRByteArray();
@@ -146,11 +186,13 @@ public:
         {
             vision::Face f = face_id_pair.second;
 
+            std::map<vision::FacePoint, vision::Point> points = f.getFacePoints();
+
             // Draw Facial Landmarks Points
-            viz.drawPoints(f.getFacePoints());
+            // viz.drawPoints(points);
 
             // Draw bounding box
-            auto bbox = f.getBoundingBox();
+            auto bbox = calculateBoundingBox(points);
             float valence = f.getEmotions().at(vision::Emotion::VALENCE);
             viz.drawBoundingBox(bbox, valence);
 
