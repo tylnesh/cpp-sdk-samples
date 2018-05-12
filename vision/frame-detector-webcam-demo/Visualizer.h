@@ -55,7 +55,7 @@ public:
   /** @brief DrawFaceMetrics Displays all facial metrics and associated value
   * @param face         -- The affdex::Face object to display
   */
-  void drawFaceMetrics(affdex::vision::Face face);
+  void drawFaceMetrics(affdex::vision::Face face, std::vector<affdex::vision::Point> bounding_box);
 
   /** @brief ShowImage displays image on screen
   */

@@ -90,9 +90,8 @@ Visualizer::Visualizer():
     };
 }
 
-void Visualizer::drawFaceMetrics(affdex::vision::Face face)
+void Visualizer::drawFaceMetrics(affdex::vision::Face face, std::vector<affdex::vision::Point> bounding_box)
 {
-    std::vector<affdex::vision::Point> bounding_box = face.getBoundingBox();
     //Draw Right side metrics
     int padding = bounding_box[0].y; //Top left Y
     auto expressions = face.getExpressions();

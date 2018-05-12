@@ -197,7 +197,7 @@ public:
             viz.drawBoundingBox(bbox, valence);
 
             // Draw a face on screen
-            viz.drawFaceMetrics(f);
+            viz.drawFaceMetrics(f, bbox);
         }
 
         viz.showImage();
