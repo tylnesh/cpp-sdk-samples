@@ -4,7 +4,7 @@ Welcome to our repository on GitHub! Here you will find example code to get you 
 
 Build Status
 -------------
-- Windows: [![Build status](https://ci.appveyor.com/api/projects/status/pn2y9h8a3nnkiw41?svg=true)](https://ci.appveyor.com/project/ahamino/win-sdk-samples)
+- Windows: [![Build status](https://ci.appveyor.com/api/projects/status/github/Affectiva/cpp-sdk-samples?branch=master&svg=true)](https://ci.appveyor.com/project/ahamino/win-sdk-samples)
 - Ubuntu: [![Build Status](https://travis-ci.org/Affectiva/cpp-sdk-samples.svg?branch=master)](https://travis-ci.org/Affectiva/cpp-sdk-samples)
 
 Dependencies
