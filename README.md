@@ -2,6 +2,10 @@
 
 Welcome to our repository on GitHub! Here you will find example code to get you started with our Automotive Linux SDK 1.0. Documentation for the SDKs is available on the <a href=https://auto.affectiva.com/>Affectiva's Developer Portal</a>.
 
+Build Status
+------------
+- Ubuntu: [![Build Status](https://travis-ci.org/Affectiva/cpp-sdk-samples.svg?branch=auto)](https://travis-ci.org/Affectiva/cpp-sdk-samples)
+
 Dependencies
 ------------
 
