@@ -15,7 +15,7 @@ See http://www.boost.org/
 
 See http://www.portaudio.com/
 
-* For Ubuntu : `sudo apt-get install libportaudio2`
+* For Ubuntu : `sudo apt-get install portaudio19-dev`
 
 #### LibSndFile: for building the `wav` sample
 
@@ -40,13 +40,13 @@ cd $HOME/boost_1_63_0 && \
 
 Specify the the following CMake variables to identify the locations of various dependencies:
 
-Note: for the \_LIBRARY and \_LIBRARY_DEBUG values, you only need to provide one or the other, as appropriate to the type of build you're doing (i.e. Release or Debug, as indicated by CMAKE_BUILD_TYPE).  On Windows, if you omit CMAKE_BUILD_TYPE and specify both values, CMake will produce a .sln file capabile of building both Debug and Release modes.
+Note: for the \_LIBRARY and \_LIBRARY_DEBUG values, you only need to provide one or the other, as appropriate to the type of build you're doing (i.e. Release or Debug, as indicated by CMAKE_BUILD_TYPE).  On Windows, if you omit CMAKE_BUILD_TYPE and specify both values, CMake will produce a .sln file capable of building both Debug and Release modes.
 
 - **BUILD_MIC**: Build the `mic` sample app.
 - **BUILD_WAV**: Build the `wav` sample app.
-- **AffdexSpeech_INCLUDE**: path to the folder containing the Speech library header files
-- **AffdexSpeech_LIBRARY**: path to the release mode Speech library
-- **AffdexSpeech_LIBRARY_DEBUG**: path to the debug mode Speech library
+- **affectiva-speech_INCLUDE**: path to the folder containing the Speech library header files
+- **affectiva-speech_LIBRARY**: path to the release mode Speech library
+- **affectiva-speech_LIBRARY_DEBUG**: path to the debug mode Speech library
 - **PortAudio_INCLUDE**: path to the folder containing the PortAudio header files
 - **PortAudio_LIBRARY**: path to the release mode PortAudio library
 - **PortAudio_LIBRARY_DEBUG**: path to the debug mode PortAudio library
@@ -69,13 +69,13 @@ AffdexSpeech_INCLUDE=$HOME/auto-sdk/include
 BOOST_DIR=$HOME/boost
 AffdexSpeech_LIBRARY=$HOME/auto-sdk/lib/libaffectiva-speech.so
 PortAudio_INCLUDE=/usr/include
-PortAudio_LIBRARY=/usr/lib64/libportaudio.so
+PortAudio_LIBRARY=/usr/lib/x86_64-linux-gnu/libportaudio.so.2
 LibSndFile_INCLUDE=/usr/include
-LibSndFile_LIBRARY=/usr/lib64/libsndfile.so
+LibSndFile_LIBRARY=/usr/lib/x86_64-linux-gnu/libsndfile.so
 
 CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release \
 -DBOOST_ROOT=$BOOST_DIR \
--DAffdexSpeech_INCLUDE=$AffdexSpeech_INCLUDE -DAffdexSpeech_LIBRARY=$AffdexSpeech_LIBRARY \
+-Daffectiva-speech_INCLUDE=$AffdexSpeech_INCLUDE -Daffectiva-speech_LIBRARY=$AffdexSpeech_LIBRARY \
 -DBUILD_MIC=ON \
 -DPortAudio_INCLUDE=$PortAudio_INCLUDE -DPortAudio_LIBRARY=$PortAudio_LIBRARY \
 -DBUILD_WAV=ON \
