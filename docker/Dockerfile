@@ -1,12 +1,12 @@
 # A Docker image to be used for building the sample applications for the Linux SDK Ubuntu 16.04
 #
 # build:
-# $ docker build --build-arg API_KEY=$API_KEY --file=Dockerfile-Ubuntu --tag=v1.0.0:affectiva-auto .
+# $ docker build --build-arg API_KEY=$API_KEY --build-arg BRANCH=$BRANCH --tag=v1.0.0:affectiva-auto .
 #
 # the result will be an image that has the tar'ed artifact of the sample app and all of its dependencies installed
 #
 # run interactively:
-# $ docker run -it --rm v4.0.0:affdex
+# $ docker run -it --rm v1.0.0:affectiva-auto
 
 FROM ubuntu:16.04
 
@@ -41,7 +41,8 @@ ENV LD_PRELOAD /usr/lib/x86_64-linux-gnu/libopencv_core.so.2.4
 ###### Clone Sample App Repo ######
 #################################
 
-RUN git clone -b auto https://github.com/Affectiva/cpp-sdk-samples.git $SRC_DIR/sdk-samples
+ARG BRANCH
+RUN git clone -b $BRANCH https://github.com/Affectiva/cpp-sdk-samples.git $SRC_DIR/sdk-samples
 
 #### BOOST ####
 WORKDIR $SRC_DIR
