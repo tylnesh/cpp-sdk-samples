@@ -1,4 +1,4 @@
-# A Docker image to be used for building the sample applications for the Linux SDK Ubuntu 16.04
+# A Docker file to be used for building the sample applications for the Linux SDK Ubuntu 16.04
 #
 # build:
 # $ docker build --build-arg API_KEY=$API_KEY --build-arg BRANCH=$BRANCH --tag=v1.0.0:affectiva-auto .
