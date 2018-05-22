@@ -1,10 +1,11 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.0)
 
 set(rootProject vision-samples)
 project(${rootProject})
 
 # CMake includes
-include(../cmake_modules/Macros.cmake)         # Some custom macros we have writtens
+include(../cmake_modules/Macros.cmake)         # Some custom macros we have written
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/../cmake_modules")
 
 # -------------------
 # CMAKE - ENVIRONMENT
@@ -69,7 +70,7 @@ else( DEFINED OpenCV_DIR )
     message(FATAL_ERROR "\"OpenCV_DIR\" not set. Please explicitly provide the path to the root build directory of OpenCV.")
 endif( DEFINED OpenCV_DIR )
 
-# Boost package
+# Boost
 # ----------------------------------------------------------------------------
 # BOOST_ROOT  is needed by  BoostConfig.cmake configuration file to
 # look for the Boost includes / libraries:
@@ -93,40 +94,16 @@ endif( NOT Boost_FOUND )
 
 
 
-# Affdex package
+# Affectiva SDK
 # ----------------------------------------------------------------------------
 
-set (AFFDEX_FOUND FALSE)
-
-if( DEFINED AFFDEX_DIR )
-   find_path(AFFDEX_INCLUDE_DIR FrameDetector.h
-             HINTS "${AFFDEX_DIR}/include" )
-
-   find_library(AFFDEX_LIBRARY NAMES affectiva-vision
-               HINTS "${AFFDEX_DIR}/lib" )
-
-   set(AFFDEX_INCLUDE_DIRS "${AFFDEX_INCLUDE_DIR}")
-   set(AFFDEX_LIBRARIES "${AFFDEX_LIBRARY}")
-
-   if (AFFDEX_INCLUDE_DIR AND AFFDEX_LIBRARY)
-      set(AFFDEX_FOUND TRUE)
-   endif (AFFDEX_INCLUDE_DIR AND AFFDEX_LIBRARY)
-
-   set(AFFDEX_DATA_DIR "${AFFDEX_DIR}/data")
-
-
-   if (NOT AFFDEX_FOUND)
-       message(FATAL_ERROR "Unable to find the Affdex found")
-   endif (NOT AFFDEX_FOUND)
-
-else (DEFINED AFFDEX_DIR)
-    message(FATAL_ERROR "Please define AFFDEX_DIR")
-endif (DEFINED AFFDEX_DIR)
-
+if(NOT DEFINED AFFECTIVA_SDK_DIR )
+    set(AFFECTIVA_SDK_DIR "" CACHE PATH "Install directory for the Affectiva SDK" )
+    message(FATAL_ERROR "Please set AFFECTIVA_SDK_DIR to the directory where the Affectiva SDK is installed")
+endif()
 
 add_subdirectory(frame-detector-webcam-demo)
-# Commenting out video-demo for auto use case
-#add_subdirectory(video-demo)
+add_subdirectory(frame-detector-video-demo)
 
 # --------------------
 # SUMMARY

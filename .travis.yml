@@ -3,4 +3,4 @@ services:
   - docker
 language: generic
 before_install:
-  - docker build --file=vision/docker/Dockerfile-Ubuntu --tag=v4.0.0:affdex .
+  - docker build --build-arg API_KEY=$API_KEY --build-arg BRANCH=$TRAVIS_BRANCH --tag=v1.0.0:affectiva-auto .

@@ -1,9 +1,5 @@
 # Sample app for analyzing facial emotion using Automotive SDK for Linux
 
-Build Status
--------------
-- Ubuntu: [![Build Status](https://travis-ci.org/Affectiva/cpp-sdk-samples.svg?branch=auto-speech)](https://travis-ci.org/Affectiva/cpp-sdk-samples)
-
 Additional Dependencies
 ------------
 
@@ -12,6 +8,7 @@ Additional Dependencies
 - libuuid
 - libcurl
 - libopenssl
+- CMake minimum version v3.5
 
 Installation
 ------------
@@ -25,28 +22,15 @@ $ tar -xzvf boost_1_63_0.tar.gz -C $HOME
 $ cd boost_1_63_0
 $ ./bootstrap.sh
 $ sudo ./b2 -j $(nproc) cxxflags=-fPIC threading=multi runtime-link=shared \
-      --with-log --with-serialization --with-system --with-date_time \
-      --with-filesystem --with-regex --with-timer --with-chrono --with-thread \
+      --with-log --with-serialization --with-date_time \
+      --with-filesystem --with-regex --with-timer --with-thread \
       --with-program_options install
-```
-
-- CMAKE
-
-```
-$ wget https://cmake.org/files/v3.8/cmake-3.8.1.tar.gz \
-$ tar -xvf cmake-3.8.1.tar.gz && rm cmake-3.8.1.tar.gz
-$ cd $SRC_DIR/cmake-3.8.1/
-$ ./bootstrap --system-curl && \
-    make -j$(nproc) && \
-    make install && \
-    rm -rf $SRC_DIR/cmake-3.8.1
-
 ```
 
 - Building the SDK on Ubuntu 16.04
 
 ```bashrc
-$ sudo apt-get install build-essential libopencv-dev libcurl4-openssl uuid-dev
+$ sudo apt-get install -y build-essential libopencv-dev libcurl4-openssl uuid-dev cmake
 $ export AFFDEX_DATA_DIR=$HOME/auto-sdk/data/vision
 $ git clone https://github.com/Affectiva/cpp-sdk-samples.git $HOME/sdk-samples
 $ mkdir $HOME/build

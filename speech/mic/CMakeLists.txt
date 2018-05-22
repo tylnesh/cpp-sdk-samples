@@ -7,9 +7,10 @@ project(${subProject})
 # --------------------
 # Dependencies
 # --------------------
-ADD_LIB(${subProject} affectiva-speech)
 ADD_LIB(${subProject} PortAudio)
 ADD_BOOST(${subProject} program_options)
+set(AffectivaSpeech_DIR ${AFFECTIVA_SDK_DIR})
+FIND_AND_ADD_LIB(${subProject} AffectivaSpeech)
 
 # Apple-specific
 IF(APPLE)

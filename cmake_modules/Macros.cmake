@@ -105,6 +105,26 @@ function(status text)
   endif()
 endfunction()
 
+# Call find_package for a library and add its include dirs and library files to ${proj}_INCLUDE_DIRS and ${proj}_LIBS
+#
+# Usage:
+# FIND_AND_ADD_LIB some_library
+
+macro(FIND_AND_ADD_LIB proj lib)
+    if(${lib}_DIR)
+        find_package(${lib} REQUIRED)
+        if(${lib}_FOUND)
+            list(APPEND ${proj}_INCLUDE_DIRS ${${lib}_INCLUDE_DIRS} )
+            list(APPEND ${proj}_LIBS ${${lib}_LIBRARIES} )
+        else()
+            message(SEND_ERROR "Failed to find ${lib}. Double check that \"${lib}_DIR\" to the root build directory of ${lib}.")
+        endif()
+    else()
+        set(${lib}_DIR "" CACHE PATH "Root directory for ${lib} BUILD directory." )
+        message(FATAL_ERROR "\"${lib}_DIR\" not set. Please explicitly provide the path to the root build directory of ${lib}.")
+    endif()
+endmacro()
+
 # Add a library's include dir to ${proj}_INCLUDE_DIRS and its release/dbug libs to ${proj}_LIBS
 # this assumes that the cmake caller (cmd line or cmake-gui) have provided values for:
 # ${lib}_INCLUDE
