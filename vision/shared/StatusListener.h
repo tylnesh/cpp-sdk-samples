@@ -1,10 +1,9 @@
 #pragma once
 
+#include <ProcessStatusListener.h>
+
 #include <iostream>
 #include <mutex>
-#include <boost/algorithm/string.hpp>
-
-#include "ProcessStatusListener.h"
 
 using namespace affdex;
 

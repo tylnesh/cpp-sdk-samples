@@ -1,23 +1,16 @@
-#include <iostream>
-#include <memory>
-#include <chrono>
-#include <fstream>
-
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/timer/timer.hpp>
-#include <boost/program_options.hpp>
-
 #include "PlottingImageListener.h"
 #include "StatusListener.h"
-#include <Detector.h>
+
 #include <FrameDetector.h>
 
+#include <opencv2/highgui/highgui.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/program_options.hpp>
+
+#include <iostream>
 
 using namespace std;
 using namespace affdex;
-
 
 class VideoReader {
 public:

@@ -3,4 +3,4 @@ services:
   - docker
 language: generic
 before_install:
-  - docker build --build-arg API_KEY=$API_KEY --build-arg BRANCH=$TRAVIS_BRANCH --tag=v1.0.0:affectiva-auto .
+  - docker build --build-arg AFFECTIVA_SDK_URL=$AFFECTIVA_SDK_URL --build-arg BRANCH=$TRAVIS_BRANCH --tag=v1.0.0:affectiva-auto .

@@ -1,74 +1,87 @@
-# Sample app for analyzing facial emotion using Automotive SDK for Linux
+# Sample apps for analyzing facial emotion using Affectiva's Automotive SDK for Linux
 
-Additional Dependencies
-------------
+###frame-detector-webcam-demo
 
-- OpenCV 2.4
-- Boost 1.63
-- libuuid
-- libcurl
-- libopenssl
-- CMake minimum version v3.5
+This sample demonstrates use of the [FrameDetector class](https://auto.affectiva.com/docs/vision-create-detector), getting its input from a webcam. It analyzes received frames and displays the results on screen.
 
-Installation
-------------
-*Installation Guide for dependencies CMake v3.8.1 and Boost v1.63 for Ubuntu 16.04*
+After building, run the command `./frame-detector-webcam-demo --help` for information on its command line options.
 
-- Boost
+###frame-detector-video-demo
+
+This sample demonstrates use of the [FrameDetector class](https://auto.affectiva.com/docs/vision-create-detector), getting its input from a video file. It analyzes received frames and displays the results on screen.
+
+After building, run the command `./frame-detector-video-demo --help` for information on its command line options.
+
+## Dependencies
+
+#### Affectiva Vision library
+
+The Vision Library is packaged with the Automotive SDK, which is available upon request. To get access, please [contact us](https://auto.affectiva.com/).
+
+#### Boost 1.63
+
+See http://www.boost.org/
 
 ```
+$ mkdir boost-build
+$ cd boost-build
 $ wget https://sourceforge.net/projects/boost/files/boost/1.63.0/boost_1_63_0.tar.gz
-$ tar -xzvf boost_1_63_0.tar.gz -C $HOME
+$ tar -xzvf boost_1_63_0.tar.gz
 $ cd boost_1_63_0
 $ ./bootstrap.sh
 $ sudo ./b2 -j $(nproc) cxxflags=-fPIC threading=multi runtime-link=shared \
-      --with-log --with-serialization --with-date_time \
-      --with-filesystem --with-regex --with-timer --with-thread \
-      --with-program_options install
+      --with-filesystem --with-program_options install
 ```
 
-- Building the SDK on Ubuntu 16.04
+#### OpenCV, libuuid, libcurl, libopenssl, and CMake
 
-```bashrc
-$ sudo apt-get install -y build-essential libopencv-dev libcurl4-openssl uuid-dev cmake
-$ export AFFDEX_DATA_DIR=$HOME/auto-sdk/data/vision
-$ git clone https://github.com/Affectiva/cpp-sdk-samples.git $HOME/sdk-samples
-$ mkdir $HOME/build
-$ cd $HOME/build
-$ cmake -DOpenCV_DIR=/usr/ -DBOOST_ROOT=/usr/ -DAFFDEX_DIR=$HOME/auto-sdk $HOME/sdk-samples
-$ make
-$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/auto-sdk/lib
+Ubuntu:
+`$ sudo apt-get install -y build-essential libopencv-dev libcurl4-openssl uuid-dev cmake`
 
-# The SDK statically links a forked version of OpenCV, so if you run into double free or corruption error
-# then you will need to preload the OpenCV library installed from package manager
-# Use this command to find the path of libopencv_core.so.2.4
+## Building with CMake
 
-$ ldconfig -p | grep libopencv_core.so.2.4
-$ export LD_PRELOAD=/path/to/libopencv_core.so.2.4
+Specify the the following CMake variables to identify the locations of various dependencies:
 
+- **AFFECTIVA_SDK_DIR**: path to the folder where the Automotive SDK is installed
+- **BOOST_ROOT** path to the Boost src tree
+
+
+#### Linux
+
+For building under Linux, type the following command:
+
+`$ cmake . -DCMAKE_BUILD_TYPE=[Release,Debug] <other args>`
+
+Example script (replace directories starting with `/path/to` as appropriate):
+```
+# create a build directory
+mkdir vision-samples-build/
+cd vision-samples-build
+
+CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release \
+-DAFFECTIVA_SDK_DIR=/path/to/auto-sdk \
+-DBOOST_ROOT=/path/to/boost-build \
+-DOpenCV_DIR=/path/to/opencv \
+-DCMAKE_INSTALL_PREFIX=/path/to/install"
+
+# run cmake, specifying the path to the CMakeLists.txt file (the same directory
+# that this README.md file resides in)
+cmake $CMAKE_ARGS /path/to/cpp-sdk-samples/vision
+make -j4
+make install
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$AFFECTIVA_SDK_DIR/lib
 ```
 
-Frame-detector-webcam-demo (c++)
-------------------
+The Affectiva SDK statically links a customized version of OpenCV, so if you run into double free or corruption errors, then you will need to preload the OpenCV library installed from package manager.
 
-Project for demoing the [FrameDetector class](https://auto.affectiva.com/docs/vision-create-detector). It grabs frames from the camera, analyzes them and displays the results on screen.
+Use this command to find the path of libopencv_core.so.2.4
 
-The following command line arguments can be used to run it:
+`ldconfig -p | grep libopencv_core.so.2.4`
 
-    -h [ --help ]                        Display this help message.
-    -d [ --data ] arg (=data)            Path to the data folder
-    -r [ --resolution ] arg (=640 480)   Resolution in pixels (2-values): width
-                                         height
-    --pfps arg (=30)                     Processing framerate.
-    --cfps arg (=30)                     Camera capture framerate.
-    --bufferLen arg (=30)                process buffer size.
-    --cid arg (=0)                       Camera ID.
-    --faceMode arg (=0)                  Face detector mode (large faces vs small
-                                        faces).
-    --numFaces arg (=1)                  Number of faces to be tracked.
-    --draw arg (=1)                      Draw metrics on screen.
+Then set LD_PRELOAD to ensure it gets loaded first at runtime:
+`export LD_PRELOAD=/path/to/libopencv_core.so.2.4`
 
-Docker Build Instructions
--------------------------
+##Docker Build Instructions
 
-The Dockerfile's are located in the [docker](docker) directory. To build the docker image please refer to the files for instructions.
+A Dockerfile is located in the top-level directory of this repo ([here](../Dockerfile)). To build the docker image, please refer to that file for instructions.

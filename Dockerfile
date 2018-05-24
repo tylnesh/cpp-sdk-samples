@@ -24,7 +24,6 @@ RUN apt-get update &&\
                         libopencv-dev \
                         cmake \
                         libsndfile1-dev \
-                        curl \
                         portaudio19-dev > /dev/null
 
 ENV SRC_DIR /opt/src
@@ -52,16 +51,14 @@ RUN wget https://sourceforge.net/projects/boost/files/boost/1.63.0/boost_1_63_0.
     cd $SRC_DIR/boost_1_63_0 && \
     ./bootstrap.sh &&\
     ./b2 -j $(nproc) cxxflags=-fPIC threading=multi runtime-link=shared \
-         --with-log --with-serialization --with-date_time \
-         --with-filesystem --with-regex --with-timer --with-thread \
-         --with-program_options \
+         --with-filesystem --with-program_options \
          install && \
     rm -rf $SRC_DIR/boost_1_63_0
 
 #### DOWNLOAD AFFECTIVA AUTO SDK ####
-ARG API_KEY
 WORKDIR $SRC_DIR
-RUN curl -L -ushared@affectiva:$API_KEY "https://affectiva.bintray.com/AutoSDK/auto-sdk-1.0.0-95-ubuntu-xenial-xerus-x86_64.tar.gz" -o auto-sdk-1.0.0-95-ubuntu-xenial-xerus-x86_64.tar.gz &&\
+ARG AFFECTIVA_SDK_URL
+RUN wget $AFFECTIVA_SDK_URL  &&\
     tar -xf auto-sdk* && \
     rm -r $SRC_DIR/auto-sdk-*
 

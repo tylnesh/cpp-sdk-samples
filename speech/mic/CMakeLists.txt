@@ -1,16 +1,13 @@
-# --------------------
-# Environment
-# --------------------
 set(subProject mic)
 project(${subProject})
 
 # --------------------
-# Dependencies
+# DEPENDENCIES
 # --------------------
+
+# PortAudio
 ADD_LIB(${subProject} PortAudio)
-ADD_BOOST(${subProject} program_options)
-set(AffectivaSpeech_DIR ${AFFECTIVA_SDK_DIR})
-FIND_AND_ADD_LIB(${subProject} AffectivaSpeech)
+
 
 # Apple-specific
 IF(APPLE)
@@ -18,17 +15,15 @@ IF(APPLE)
 endif()
 
 # --------------------
-# Build
+# BUILD
 # --------------------
 
 file(GLOB SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
-
 file(GLOB HDRS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h ../headers/*.h)
 
-
 add_executable(${subProject} ${SRCS} ${HDRS})
-target_include_directories(${subProject} PRIVATE ${${subProject}_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/headers)
-target_link_libraries(${subProject} ${${subProject}_LIBS} ${FRAMEWORKS})
+target_include_directories(${subProject} PRIVATE ${${rootProject}_INCLUDE_DIRS} ${${subProject}_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/headers)
+target_link_libraries(${subProject} ${${rootProject}_LIBS} ${${subProject}_LIBS} ${FRAMEWORKS})
 
 # Installation steps
 install( TARGETS ${subProject}

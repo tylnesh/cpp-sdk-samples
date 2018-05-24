@@ -1,19 +1,14 @@
-#include <iostream>
-#include <memory>
-#include <chrono>
-#include <fstream>
-#include <boost/filesystem.hpp>
-#include <boost/timer/timer.hpp>
-#include <boost/program_options.hpp>
-
-#include "Frame.h"
-#include "Face.h"
-#include "FrameDetector.h"
-
 #include "AFaceListener.h"
 #include "PlottingImageListener.h"
 #include "StatusListener.h"
+
+#include <FrameDetector.h>
+#include <boost/filesystem.hpp>
+#include <boost/program_options.hpp>
 #include <opencv2/highgui/highgui.hpp>
+
+#include <fstream>
+#include <iostream>
 
 using namespace std;
 using namespace affdex;
