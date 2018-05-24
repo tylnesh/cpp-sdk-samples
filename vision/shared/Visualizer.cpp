@@ -1,8 +1,8 @@
 #include "Visualizer.h"
-#include <boost/format.hpp>
-#include <algorithm>
 #include "AffectivaLogo.h"
+
 #include <opencv2/highgui/highgui.hpp>
+#include <iomanip>
 
 Visualizer::Visualizer():
   GREEN_COLOR_CLASSIFIERS({
@@ -210,9 +210,12 @@ void Visualizer::drawEqualizer(const std::string& name, const float value, const
 void Visualizer::drawHeadOrientation(std::map<affdex::vision::Measurement, float> headAngles, const int x, int &padding,
                                      bool align_right, cv::Scalar color)
 {
+    std::stringstream ss;
+    ss << std::setw(3) << std::setprecision(1);
     for (auto& h: HEAD_ANGLES) {
-        std::string valueStr = boost::str(boost::format("%3.1f") % headAngles.at(h.first));
-        drawText(h.second, valueStr, cv::Point(x, padding += spacing), align_right, color );
+        ss << headAngles.at(h.first);
+        drawText(h.second, ss.str(), cv::Point(x, padding += spacing), align_right, color );
+        ss.clear();
     }
 }
 

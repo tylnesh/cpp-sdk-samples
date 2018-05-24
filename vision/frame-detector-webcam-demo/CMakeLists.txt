@@ -1,9 +1,5 @@
 set(subProject frame-detector-webcam-demo)
-
-PROJECT(${subProject})
-
-set(AffectivaVision_DIR ${AFFECTIVA_SDK_DIR})
-FIND_AND_ADD_LIB(${subProject} AffectivaVision)
+project(${subProject})
 
 file(GLOB SRCS *.c*)
 file(GLOB HDRS *.h*)
@@ -15,9 +11,9 @@ file(GLOB SHARED_CPP_FILES ${SHARED}/*.c*)
 
 add_executable(${subProject} ${SRCS} ${HDRS} ${SHARED_HDRS_FILES} ${SHARED_CPP_FILES})
 
-target_include_directories(${subProject} PRIVATE ${Boost_INCLUDE_DIRS} ${${subProject}_INCLUDE_DIRS} ${SHARED})
+target_include_directories(${subProject} PRIVATE ${Boost_INCLUDE_DIRS} ${${rootProject}_INCLUDE_DIRS} ${${subProject}_INCLUDE_DIRS} ${SHARED})
 
-target_link_libraries( ${subProject} ${${subProject}_LIBS} ${OpenCV_LIBS} ${Boost_LIBRARIES} )
+target_link_libraries( ${subProject} ${${rootProject}_LIBS} ${${subProject}_LIBS} ${OpenCV_LIBS} ${Boost_LIBRARIES} )
 
 #Add to the apps list
 list( APPEND ${rootProject}_APPS ${subProject} )

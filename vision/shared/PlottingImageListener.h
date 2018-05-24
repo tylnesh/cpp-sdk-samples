@@ -1,16 +1,15 @@
 #pragma once
 
-#include <iostream>
-#include <memory>
-#include <chrono>
-#include <thread>
+#include "Visualizer.h"
+
+#include <ImageListener.h>
+
+#include <deque>
 #include <mutex>
 #include <fstream>
 #include <condition_variable>
-#include <boost/filesystem.hpp>
 
-#include "Visualizer.h"
-#include "ImageListener.h"
+
 
 using namespace affdex;
 
