@@ -1,7 +1,7 @@
 # A Docker file to be used for building the sample applications for the Linux SDK Ubuntu 16.04
 #
 # build:
-# $ docker build --build-arg API_KEY=$API_KEY --build-arg BRANCH=$BRANCH --tag=v1.0.0:affectiva-auto .
+# $ docker build --build-arg AFFECTIVA_SDK_URL=<URL of Affectiva Auto SDK as a .tar.gz file> --build-arg BRANCH=<branch of this repo> --tag=v1.0.0:affectiva-auto .
 #
 # the result will be an image that has the tar'ed artifact of the sample app and all of its dependencies installed
 #
@@ -13,8 +13,6 @@ FROM ubuntu:16.04
 RUN apt-get update &&\
     apt-get install -yqq software-properties-common\
                         git \
-                        libcurl4-openssl-dev \
-                        libssl-dev \
                         bc \
                         gfortran \
                         unzip \
