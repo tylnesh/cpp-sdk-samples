@@ -211,11 +211,11 @@ void Visualizer::drawHeadOrientation(std::map<affdex::vision::Measurement, float
                                      bool align_right, cv::Scalar color)
 {
     std::stringstream ss;
-    ss << std::setw(3) << std::setprecision(1);
+    ss << std::fixed << std::setw(3) << std::setprecision(1);
     for (auto& h: HEAD_ANGLES) {
         ss << headAngles.at(h.first);
         drawText(h.second, ss.str(), cv::Point(x, padding += spacing), align_right, color );
-        ss.clear();
+        ss.str(""); // clear the string.
     }
 }
 
