@@ -12,6 +12,11 @@ This sample demonstrates use of the [FrameDetector class](https://auto.affectiva
 
 After building, run the command `./frame-detector-video-demo --help` for information on its command line options.
 
+---
+Note: Both of these sample apps take a command line parameter (`-d/--data`) which is used to specify the path to the data directory for the Affectiva Vision library.  This directory is named `data/vision`, and is located under the folder where you installed the Affectiva Automotive SDK (e.g. `/path/to/affectiva-sdk/vision/data`). 
+
+---
+
 ## Dependencies
 
 #### Affectiva Vision library
@@ -33,10 +38,10 @@ $ sudo ./b2 -j $(nproc) cxxflags=-fPIC threading=multi runtime-link=shared \
       --with-filesystem --with-program_options install
 ```
 
-#### OpenCV, libuuid, and CMake
+#### OpenCV and CMake
 
 Ubuntu:
-`$ sudo apt-get install -y build-essential libopencv-dev uuid-dev cmake`
+`$ sudo apt-get install -y build-essential libopencv-dev cmake`
 
 ## Building with CMake
 
