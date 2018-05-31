@@ -33,10 +33,10 @@ $ sudo ./b2 -j $(nproc) cxxflags=-fPIC threading=multi runtime-link=shared \
       --with-filesystem --with-program_options install
 ```
 
-#### OpenCV, libuuid, libcurl, libopenssl, and CMake
+#### OpenCV, libuuid, and CMake
 
 Ubuntu:
-`$ sudo apt-get install -y build-essential libopencv-dev libcurl4-openssl uuid-dev cmake`
+`$ sudo apt-get install -y build-essential libopencv-dev uuid-dev cmake`
 
 ## Building with CMake
 
