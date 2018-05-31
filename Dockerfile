@@ -30,7 +30,6 @@ ENV VISION_BUILD_DIR /opt/build/vision
 ENV SPEECH_BUILD_DIR /opt/build/speech
 ENV ARTIFACT_DIR /opt/testapp-artifact
 ENV AUTO_SDK_DIR $SRC_DIR/affectiva-auto-sdk-1.0.0
-ENV AFFDEX_DATA_DIR $ARTIFACT_DIR/affectiva-auto-sdk-1.0.0/data/vision
 ENV LD_LIBRARY_PATH $ARTIFACT_DIR/affectiva-auto-sdk-1.0.0/lib
 ENV LD_PRELOAD /usr/lib/x86_64-linux-gnu/libopencv_core.so.2.4
 

@@ -2,13 +2,13 @@
 
 ###mic
 
-This sample demonstrates integration with a microphone as the audio input source
+This sample demonstrates integration with a microphone as the audio input source.
 
 After building, run the command `./mic --help` for information on its command line options.
 
 ###wav
 
-This sample demonstrates processing audio from a .wav recorded audio file
+This sample demonstrates processing audio from a .wav recorded audio file.  Note: the file must contain mono audio with a 16 kHz sample rate.
 
 After building, run the command `./wav --help` for information on its command line options.
 
@@ -38,7 +38,7 @@ $ sudo ./b2 -j $(nproc) cxxflags=-fPIC threading=multi runtime-link=shared \
 See http://www.portaudio.com/
 
 Ubuntu:
-`$ sudo apt-get install portaudio2`
+`$ sudo apt-get install portaudio19-dev`
 
 #### LibSndFile: (needed by `wav`)
 
@@ -62,12 +62,12 @@ Specify the the following CMake variables to identify the locations of various d
 - **AFFECTIVA_SDK_DIR**: path to the folder where the Automotive SDK is installed
 - **BOOST_ROOT** path to the Boost src tree
 
-if you are building the `wav` app:
+If you are building the `wav` app:
 - **PortAudio_INCLUDE**: path to the folder containing the PortAudio header files
 - **PortAudio_LIBRARY**: path to the release mode PortAudio library
 - **PortAudio_LIBRARY_DEBUG**: path to the debug mode PortAudio library
 
-if you are building the `mic` app:
+If you are building the `mic` app:
 - **LibSndFile_INCLUDE**: path to the folder containing the LibSndFile header files
 - **LibSndFile_LIBRARY**: path to the release mode LibSndFile library
 - **LibSndFile_LIBRARY_DEBUG**: path to the debug mode LibSndFile library
