@@ -54,8 +54,8 @@ RUN wget https://sourceforge.net/projects/boost/files/boost/1.63.0/boost_1_63_0.
 
 #### DOWNLOAD AFFECTIVA AUTO SDK ####
 WORKDIR $SRC_DIR
-ARG AFFECTIVA_SDK_URL
-RUN wget $AFFECTIVA_SDK_URL  &&\
+ARG AFFECTIVA_AUTO_SDK_1_1_URL
+RUN wget $AFFECTIVA_AUTO_SDK_1_1_URL  &&\
     tar -xf auto-sdk* && \
     rm -r $SRC_DIR/auto-sdk-*
 
