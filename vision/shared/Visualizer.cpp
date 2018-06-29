@@ -23,7 +23,10 @@ Visualizer::Visualizer():
         {affdex::vision::Expression::UPPER_LIP_RAISE, "upperLipRaise"},
         {affdex::vision::Expression::MOUTH_OPEN, "mouthOpen"},
         {affdex::vision::Expression::EYE_CLOSURE, "eyeClosure"},
-        {affdex::vision::Expression::CHEEK_RAISE, "cheekRaise"}
+        {affdex::vision::Expression::CHEEK_RAISE, "cheekRaise"},
+        {affdex::vision::Expression::YAWN, "yawn"},
+        {affdex::vision::Expression::BLINK, "blink"},
+        {affdex::vision::Expression::BLINK_RATE, "blinkRate"},
     };
 
     EMOTIONS = {
@@ -46,7 +49,18 @@ void Visualizer::drawFaceMetrics(affdex::vision::Face face, std::vector<affdex::
     int padding = bounding_box[0].y; //Top left Y
     auto expressions = face.getExpressions();
     for (auto& exp : EXPRESSIONS) {
-        drawClassifierOutput(exp.second, expressions.at(exp.first), cv::Point(bounding_box[1].x, padding += spacing), false);
+        // special case: display blink rate as number instead of bar
+        if (exp.first == affdex::vision::Expression::BLINK_RATE) {
+            std::stringstream ss;
+            ss << std::fixed << std::setw(3) << std::setprecision(1);
+            ss << expressions.at(exp.first);
+            drawText(exp.second, ss.str(), cv::Point(bounding_box[1].x, padding += spacing), false, cv::Scalar(255,255,255));
+        }
+        else {
+            float val = expressions.at(exp.first);
+            if (exp.first == affdex::vision::Expression::BLINK) val *= 100; // blink is 0 or 1, so translate to 0 or 100 so it shows up in the UI
+            drawClassifierOutput(exp.second, val, cv::Point(bounding_box[1].x, padding += spacing), false);
+        }
     }
 
     padding = bounding_box[0].y;  //Top right Y
