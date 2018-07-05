@@ -25,7 +25,7 @@ public:
         process_fps(-1.0f),
         out_stream(csv),
         start(std::chrono::system_clock::now()) {
-        out_stream << "TimeStamp,faceId,confidence,interocularDistance,brightness,";
+        out_stream << "TimeStamp,faceId,confidence,interocularDistance,";
         for (const auto& angle : viz.HEAD_ANGLES) out_stream << angle.second << ",";
         for (const auto& emotion : viz.EMOTIONS) out_stream << emotion.second << ",";
         for (const auto& expression : viz.EXPRESSIONS) out_stream << expression.second << ",";
@@ -82,7 +82,7 @@ public:
     void outputToFile(const std::map<vision::FaceId, vision::Face> faces, const double timeStamp) {
         if (faces.empty()) {
             out_stream << timeStamp
-                << ",nan,nan,nan,nan,"; // face ID, confidence, interocular distance, brightness
+                << ",nan,nan,nan,nan,"; // face ID, confidence, interocular distance
             for (const auto& angle : viz.HEAD_ANGLES) out_stream << "nan,";
             for (const auto& emotion : viz.EMOTIONS) out_stream << "nan,";
             for (const auto& expression : viz.EXPRESSIONS) out_stream << "nan,";
@@ -95,8 +95,7 @@ public:
             out_stream << timeStamp << ","
                 << f.getId() << ","
                 << f.getConfidence() << ","
-                << f.getMeasurements().at(vision::Measurement::INTEROCULAR_DISTANCE) << ","
-                << f.getQualities().at(vision::Quality::BRIGHTNESS) << ",";
+                << f.getMeasurements().at(vision::Measurement::INTEROCULAR_DISTANCE) << ",";
 
             auto measurements = f.getMeasurements();
             for (auto m : viz.HEAD_ANGLES) {
@@ -112,8 +111,6 @@ public:
             for (auto exp : viz.EXPRESSIONS) {
                 out_stream << expressions.at(exp.first) << ",";
             }
-
-            out_stream << f.getQualities().at(vision::Quality::BRIGHTNESS) << ",";
 
             out_stream << std::endl;
         }
