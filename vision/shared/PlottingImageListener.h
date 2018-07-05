@@ -19,9 +19,9 @@ public:
 
     PlottingImageListener(std::ofstream &csv, bool draw_display) :
         draw_display(draw_display),
-        capture_last_ts(-1.0f),
+        capture_last_ts(0),
         capture_fps(-1.0f),
-        process_last_ts(-1.0f),
+        process_last_ts(0),
         process_fps(-1.0f),
         out_stream(csv),
         start(std::chrono::system_clock::now()) {
@@ -64,18 +64,15 @@ public:
     void onImageResults(std::map<vision::FaceId, vision::Face> faces, vision::Frame image) override {
         std::lock_guard<std::mutex> lg(mtx);
         results.emplace_back(image, faces);
-        std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
-        std::chrono::milliseconds milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
-        const double seconds = milliseconds.count() / 1000.f;
-        process_fps = 1.0f / (seconds - process_last_ts);
-        process_last_ts = seconds;
+        process_fps = 1000.0f / (image.getTimestamp() - process_last_ts) ;
+        process_last_ts = image.getTimestamp();
         std::unique_lock< std::mutex > lock(result_mtx);
         result_received.notify_one();
     };
 
     void onImageCapture(vision::Frame image) override {
         std::lock_guard<std::mutex> lg(mtx);
-        capture_fps = 1.0f / (image.getTimestamp() - capture_last_ts);
+        capture_fps = 1000.0f / (image.getTimestamp() - capture_last_ts);
         capture_last_ts = image.getTimestamp();
     };
 
@@ -199,9 +196,9 @@ private:
     std::condition_variable result_received;
     std::deque<std::pair<vision::Frame, std::map<vision::FaceId, vision::Face> > > results;
 
-    double capture_last_ts;
+    timestamp capture_last_ts;
     double capture_fps;
-    double process_last_ts;
+    timestamp process_last_ts;
     double process_fps;
     std::ofstream &out_stream;
     std::chrono::time_point<std::chrono::system_clock> start;
