@@ -14,7 +14,7 @@ using namespace affdex;
 
 class VideoReader {
 public:
-    VideoReader(const boost::filesystem::path& video_file, const float sampling_frame_rate) :
+    VideoReader(const boost::filesystem::path& video_file, const unsigned int sampling_frame_rate) :
         sampling_frame_rate(sampling_frame_rate) {
 
         if (!(sampling_frame_rate == -1 || sampling_frame_rate > 0))
@@ -34,7 +34,7 @@ public:
             frame_data_loaded = GetFrameData(bgr_frame, timestamp_ms);
         } while ((sampling_frame_rate > 0)
             && (timestamp_ms > 0)
-            && ((timestamp_ms - last_timestamp_ms)/1000.f < 1 / sampling_frame_rate));
+            && ((timestamp_ms - last_timestamp_ms) < 1000 / sampling_frame_rate));
 
         last_timestamp_ms = timestamp_ms;
         return frame_data_loaded;
@@ -73,7 +73,7 @@ private:
 
     cv::VideoCapture cap;
     timestamp last_timestamp_ms;
-    float sampling_frame_rate;
+    unsigned int sampling_frame_rate;
 };
 
 
@@ -94,7 +94,8 @@ int main(int argsc, char ** argsv) {
     // cmd line args
     affdex::path data_dir;
     affdex::path video_path;
-    int sampling_frame_rate;
+    unsigned int sampling_frame_rate;
+    unsigned int processing_frame_rate = 0;
     bool draw_display;
     unsigned int num_faces;
 
@@ -104,15 +105,16 @@ int main(int argsc, char ** argsv) {
     description.add_options()
     ("help,h", po::bool_switch()->default_value(false), "Display this help message.")
 #ifdef _WIN32
-    ("data,d", po::wvalue< affdex::path >(&data_dir)->default_value(affdex::path(L"data"), std::string("data")), "Path to the data folder")
-    ("input,i", po::wvalue< affdex::path >(&video_path)->required(), "Video file to processs")
+    ("data,d", po::wvalue<affdex::path>(&data_dir)->default_value(affdex::path(L"data"), std::string("data")), "Path to the data folder")
+    ("input,i", po::wvalue<affdex::path>(&video_path)->required(), "Video file to processs")
 #else // _WIN32
     ("data,d", po::value< affdex::path >(&data_dir)->default_value(affdex::path("data"), std::string("data")), "Path to the data folder")
     ("input,i", po::value< affdex::path >(&video_path)->required(), "Video file to processs")
 #endif // _WIN32
-    ("sfps", po::value< int >(&sampling_frame_rate)->default_value(Detector::DEFAULT_PROCESSING_FRAMERATE), "Input sampling frame rate.")
-    ("draw", po::value< bool >(&draw_display)->default_value(true), "Draw video on screen.")
-    ("numFaces", po::value< unsigned int >(&num_faces)->default_value(1), "Number of faces to be tracked.")
+    ("sfps", po::value<unsigned int>(&sampling_frame_rate)->default_value(Detector::DEFAULT_PROCESSING_FRAMERATE), "Input sampling frame rate.")
+    ("pfps", po::value<unsigned int>(&processing_frame_rate), "Max processing frame rate.")
+    ("draw", po::value<bool>(&draw_display)->default_value(true), "Draw video on screen.")
+    ("numFaces", po::value<unsigned int>(&num_faces)->default_value(1), "Number of faces to be tracked.")
     ;
 
     po::variables_map args;
@@ -131,8 +133,13 @@ int main(int argsc, char ** argsv) {
         return 1;
     }
 
-    if (sampling_frame_rate > Detector::DEFAULT_PROCESSING_FRAMERATE) {
-        std::cerr << "Warning: sampling frame rate should be <= " << Detector::DEFAULT_PROCESSING_FRAMERATE << "to avoid dropped frames";
+    // if processing frame rate not specified, default to sampling frame rate
+    if (processing_frame_rate ==0) {
+        processing_frame_rate = sampling_frame_rate;
+    }
+
+    if (sampling_frame_rate > processing_frame_rate) {
+        std::cerr << "Warning: sampling frame rate (" << sampling_frame_rate << ") should be <= processing frame rate ("  << processing_frame_rate << ") to avoid dropped frames\n";
     }
 
     const boost::filesystem::path video_ext = boost::filesystem::path(video_path).extension();
@@ -162,8 +169,15 @@ int main(int argsc, char ** argsv) {
         // the VideoReader will handle decoding frames from the input video file
         VideoReader video_reader(video_path, sampling_frame_rate);
 
+        // if the sampling rate and the requested processing rate are the same, bump the processing rate
+        // by one to overcome potential rounding issues when comparing inter-frame timestamp differences
+        // against the processing rate
+        if (sampling_frame_rate == processing_frame_rate)
+            processing_frame_rate++;
+
+
         // create the FrameDetector
-        vision::FrameDetector detector(data_dir, Detector::DEFAULT_PROCESSING_FRAMERATE, num_faces);
+        vision::FrameDetector detector(data_dir, processing_frame_rate, num_faces);
 
         // prepare listeners
         PlottingImageListener image_listener(csv_file_stream, draw_display);
@@ -186,11 +200,11 @@ int main(int argsc, char ** argsv) {
             // Since a FrameDetector processes frames asynchronously, and video decoding frame rates are typically
             // faster than FrameDetector processing frame rates, some intervention is needed if we want to avoid
             // sending frames to the FrameDetector much faster than it can process them, resulting in a lot of dropped
-            // frames.  So, if the video sampling frame rate <= the default processing frame rate, we infer
-            // that the intention is to process all frames, which we can ensure waiting for each frame to be processed
+            // frames.  So, if the video sampling frame rate <= the processing frame rate, we infer
+            // that the intention is to process all frames, which we can ensure by waiting for each frame to be processed
             // before sending to the next one.
 
-            if (sampling_frame_rate <= Detector::DEFAULT_PROCESSING_FRAMERATE) {
+            if (sampling_frame_rate <= processing_frame_rate) {
                 image_listener.waitForResult();
             }
 
