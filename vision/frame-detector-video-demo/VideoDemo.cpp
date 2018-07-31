@@ -183,6 +183,12 @@ int main(int argsc, char ** argsv) {
         PlottingImageListener image_listener(csv_file_stream, draw_display);
         StatusListener status_listener;
 
+        if (!image_listener.validate(frame_detector.getSupportedExpressions()) ||
+            !image_listener.validate(frame_detector.getSupportedEmotions()) ||
+            !image_listener.validate(frame_detector.getSupportedMeasurements())) {
+            return 1;
+        }
+
         // configure the FrameDetector by enabling features and assigning listeners
         detector.enable({ vision::Feature::EMOTIONS, vision::Feature::EXPRESSIONS });
         detector.setImageListener(&image_listener);

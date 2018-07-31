@@ -152,6 +152,35 @@ public:
         }
     }
 
+    bool validate(std::set<vision::Expression> supported) {
+        for (auto pair: viz.EXPRESSIONS) {
+            if (supported.find(pair.first) == supported.end()) {
+                std::cerr << "\"" << pair.second << "\": is not supported by the current data directory" << std::endl;
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    bool validate(std::set<vision::Emotion> supported) {
+        for (auto pair: viz.EMOTIONS) {
+            if (supported.find(pair.first) == supported.end()) {
+                std::cerr << "\"" << pair.second << "\": is not supported by the current data directory" << std::endl;
+                return false;
+            }
+        }
+        return true;
+    }
+    bool validate(std::set<vision::Measurement> supported) {
+        for (auto pair: viz.HEAD_ANGLES) {
+            if (supported.find(pair.first) == supported.end()) {
+                std::cerr << "\"" << pair.second << "\": is not supported by the current data directory" << std::endl;
+                return false;
+            }
+        }
+        return true;
+    }
+
 private:
     bool draw_display;
     std::mutex mtx;
