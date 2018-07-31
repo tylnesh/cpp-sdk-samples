@@ -42,7 +42,7 @@ RUN git clone -b $BRANCH https://github.com/Affectiva/cpp-sdk-samples.git $SRC_D
 
 #### BOOST ####
 WORKDIR $SRC_DIR
-RUN wget https://sourceforge.net/projects/boost/files/boost/1.63.0/boost_1_63_0.tar.gz --no-check-certificate && \
+RUN wget --quiet https://sourceforge.net/projects/boost/files/boost/1.63.0/boost_1_63_0.tar.gz --no-check-certificate && \
     tar -xf boost_1_63_0.tar.gz && \
     rm boost_1_63_0.tar.gz && \
     cd $SRC_DIR/boost_1_63_0 && \
