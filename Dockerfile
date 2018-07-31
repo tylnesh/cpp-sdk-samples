@@ -1,7 +1,7 @@
 # A Docker file to be used for building the sample applications for the Linux SDK Ubuntu 16.04
 #
 # build:
-# $ docker build --build-arg API_KEY=$API_KEY --build-arg BRANCH=$BRANCH --tag=v1.1.0:affectiva-auto .
+# $ docker build --build-arg AFFECTIVA_AUTO_SDK_1_1_URL=$AFFECTIVA_AUTO_SDK_1_1_URL --build-arg BRANCH=$BRANCH --tag=v1.1.0:affectiva-auto .
 #
 # the result will be an image that has the tar'ed artifact of the sample app and all of its dependencies installed
 #
@@ -49,15 +49,15 @@ RUN wget https://sourceforge.net/projects/boost/files/boost/1.63.0/boost_1_63_0.
     ./bootstrap.sh &&\
     ./b2 -j $(nproc) cxxflags=-fPIC threading=multi runtime-link=shared \
          --with-filesystem --with-program_options \
-         install && \
+         install > /dev/null && \
     rm -rf $SRC_DIR/boost_1_63_0
 
 #### DOWNLOAD AFFECTIVA AUTO SDK ####
 WORKDIR $SRC_DIR
 ARG AFFECTIVA_AUTO_SDK_1_1_URL
-RUN wget $AFFECTIVA_AUTO_SDK_1_1_URL  &&\
+RUN wget --quiet $AFFECTIVA_AUTO_SDK_1_1_URL  &&\
     tar -xf affectiva-auto-sdk* && \
-    rm -r $SRC_DIR/affectiva-auto-sdk-*
+    rm -r $SRC_DIR/affectiva-auto-sdk-ubuntu-xenial-xerus-*
 
 #### BUILD SAMPLE APPS FOR VISION ####
 RUN mkdir -p $VISION_BUILD_DIR &&\
@@ -82,4 +82,4 @@ RUN mkdir -p $ARTIFACT_DIR &&\
     mv $BUILD_DIR . &&\
     tar -cf ../testapp-artifact.tar.gz .
 
-WORKDIR /opt
+WORKDIR $ARTIFACT_DIR
