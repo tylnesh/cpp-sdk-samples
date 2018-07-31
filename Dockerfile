@@ -56,8 +56,8 @@ RUN wget https://sourceforge.net/projects/boost/files/boost/1.63.0/boost_1_63_0.
 WORKDIR $SRC_DIR
 ARG AFFECTIVA_AUTO_SDK_1_1_URL
 RUN wget $AFFECTIVA_AUTO_SDK_1_1_URL  &&\
-    tar -xf auto-sdk* && \
-    rm -r $SRC_DIR/auto-sdk-*
+    tar -xf affectiva-auto-sdk* && \
+    rm -r $SRC_DIR/affectiva-auto-sdk-*
 
 #### BUILD SAMPLE APPS FOR VISION ####
 RUN mkdir -p $VISION_BUILD_DIR &&\
