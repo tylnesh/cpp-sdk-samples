@@ -183,9 +183,9 @@ int main(int argsc, char ** argsv) {
         PlottingImageListener image_listener(csv_file_stream, draw_display);
         StatusListener status_listener;
 
-        if (!image_listener.validate(frame_detector.getSupportedExpressions()) ||
-            !image_listener.validate(frame_detector.getSupportedEmotions()) ||
-            !image_listener.validate(frame_detector.getSupportedMeasurements())) {
+        if (!image_listener.validate(detector.getSupportedExpressions()) ||
+            !image_listener.validate(detector.getSupportedEmotions()) ||
+            !image_listener.validate(detector.getSupportedMeasurements())) {
             return 1;
         }
 
