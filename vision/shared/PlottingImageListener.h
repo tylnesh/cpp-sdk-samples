@@ -9,6 +9,8 @@
 #include <fstream>
 #include <condition_variable>
 
+#include <iostream>
+
 
 
 using namespace affdex;
