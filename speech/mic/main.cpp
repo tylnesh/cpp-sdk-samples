@@ -40,7 +40,7 @@ namespace affdex_samples {
 
         AudioHelper(path data_dir) : logger(new Logger) {
             detector.reset(new speech::SpeechDetector(data_dir));
-            detector->enable({speech::Feature::ANGER, speech::Feature::LAUGHTER});
+            detector->enable(detector->getSupportedFeatures());
 
             // if using a listener, register the logger with the detector
 #ifdef USE_LISTENER
