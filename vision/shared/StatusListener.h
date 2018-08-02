@@ -13,9 +13,9 @@ public:
 
     StatusListener():is_running(true) {};
 
-    void onProcessingException(Exception ex) override
+    void onProcessingException(Exception& ex) override
     {
-        std::cerr << "Encountered an exception while processing: " << ex.what() << std::endl;
+        print_exception(ex);
         m.lock();
         is_running = false;
         m.unlock();
@@ -40,6 +40,19 @@ public:
     };
 
 private:
+    // prints the explanatory string of an exception. If the exception is nested,
+    // recurses to print the explanatory of the exception it holds
+    static void print_exception(const std::exception& e, int level = 0) {
+        std::cerr << std::string(level, ' ') << "exception: " << e.what() << '\n';
+        try {
+            std::rethrow_if_nested(e);
+        }
+        catch (const std::exception& e) {
+            print_exception(e, level + 1);
+        }
+        catch (...) {}
+    }
+
     std::mutex m;
     bool is_running;
 
