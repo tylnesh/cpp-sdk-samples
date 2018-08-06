@@ -3,6 +3,7 @@
 #include "StatusListener.h"
 
 #include <FrameDetector.h>
+#include <SyncFrameDetector.h>
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -30,6 +31,7 @@ int main(int argsc, char ** argsv) {
         int camera_id;
         unsigned int num_faces;
         bool draw_display = true;
+        bool async = true;
 
         const int precision = 2;
         std::cerr.precision(precision);
@@ -49,6 +51,7 @@ int main(int argsc, char ** argsv) {
             ("cid", po::value< int >(&camera_id)->default_value(0), "Camera ID.")
             ("numFaces", po::value< unsigned int >(&num_faces)->default_value(1), "Number of faces to be tracked.")
             ("draw", po::value< bool >(&draw_display)->default_value(true), "Draw metrics on screen.")
+            ("async", po::value< bool >(&async)->default_value(true), "Process frames asynchronously.")
             ;
         po::variables_map args;
         try {
@@ -83,7 +86,13 @@ int main(int argsc, char ** argsv) {
         }
 
         // create the FrameDetector
-        vision::FrameDetector frame_detector(data_dir, process_framerate, num_faces);
+        unique_ptr<vision::Detector> frame_detector;
+        if (async) {
+            frame_detector = std::unique_ptr<vision::Detector>(new vision::FrameDetector(data_dir, process_framerate, num_faces));
+        }
+        else {
+            frame_detector = std::unique_ptr<vision::Detector>(new vision::SyncFrameDetector(data_dir, process_framerate, num_faces));
+        }
 
         // prepare listeners
         std::ofstream csvFileStream;
@@ -91,17 +100,17 @@ int main(int argsc, char ** argsv) {
         AFaceListener face_listener;
         StatusListener status_listener;
 
-        if (!image_listener.validate(frame_detector.getSupportedExpressions()) ||
-            !image_listener.validate(frame_detector.getSupportedEmotions()) ||
-            !image_listener.validate(frame_detector.getSupportedMeasurements())) {
+        if (!image_listener.validate(frame_detector->getSupportedExpressions()) ||
+            !image_listener.validate(frame_detector->getSupportedEmotions()) ||
+            !image_listener.validate(frame_detector->getSupportedMeasurements())) {
             return 1;
         }
 
         // configure the FrameDetector by enabling features and assigning listeners
-        frame_detector.enable({ vision::Feature::EMOTIONS, vision::Feature::EXPRESSIONS });
-        frame_detector.setImageListener(&image_listener);
-        frame_detector.setFaceListener(&face_listener);
-        frame_detector.setProcessStatusListener(&status_listener);
+        frame_detector->enable({ vision::Feature::EMOTIONS, vision::Feature::EXPRESSIONS });
+        frame_detector->setImageListener(&image_listener);
+        frame_detector->setFaceListener(&face_listener);
+        frame_detector->setProcessStatusListener(&status_listener);
 
         // Connect to the webcam and configure it
         cv::VideoCapture webcam(camera_id);
@@ -116,7 +125,7 @@ int main(int argsc, char ** argsv) {
         }
 
         //Start the frame detector thread.
-        frame_detector.start();
+        frame_detector->start();
 
         do {
             cv::Mat img;
@@ -129,7 +138,12 @@ int main(int argsc, char ** argsv) {
 
             // Create a Frame from the webcam image and process it with the FrameDetector
             const vision::Frame f(img.size().width, img.size().height, img.data, vision::Frame::ColorFormat::BGR, ts);
-            frame_detector.process(f);
+            if (async) {
+                dynamic_cast<vision::FrameDetector *>(frame_detector.get())->process(f);
+            }
+            else {
+                dynamic_cast<vision::SyncFrameDetector *>(frame_detector.get())->process(f);
+            }
 
             image_listener.processResults();
         }
@@ -139,7 +153,7 @@ int main(int argsc, char ** argsv) {
 #else //  _WIN32
         while (status_listener.isRunning());//(cv::waitKey(20) != -1);
 #endif
-        frame_detector.stop();
+        frame_detector->stop();
     }
     catch (std::exception& ex) {
         std::cerr << "Encountered an exception " << ex.what();

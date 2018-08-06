@@ -2,6 +2,7 @@
 #include "StatusListener.h"
 
 #include <FrameDetector.h>
+#include <SyncFrameDetector.h>
 
 #include <opencv2/highgui/highgui.hpp>
 #include <boost/filesystem.hpp>
@@ -98,6 +99,7 @@ int main(int argsc, char ** argsv) {
     unsigned int processing_frame_rate = 0;
     bool draw_display;
     unsigned int num_faces;
+    bool async = true;
 
     namespace po = boost::program_options; // abbreviate namespace
 
@@ -115,6 +117,7 @@ int main(int argsc, char ** argsv) {
     ("pfps", po::value<unsigned int>(&processing_frame_rate), "Max processing frame rate.")
     ("draw", po::value<bool>(&draw_display)->default_value(true), "Draw video on screen.")
     ("numFaces", po::value<unsigned int>(&num_faces)->default_value(1), "Number of faces to be tracked.")
+    ("async", po::value< bool >(&async)->default_value(true), "Process frames asynchronously.")
     ;
 
     po::variables_map args;
@@ -177,31 +180,42 @@ int main(int argsc, char ** argsv) {
 
 
         // create the FrameDetector
-        vision::FrameDetector detector(data_dir, processing_frame_rate, num_faces);
+        unique_ptr<vision::Detector> detector;
+        if (async) {
+            detector = std::unique_ptr<vision::Detector>(new vision::FrameDetector(data_dir, processing_frame_rate, num_faces));
+        }
+        else {
+            detector = std::unique_ptr<vision::Detector>(new vision::SyncFrameDetector(data_dir, processing_frame_rate, num_faces));
+        }
 
         // prepare listeners
         PlottingImageListener image_listener(csv_file_stream, draw_display);
         StatusListener status_listener;
 
-        if (!image_listener.validate(detector.getSupportedExpressions()) ||
-            !image_listener.validate(detector.getSupportedEmotions()) ||
-            !image_listener.validate(detector.getSupportedMeasurements())) {
+        if (!image_listener.validate(detector->getSupportedExpressions()) ||
+            !image_listener.validate(detector->getSupportedEmotions()) ||
+            !image_listener.validate(detector->getSupportedMeasurements())) {
             return 1;
         }
 
         // configure the FrameDetector by enabling features and assigning listeners
-        detector.enable({ vision::Feature::EMOTIONS, vision::Feature::EXPRESSIONS });
-        detector.setImageListener(&image_listener);
-        detector.setProcessStatusListener(&status_listener);
+        detector->enable({ vision::Feature::EMOTIONS, vision::Feature::EXPRESSIONS });
+        detector->setImageListener(&image_listener);
+        detector->setProcessStatusListener(&status_listener);
 
-        detector.start();
+        detector->start();
 
         cv::Mat mat;
         timestamp timestamp_ms;
         while (video_reader.GetFrame(mat, timestamp_ms)) {
             // create a Frame from the video input and process it with the FrameDetector
             vision::Frame f(mat.size().width, mat.size().height, mat.data, vision::Frame::ColorFormat::BGR, timestamp_ms);
-            detector.process(f);
+            if (async) {
+                dynamic_cast<vision::FrameDetector *>(detector.get())->process(f);
+            }
+            else {
+                dynamic_cast<vision::SyncFrameDetector *>(detector.get())->process(f);
+            }
 
             // Since a FrameDetector processes frames asynchronously, and video decoding frame rates are typically
             // faster than FrameDetector processing frame rates, some intervention is needed if we want to avoid
@@ -210,14 +224,14 @@ int main(int argsc, char ** argsv) {
             // that the intention is to process all frames, which we can ensure by waiting for each frame to be processed
             // before sending to the next one.
 
-            if (sampling_frame_rate <= processing_frame_rate) {
+            if (async && sampling_frame_rate <= processing_frame_rate) {
                 image_listener.waitForResult();
             }
 
             image_listener.processResults();
          }
 
-        detector.stop();
+        detector->stop();
         csv_file_stream.close();
 
         std::cout << "Output written to file: " << csv_path << std::endl;
