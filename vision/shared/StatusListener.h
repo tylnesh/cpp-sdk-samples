@@ -13,7 +13,7 @@ public:
 
     StatusListener():is_running(true) {};
 
-    void onProcessingException(Exception ex) override
+    void onProcessingException(Exception& ex) override
     {
         std::cerr << "Encountered an exception while processing: " << ex.what() << std::endl;
         m.lock();
