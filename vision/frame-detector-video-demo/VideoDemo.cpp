@@ -99,7 +99,7 @@ int main(int argsc, char ** argsv) {
     unsigned int processing_frame_rate = 0;
     bool draw_display;
     unsigned int num_faces;
-    bool async = true;
+    bool sync = false;
 
     namespace po = boost::program_options; // abbreviate namespace
 
@@ -117,7 +117,7 @@ int main(int argsc, char ** argsv) {
     ("pfps", po::value<unsigned int>(&processing_frame_rate), "Max processing frame rate.")
     ("draw", po::value<bool>(&draw_display)->default_value(true), "Draw video on screen.")
     ("numFaces", po::value<unsigned int>(&num_faces)->default_value(1), "Number of faces to be tracked.")
-    ("async", po::value< bool >(&async)->default_value(true), "Process frames asynchronously.")
+    ("sync", po::bool_switch(&sync)->default_value(false), "Process frames asynchronously.")
     ;
 
     po::variables_map args;
@@ -181,11 +181,11 @@ int main(int argsc, char ** argsv) {
 
         // create the FrameDetector
         unique_ptr<vision::Detector> detector;
-        if (async) {
-            detector = std::unique_ptr<vision::Detector>(new vision::FrameDetector(data_dir, processing_frame_rate, num_faces));
+        if (sync) {
+            detector = std::unique_ptr<vision::Detector>(new vision::SyncFrameDetector(data_dir, processing_frame_rate, num_faces));
         }
         else {
-            detector = std::unique_ptr<vision::Detector>(new vision::SyncFrameDetector(data_dir, processing_frame_rate, num_faces));
+            detector = std::unique_ptr<vision::Detector>(new vision::FrameDetector(data_dir, processing_frame_rate, num_faces));
         }
 
         // prepare listeners
@@ -210,11 +210,11 @@ int main(int argsc, char ** argsv) {
         while (video_reader.GetFrame(mat, timestamp_ms)) {
             // create a Frame from the video input and process it with the FrameDetector
             vision::Frame f(mat.size().width, mat.size().height, mat.data, vision::Frame::ColorFormat::BGR, timestamp_ms);
-            if (async) {
-                dynamic_cast<vision::FrameDetector *>(detector.get())->process(f);
+            if (sync) {
+                dynamic_cast<vision::SyncFrameDetector *>(detector.get())->process(f);
             }
             else {
-                dynamic_cast<vision::SyncFrameDetector *>(detector.get())->process(f);
+                dynamic_cast<vision::FrameDetector *>(detector.get())->process(f);
             }
 
             // Since a FrameDetector processes frames asynchronously, and video decoding frame rates are typically
@@ -224,7 +224,7 @@ int main(int argsc, char ** argsv) {
             // that the intention is to process all frames, which we can ensure by waiting for each frame to be processed
             // before sending to the next one.
 
-            if (async && sampling_frame_rate <= processing_frame_rate) {
+            if (!sync && sampling_frame_rate <= processing_frame_rate) {
                 image_listener.waitForResult();
             }
 

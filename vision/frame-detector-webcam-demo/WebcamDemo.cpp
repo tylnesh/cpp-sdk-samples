@@ -31,7 +31,7 @@ int main(int argsc, char ** argsv) {
         int camera_id;
         unsigned int num_faces;
         bool draw_display = true;
-        bool async = true;
+        bool sync = false;
 
         const int precision = 2;
         std::cerr.precision(precision);
@@ -51,7 +51,7 @@ int main(int argsc, char ** argsv) {
             ("cid", po::value< int >(&camera_id)->default_value(0), "Camera ID.")
             ("numFaces", po::value< unsigned int >(&num_faces)->default_value(1), "Number of faces to be tracked.")
             ("draw", po::value< bool >(&draw_display)->default_value(true), "Draw metrics on screen.")
-            ("async", po::value< bool >(&async)->default_value(true), "Process frames asynchronously.")
+            ("sync", po::bool_switch(&sync)->default_value(false), "Process frames asynchronously.")
             ;
         po::variables_map args;
         try {
@@ -87,11 +87,11 @@ int main(int argsc, char ** argsv) {
 
         // create the FrameDetector
         unique_ptr<vision::Detector> frame_detector;
-        if (async) {
-            frame_detector = std::unique_ptr<vision::Detector>(new vision::FrameDetector(data_dir, process_framerate, num_faces));
+        if (sync) {
+            frame_detector = std::unique_ptr<vision::Detector>(new vision::SyncFrameDetector(data_dir, process_framerate, num_faces));
         }
         else {
-            frame_detector = std::unique_ptr<vision::Detector>(new vision::SyncFrameDetector(data_dir, process_framerate, num_faces));
+            frame_detector = std::unique_ptr<vision::Detector>(new vision::FrameDetector(data_dir, process_framerate, num_faces));
         }
 
         // prepare listeners
@@ -138,11 +138,11 @@ int main(int argsc, char ** argsv) {
 
             // Create a Frame from the webcam image and process it with the FrameDetector
             const vision::Frame f(img.size().width, img.size().height, img.data, vision::Frame::ColorFormat::BGR, ts);
-            if (async) {
-                dynamic_cast<vision::FrameDetector *>(frame_detector.get())->process(f);
+            if (sync) {
+                dynamic_cast<vision::SyncFrameDetector *>(frame_detector.get())->process(f);
             }
             else {
-                dynamic_cast<vision::SyncFrameDetector *>(frame_detector.get())->process(f);
+                dynamic_cast<vision::FrameDetector *>(frame_detector.get())->process(f);
             }
 
             image_listener.processResults();
@@ -155,9 +155,9 @@ int main(int argsc, char ** argsv) {
 #endif
         frame_detector->stop();
     }
-    catch (std::exception& ex) {
-        std::cerr << "Encountered an exception " << ex.what();
-        return 1;
+    catch (...) {
+//        std::cerr << "Encountered an exception " << ex.what();
+//        return 1;
     }
 
     return 0;
