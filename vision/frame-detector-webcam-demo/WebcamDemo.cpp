@@ -51,7 +51,7 @@ int main(int argsc, char ** argsv) {
             ("cid", po::value< int >(&camera_id)->default_value(0), "Camera ID.")
             ("numFaces", po::value< unsigned int >(&num_faces)->default_value(1), "Number of faces to be tracked.")
             ("draw", po::value< bool >(&draw_display)->default_value(true), "Draw metrics on screen.")
-            ("sync", po::bool_switch(&sync)->default_value(false), "Process frames asynchronously.")
+            ("sync", po::bool_switch(&sync)->default_value(false), "Process frames synchronously.")
             ;
         po::variables_map args;
         try {
