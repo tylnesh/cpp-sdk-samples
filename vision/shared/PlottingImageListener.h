@@ -27,7 +27,7 @@ public:
         process_fps(-1.0f),
         out_stream(csv),
         start(std::chrono::system_clock::now()) {
-        out_stream << "TimeStamp,faceId,confidence,interocularDistance,";
+        out_stream << "TimeStamp,faceId,confidence,location,interocularDistance,";
         for (const auto& angle : viz.HEAD_ANGLES) out_stream << angle.second << ",";
         for (const auto& emotion : viz.EMOTIONS) out_stream << emotion.second << ",";
         for (const auto& expression : viz.EXPRESSIONS) out_stream << expression.second << ",";
@@ -81,7 +81,7 @@ public:
     void outputToFile(const std::map<vision::FaceId, vision::Face> faces, const double timeStamp) {
         if (faces.empty()) {
             out_stream << timeStamp
-                << ",nan,nan,nan,nan,"; // face ID, confidence, interocular distance
+                << ",nan,nan,nan,nan,"; // face ID, confidence, location, interocular distance
             for (const auto& angle : viz.HEAD_ANGLES) out_stream << "nan,";
             for (const auto& emotion : viz.EMOTIONS) out_stream << "nan,";
             for (const auto& expression : viz.EXPRESSIONS) out_stream << "nan,";
@@ -94,6 +94,7 @@ public:
             out_stream << timeStamp << ","
                 << f.getId() << ","
                 << f.getConfidence() << ","
+                << viz.LOCATIONS[f.getOccupantLocation()] << ","
                 << f.getMeasurements().at(vision::Measurement::INTEROCULAR_DISTANCE) << ",";
 
             auto measurements = f.getMeasurements();
@@ -173,6 +174,7 @@ public:
         }
         return true;
     }
+
     bool validate(std::set<vision::Measurement> supported) {
         for (auto pair: viz.HEAD_ANGLES) {
             if (supported.find(pair.first) == supported.end()) {
@@ -181,6 +183,10 @@ public:
             }
         }
         return true;
+    }
+
+    std::map<vision::OccupantLocation, std::string> getLocationNames() const {
+        return viz.LOCATIONS;
     }
 
 private:

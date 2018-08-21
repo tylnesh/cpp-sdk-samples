@@ -1,7 +1,9 @@
 #include "AFaceListener.h"
 #include "PlottingImageListener.h"
 #include "StatusListener.h"
+#include "LocationsConfig.h"
 
+#include <Platform.h>
 #include <FrameDetector.h>
 #include <SyncFrameDetector.h>
 #include <boost/filesystem.hpp>
@@ -25,6 +27,7 @@ int main(int argsc, char ** argsv) {
 
         // cmd line options
         affdex::path data_dir;
+        affdex::path locations_file;
         std::vector<int> resolution;
         int process_framerate;
         int camera_framerate;
@@ -52,13 +55,20 @@ int main(int argsc, char ** argsv) {
             ("numFaces", po::value< unsigned int >(&num_faces)->default_value(1), "Number of faces to be tracked.")
             ("draw", po::value< bool >(&draw_display)->default_value(true), "Draw metrics on screen.")
             ("sync", po::bool_switch(&sync)->default_value(false), "Process frames synchronously.")
-            ;
+#ifdef _WIN32
+            ("locations", po::wvalue< affdex::path >(&locations_file), "Path to the file containing occupant location configurations.")
+#else //  _WIN32
+            ("locations", po::value< affdex::path >(&locations_file), "Path to the file containing occupant location configurations.")
+#endif // _WIN32
+
+        ;
         po::variables_map args;
         try {
             po::store(po::command_line_parser(argsc, argsv).options(description).run(), args);
             if (args["help"].as<bool>())
             {
                 std::cout << description << std::endl;
+                LocationsConfig::printHelpMessage();
                 return 0;
             }
             po::notify(args);
@@ -104,6 +114,20 @@ int main(int argsc, char ** argsv) {
             !image_listener.validate(frame_detector->getSupportedEmotions()) ||
             !image_listener.validate(frame_detector->getSupportedMeasurements())) {
             return 1;
+        }
+
+        // if a locations config file was specified on the command line, parse its contents
+        if (!locations_file.empty()) {
+            if (!boost::filesystem::exists(locations_file)) {
+                std::cerr << "Locations file doesn't exist: " << std::string(locations_file.begin(), locations_file.end()) << std::endl << std::endl;;
+                std::cerr << description << std::endl;
+                return 1;
+            }
+            LocationsConfig locations_config(boost::filesystem::path(locations_file), image_listener.getLocationNames());
+
+            for (auto pair : locations_config.locations) {
+                frame_detector->setOccupantLocationRegion(pair.first, pair.second);
+            }
         }
 
         // configure the FrameDetector by enabling features and assigning listeners

@@ -3,6 +3,9 @@
 
 #include <opencv2/highgui/highgui.hpp>
 #include <iomanip>
+#include <Face.h>
+
+using namespace affdex::vision;
 
 Visualizer::Visualizer():
   GREEN_COLOR_CLASSIFIERS({
@@ -16,41 +19,56 @@ Visualizer::Visualizer():
     logo = cv::imdecode(cv::InputArray(small_logo), CV_LOAD_IMAGE_UNCHANGED);
 
     EXPRESSIONS = {
-        {affdex::vision::Expression::SMILE, "smile"},
-        {affdex::vision::Expression::BROW_RAISE, "browRaise"},
-        {affdex::vision::Expression::BROW_FURROW, "browFurrow"},
-        {affdex::vision::Expression::NOSE_WRINKLE, "noseWrinkle"},
-        {affdex::vision::Expression::UPPER_LIP_RAISE, "upperLipRaise"},
-        {affdex::vision::Expression::MOUTH_OPEN, "mouthOpen"},
-        {affdex::vision::Expression::EYE_CLOSURE, "eyeClosure"},
-        {affdex::vision::Expression::CHEEK_RAISE, "cheekRaise"},
-        {affdex::vision::Expression::YAWN, "yawn"},
-        {affdex::vision::Expression::BLINK, "blink"},
-        {affdex::vision::Expression::BLINK_RATE, "blinkRate"},
+        {Expression::SMILE, "smile"},
+        {Expression::BROW_RAISE, "browRaise"},
+        {Expression::BROW_FURROW, "browFurrow"},
+        {Expression::NOSE_WRINKLE, "noseWrinkle"},
+        {Expression::UPPER_LIP_RAISE, "upperLipRaise"},
+        {Expression::MOUTH_OPEN, "mouthOpen"},
+        {Expression::EYE_CLOSURE, "eyeClosure"},
+        {Expression::CHEEK_RAISE, "cheekRaise"},
+        {Expression::YAWN, "yawn"},
+        {Expression::BLINK, "blink"},
+        {Expression::BLINK_RATE, "blinkRate"},
     };
 
     EMOTIONS = {
-        {affdex::vision::Emotion::JOY, "joy"},
-        {affdex::vision::Emotion::ANGER, "anger"},
-        {affdex::vision::Emotion::SURPRISE, "surprise"},
-        {affdex::vision::Emotion::VALENCE, "valence"},
+        {Emotion::JOY, "joy"},
+        {Emotion::ANGER, "anger"},
+        {Emotion::SURPRISE, "surprise"},
+        {Emotion::VALENCE, "valence"},
     };
 
     HEAD_ANGLES = {
-        {affdex::vision::Measurement::PITCH, "pitch"},
-        {affdex::vision::Measurement::YAW, "yaw"},
-        {affdex::vision::Measurement::ROLL, "roll"}
+        {Measurement::PITCH, "pitch"},
+        {Measurement::YAW, "yaw"},
+        {Measurement::ROLL, "roll"}
+    };
+
+    LOCATIONS = {
+        {OccupantLocation::UNKNOWN,"UNKNOWN" },
+        {OccupantLocation::FIRST_ROW_DRIVER_SIDE,"FIRST_ROW_DRIVER_SIDE" },
+        { OccupantLocation::FIRST_ROW_CENTER,"FIRST_ROW_CENTER" },
+        { OccupantLocation::FIRST_ROW_PASSENGER_SIDE,"FIRST_ROW_PASSENGER_SIDE" },
+        { OccupantLocation::SECOND_ROW_LEFT,"SECOND_ROW_LEFT" },
+        { OccupantLocation::SECOND_ROW_CENTER,"SECOND_ROW_CENTER" },
+        { OccupantLocation::SECOND_ROW_RIGHT,"SECOND_ROW_RIGHT" },
+        { OccupantLocation::THIRD_ROW_LEFT,"THIRD_ROW_LEFT" },
+        { OccupantLocation::THIRD_ROW_CENTER,"THIRD_ROW_CENTER" },
+        {OccupantLocation::THIRD_ROW_RIGHT,"THIRD_ROW_RIGHT" }
     };
 }
 
-void Visualizer::drawFaceMetrics(affdex::vision::Face face, std::vector<affdex::vision::Point> bounding_box)
+void Visualizer::drawFaceMetrics(Face face, std::vector<Point> bounding_box)
 {
     //Draw Right side metrics
     int padding = bounding_box[0].y; //Top left Y
+    drawText("location", LOCATIONS[face.getOccupantLocation()], cv::Point(bounding_box[1].x, padding += spacing), false, cv::Scalar(255, 255, 255));
+
     auto expressions = face.getExpressions();
     for (auto& exp : EXPRESSIONS) {
         // special case: display blink rate as number instead of bar
-        if (exp.first == affdex::vision::Expression::BLINK_RATE) {
+        if (exp.first == Expression::BLINK_RATE) {
             std::stringstream ss;
             ss << std::fixed << std::setw(3) << std::setprecision(1);
             ss << expressions.at(exp.first);
@@ -58,7 +76,7 @@ void Visualizer::drawFaceMetrics(affdex::vision::Face face, std::vector<affdex::
         }
         else {
             float val = expressions.at(exp.first);
-            if (exp.first == affdex::vision::Expression::BLINK) val *= 100; // blink is 0 or 1, so translate to 0 or 100 so it shows up in the UI
+            if (exp.first == Expression::BLINK) val *= 100; // blink is 0 or 1, so translate to 0 or 100 so it shows up in the UI
             drawClassifierOutput(exp.second, val, cv::Point(bounding_box[1].x, padding += spacing), false);
         }
     }
@@ -89,7 +107,7 @@ void Visualizer::updateImage(cv::Mat output_img)
   overlayImage(logo, roi, cv::Point(0, 0));
 }
 
-void Visualizer::drawPoints(std::map<affdex::vision::FacePoint, affdex::vision::Point> points)
+void Visualizer::drawPoints(std::map<FacePoint, Point> points)
 {
     for (auto& point : points)    //Draw face feature points.
     {
@@ -97,7 +115,7 @@ void Visualizer::drawPoints(std::map<affdex::vision::FacePoint, affdex::vision::
     }
 }
 
-void Visualizer::drawBoundingBox(std::vector<affdex::vision::Point> bounding_box, float valence)
+void Visualizer::drawBoundingBox(std::vector<Point> bounding_box, float valence)
 {
     //Draw bounding box
     const ColorgenRedGreen valence_color_generator( -100, 100 );
@@ -221,7 +239,7 @@ void Visualizer::drawEqualizer(const std::string& name, const float value, const
 
 }
 
-void Visualizer::drawHeadOrientation(std::map<affdex::vision::Measurement, float> headAngles, const int x, int &padding,
+void Visualizer::drawHeadOrientation(std::map<Measurement, float> headAngles, const int x, int &padding,
                                      bool align_right, cv::Scalar color)
 {
     std::stringstream ss;
