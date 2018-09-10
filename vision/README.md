@@ -6,6 +6,7 @@ This sample demonstrates use of the [FrameDetector class](https://auto.affectiva
 
 After building, run the command `./frame-detector-webcam-demo --help` for information on its command line options.
 
+---
 ###frame-detector-video-demo
 
 This sample demonstrates use of the [FrameDetector class](https://auto.affectiva.com/docs/vision-create-detector), getting its input from a video file. It analyzes received frames and displays the results on screen.
@@ -14,6 +15,28 @@ After building, run the command `./frame-detector-video-demo --help` for informa
 
 ---
 Note: Both of these sample apps take a command line parameter (`-d/--data`) which is used to specify the path to the data directory for the Affectiva Vision library.  This directory is named `data/vision`, and is located under the folder where you installed the Affectiva Automotive SDK (e.g. `/path/to/affectiva-sdk/vision/data`). 
+
+---
+Both sample apps also accept an optional command line parameter `--locations <filename>`, which if specified, identifies a file which configures occupant location regions.  This file should contain comma-separated values, with a header row followed by one or more data rows. Each data row should specify the following values:
+
+- an OccupantLocation enum value name
+- the top left X and Y coordinates of the location bounding box
+- the bottom right X and Y coordinates of the location bounding box
+
+The header row is required, but its content is ignored.  There should be at least one data row.
+
+For example:
+
+    location,top_left_x,top_left_y,bottom_right_x,bottom_right_y
+    FIRST_ROW_DRIVER_SIDE,852,512,1280,768
+    FIRST_ROW_CENTER,426,512,852,768
+    FIRST_ROW_PASSENGER_SIDE,0,512,426,768
+    SECOND_ROW_LEFT,852,256,1280,512
+    SECOND_ROW_CENTER,426,256,852,512
+    SECOND_ROW_RIGHT,0,256,426,512
+    THIRD_ROW_LEFT,852,0,1280,256
+    THIRD_ROW_CENTER,426,0,852,256
+    THIRD_ROW_RIGHT,0,0,426,256
 
 ---
 
