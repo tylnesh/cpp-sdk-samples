@@ -23,6 +23,7 @@ Visualizer::Visualizer():
         {affdex::vision::Expression::UPPER_LIP_RAISE, "upperLipRaise"},
         {affdex::vision::Expression::MOUTH_OPEN, "mouthOpen"},
         {affdex::vision::Expression::EYE_CLOSURE, "eyeClosure"},
+        {affdex::vision::Expression::EYE_WIDEN, "eyeWiden"},
         {affdex::vision::Expression::CHEEK_RAISE, "cheekRaise"},
         {affdex::vision::Expression::YAWN, "yawn"},
         {affdex::vision::Expression::BLINK, "blink"},
@@ -34,6 +35,7 @@ Visualizer::Visualizer():
         {affdex::vision::Emotion::ANGER, "anger"},
         {affdex::vision::Emotion::SURPRISE, "surprise"},
         {affdex::vision::Emotion::VALENCE, "valence"},
+        {affdex::vision::Emotion::NEUTRAL, "neutral"},
     };
 
     HEAD_ANGLES = {
