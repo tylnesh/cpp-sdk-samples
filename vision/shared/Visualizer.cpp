@@ -24,7 +24,6 @@ Visualizer::Visualizer():
         {affdex::vision::Expression::MOUTH_OPEN, "mouthOpen"},
         {affdex::vision::Expression::EYE_CLOSURE, "eyeClosure"},
         {affdex::vision::Expression::EYE_WIDEN, "eyeWiden"},
-        {affdex::vision::Expression::CHEEK_RAISE, "cheekRaise"},
         {affdex::vision::Expression::YAWN, "yawn"},
         {affdex::vision::Expression::BLINK, "blink"},
         {affdex::vision::Expression::BLINK_RATE, "blinkRate"},
