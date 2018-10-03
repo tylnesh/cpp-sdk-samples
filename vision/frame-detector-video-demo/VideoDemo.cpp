@@ -11,6 +11,7 @@
 #include <boost/program_options.hpp>
 
 #include <iostream>
+#include <iomanip>
 
 using namespace std;
 using namespace affdex;
@@ -27,7 +28,7 @@ public:
 
         cap.open(video_file.string());
         if (!cap.isOpened())
-            throw runtime_error("Error opening video file: " + video_file.string());
+            throw runtime_error("Error opening video/image file: " + video_file.string());
     }
 
     bool GetFrame(cv::Mat &bgr_frame, timestamp& timestamp_ms) {
@@ -37,7 +38,8 @@ public:
             frame_data_loaded = GetFrameData(bgr_frame, timestamp_ms);
         } while ((sampling_frame_rate > 0)
             && (timestamp_ms > 0)
-            && ((timestamp_ms - last_timestamp_ms) < 1000 / sampling_frame_rate));
+            && ((timestamp_ms - last_timestamp_ms) < 1000 / sampling_frame_rate)
+            && frame_data_loaded);
 
         last_timestamp_ms = timestamp_ms;
         return frame_data_loaded;
@@ -56,6 +58,9 @@ public:
         //
         // This workaround double-checks that a subsequent frame can't be decoded, in the absence
         // of better reporting on which case has been encountered.
+        //
+        // In the case of reading an image, first attempt will not return a new frame, but the second one will
+        // succeed. So as a workaround, the new timestamp must be greater than the previous one.
         int n_attempts = 0;
         while (!(frame_found && frame_retrieved) && n_attempts++ < MAX_ATTEMPTS) {
             frame_found = cap.grab();
@@ -64,7 +69,7 @@ public:
         }
 
         if (frame_found && frame_retrieved && n_attempts > 0) {
-            if (timestamp_ms < prev_timestamp_ms) {
+            if (timestamp_ms <= prev_timestamp_ms) {
                 frame_found = false;
             }
         }
@@ -82,17 +87,9 @@ private:
 
 int main(int argsc, char ** argsv) {
 
-    std::map<boost::filesystem::path, bool> SUPPORTED_VIDEO_EXTS  = { {boost::filesystem::path(".avi"), 1},
-                                                                      {boost::filesystem::path(".mov"), 1},
-                                                                      {boost::filesystem::path(".flv"), 1},
-                                                                      {boost::filesystem::path(".webm"), 1},
-                                                                      {boost::filesystem::path(".wmv"), 1},
-                                                                      {boost::filesystem::path(".mp4"), 1} };
-
-
     const int precision = 2;
-    std::cerr.precision(precision);
-    std::cout.precision(precision);
+    std::cerr << std::fixed << std::setprecision(precision);
+    std::cout << std::fixed << std::setprecision(precision);
 
     // cmd line args
     affdex::path data_dir;
@@ -103,6 +100,9 @@ int main(int argsc, char ** argsv) {
     bool draw_display;
     unsigned int num_faces;
     bool sync = false;
+    bool loop = false;
+    bool draw_id = false;
+    bool enable_logging = false;
 
     namespace po = boost::program_options; // abbreviate namespace
 
@@ -126,6 +126,9 @@ int main(int argsc, char ** argsv) {
 #else //  _WIN32
         ("locations", po::value< affdex::path >(&locations_file), "Path to the file containing occupant location configurations.")
 #endif // _WIN32
+    ("loop", po::bool_switch(&loop)->default_value(false), "Loop over the video being processed.")
+    ("log", po::bool_switch(&enable_logging)->default_value(false), "Enable logging to console")
+    ("face_id", po::bool_switch(&draw_id)->default_value(false), "Draw face id on screen. Note: Drawing to screen should be enabled.")
     ;
 
     po::variables_map args;
@@ -154,12 +157,6 @@ int main(int argsc, char ** argsv) {
         std::cerr << "Warning: sampling frame rate (" << sampling_frame_rate << ") should be <= processing frame rate ("  << processing_frame_rate << ") to avoid dropped frames\n";
     }
 
-    const boost::filesystem::path video_ext = boost::filesystem::path(video_path).extension();
-    if (!SUPPORTED_VIDEO_EXTS[video_ext]) {
-        std::cerr << "Unsupported video file extension: " << video_ext << std::endl;
-        return 1;
-    }
-
     // check the data directory
     if (!boost::filesystem::exists(data_dir)) {
         std::cerr << "Data directory doesn't exist: " << std::string(data_dir.begin(), data_dir.end()) << std::endl;
@@ -178,9 +175,6 @@ int main(int argsc, char ** argsv) {
             return 1;
         }
 
-        // the VideoReader will handle decoding frames from the input video file
-        VideoReader video_reader(video_path, sampling_frame_rate);
-
         // if the sampling rate and the requested processing rate are the same, bump the processing rate
         // by one to overcome potential rounding issues when comparing inter-frame timestamp differences
         // against the processing rate
@@ -197,61 +191,79 @@ int main(int argsc, char ** argsv) {
             detector = std::unique_ptr<vision::Detector>(new vision::FrameDetector(data_dir, processing_frame_rate, num_faces));
         }
 
-        // prepare listeners
-        PlottingImageListener image_listener(csv_file_stream, draw_display);
-        StatusListener status_listener;
-
-        if (!image_listener.validate(detector->getSupportedExpressions()) ||
-            !image_listener.validate(detector->getSupportedEmotions()) ||
-            !image_listener.validate(detector->getSupportedMeasurements())) {
-            return 1;
-        }
-
-        // if a locations config file was specified on the command line, parse its contents
-        if (!locations_file.empty()) {
-            if (!boost::filesystem::exists(locations_file)) {
-                std::cerr << "Locations file doesn't exist: " << std::string(locations_file.begin(), locations_file.end()) << std::endl << std::endl;;
-                std::cerr << description << std::endl;
-                return 1;
-            }
-            LocationsConfig locations_config(boost::filesystem::path(locations_file), image_listener.getLocationNames());
-
-            for (auto pair : locations_config.locations) {
-                detector->setOccupantLocationRegion(pair.first, pair.second);
-            }
-        }
-        // configure the FrameDetector by enabling features and assigning listeners
+        // configure the FrameDetector by enabling features
         detector->enable({ vision::Feature::EMOTIONS, vision::Feature::EXPRESSIONS });
-        detector->setImageListener(&image_listener);
-        detector->setProcessStatusListener(&status_listener);
 
+        // start the detector
         detector->start();
 
-        cv::Mat mat;
-        timestamp timestamp_ms;
-        while (video_reader.GetFrame(mat, timestamp_ms)) {
-            // create a Frame from the video input and process it with the FrameDetector
-            vision::Frame f(mat.size().width, mat.size().height, mat.data, vision::Frame::ColorFormat::BGR, timestamp_ms);
-            if (sync) {
-                dynamic_cast<vision::SyncFrameDetector *>(detector.get())->process(f);
-            }
-            else {
-                dynamic_cast<vision::FrameDetector *>(detector.get())->process(f);
-            }
+        do {
+            // the VideoReader will handle decoding frames from the input video file
+            VideoReader video_reader(video_path, sampling_frame_rate);
 
-            // Since a FrameDetector processes frames asynchronously, and video decoding frame rates are typically
-            // faster than FrameDetector processing frame rates, some intervention is needed if we want to avoid
-            // sending frames to the FrameDetector much faster than it can process them, resulting in a lot of dropped
-            // frames.  So, if the video sampling frame rate <= the processing frame rate, we infer
-            // that the intention is to process all frames, which we can ensure by waiting for each frame to be processed
-            // before sending to the next one.
+            // prepare listeners
+            PlottingImageListener image_listener(csv_file_stream, draw_display, enable_logging, draw_id);
+            StatusListener status_listener;
 
-            if (!sync && sampling_frame_rate <= processing_frame_rate) {
-                image_listener.waitForResult();
+            if (!image_listener.validate(detector->getSupportedExpressions()) ||
+                !image_listener.validate(detector->getSupportedEmotions()) ||
+                !image_listener.validate(detector->getSupportedMeasurements())) {
+                return 1;
             }
 
-            image_listener.processResults();
-         }
+            // if a locations config file was specified on the command line, parse its contents
+            if (!locations_file.empty()) {
+                if (!boost::filesystem::exists(locations_file)) {
+                    std::cerr << "Locations file doesn't exist: " << std::string(locations_file.begin(), locations_file.end()) << std::endl << std::endl;;
+                    std::cerr << description << std::endl;
+                    return 1;
+                }
+                LocationsConfig locations_config(boost::filesystem::path(locations_file), image_listener.getLocationNames());
+
+                for (auto pair : locations_config.locations) {
+                    detector->setOccupantLocationRegion(pair.first, pair.second);
+                }
+            }
+
+            // configure the FrameDetector by assigning listeners
+            detector->setImageListener(&image_listener);
+            detector->setProcessStatusListener(&status_listener);
+
+            cv::Mat mat;
+            timestamp timestamp_ms;
+            while (video_reader.GetFrame(mat, timestamp_ms)) {
+                // create a Frame from the video input and process it with the FrameDetector
+                vision::Frame f(mat.size().width, mat.size().height, mat.data, vision::Frame::ColorFormat::BGR, timestamp_ms);
+                if (sync) {
+                    dynamic_cast<vision::SyncFrameDetector *>(detector.get())->process(f);
+                }
+                else {
+                    dynamic_cast<vision::FrameDetector *>(detector.get())->process(f);
+                }
+
+                // Since a FrameDetector processes frames asynchronously, and video decoding frame rates are typically
+                // faster than FrameDetector processing frame rates, some intervention is needed if we want to avoid
+                // sending frames to the FrameDetector much faster than it can process them, resulting in a lot of dropped
+                // frames.  So, if the video sampling frame rate <= the processing frame rate, we infer
+                // that the intention is to process all frames, which we can ensure by waiting for each frame to be processed
+                // before sending to the next one.
+
+                if (!sync && sampling_frame_rate <= processing_frame_rate) {
+                    image_listener.waitForResult();
+                }
+
+                image_listener.processResults();
+            }
+
+            cout << "******************************************************************" << endl
+            << "Processed Frame count: " << image_listener.getProcessedFrames() << endl
+            << "Frames w/faces: " << image_listener.getFramesWithFaces() << endl
+            << "Percent of frames w/faces: " << image_listener.getFramesWithFacesPercent() << "%" << endl
+            << "******************************************************************" << endl;
+
+            detector->reset();
+
+        } while (loop);
 
         detector->stop();
         csv_file_stream.close();
