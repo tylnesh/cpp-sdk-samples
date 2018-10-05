@@ -219,6 +219,18 @@ public:
         return viz.LOCATIONS;
     }
 
+    void reset() {
+        std::lock_guard<std::mutex> lg(mtx);
+        capture_last_ts = 0;
+        capture_fps = -1.0f;
+        process_last_ts = 0;
+        process_fps = -1.0f;
+        start = std::chrono::system_clock::now();
+        processed_frames = 0;
+        frames_with_faces = 0;
+        results.clear();
+    }
+
 private:
     bool draw_display;
     std::mutex mtx;

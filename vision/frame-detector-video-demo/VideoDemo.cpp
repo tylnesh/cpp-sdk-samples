@@ -229,40 +229,40 @@ int main(int argsc, char ** argsv) {
         // configure the FrameDetector by enabling features
         detector->enable({ vision::Feature::EMOTIONS, vision::Feature::EXPRESSIONS });
 
+        // prepare listeners
+        PlottingImageListener image_listener(csv_file_stream, draw_display, enable_logging, draw_id);
+        StatusListener status_listener;
+
+        if (!image_listener.validate(detector->getSupportedExpressions()) ||
+            !image_listener.validate(detector->getSupportedEmotions()) ||
+            !image_listener.validate(detector->getSupportedMeasurements())) {
+            return 1;
+        }
+
+        // if a locations config file was specified on the command line, parse its contents
+        if (!locations_file.empty()) {
+            if (!boost::filesystem::exists(locations_file)) {
+                std::cerr << "Locations file doesn't exist: " << std::string(locations_file.begin(), locations_file.end()) << std::endl << std::endl;;
+                std::cerr << description << std::endl;
+                return 1;
+            }
+            LocationsConfig locations_config(boost::filesystem::path(locations_file), image_listener.getLocationNames());
+
+            for (auto pair : locations_config.locations) {
+                detector->setOccupantLocationRegion(pair.first, pair.second);
+            }
+        }
+
+        // configure the FrameDetector by assigning listeners
+        detector->setImageListener(&image_listener);
+        detector->setProcessStatusListener(&status_listener);
+
         // start the detector
         detector->start();
 
         do {
             // the VideoReader will handle decoding frames from the input video file
             VideoReader video_reader(video_path, sampling_frame_rate);
-
-            // prepare listeners
-            PlottingImageListener image_listener(csv_file_stream, draw_display, enable_logging, draw_id);
-            StatusListener status_listener;
-
-            if (!image_listener.validate(detector->getSupportedExpressions()) ||
-                !image_listener.validate(detector->getSupportedEmotions()) ||
-                !image_listener.validate(detector->getSupportedMeasurements())) {
-                return 1;
-            }
-
-            // if a locations config file was specified on the command line, parse its contents
-            if (!locations_file.empty()) {
-                if (!boost::filesystem::exists(locations_file)) {
-                    std::cerr << "Locations file doesn't exist: " << std::string(locations_file.begin(), locations_file.end()) << std::endl << std::endl;;
-                    std::cerr << description << std::endl;
-                    return 1;
-                }
-                LocationsConfig locations_config(boost::filesystem::path(locations_file), image_listener.getLocationNames());
-
-                for (auto pair : locations_config.locations) {
-                    detector->setOccupantLocationRegion(pair.first, pair.second);
-                }
-            }
-
-            // configure the FrameDetector by assigning listeners
-            detector->setImageListener(&image_listener);
-            detector->setProcessStatusListener(&status_listener);
 
             cv::Mat mat;
             timestamp timestamp_ms;
@@ -297,6 +297,7 @@ int main(int argsc, char ** argsv) {
             << "******************************************************************" << endl;
 
             detector->reset();
+            image_listener.reset();
 
         } while (loop);
 
@@ -307,6 +308,8 @@ int main(int argsc, char ** argsv) {
     }
     catch (std::exception& ex) {
         std::cerr << ex.what();
+
+        // if video_reader couldn't load the video/image, it will throw. Since the detector was started before initializing the video_reader, We need to call `detector->stop()` to avoid crashing
         detector->stop();
         return 1;
     }
