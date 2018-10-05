@@ -10,7 +10,7 @@
 #include <condition_variable>
 
 #include <iostream>
-
+#include <iomanip>
 
 
 using namespace affdex;
@@ -104,7 +104,7 @@ public:
     void outputToFile(const std::map<vision::FaceId, vision::Face> faces, const double timeStamp) {
         if (faces.empty()) {
             out_stream << timeStamp
-                << ",nan,nan,nan,nan,"; // face ID, confidence, location, interocular distance
+                << ",nan,nan,nan,nan,nan,nan,nan,"; // face ID, bbox UL X, UL Y, BR X, BR Y, confidence, interocular distance
             for (const auto& angle : viz.HEAD_ANGLES) out_stream << "nan,";
             for (const auto& emotion : viz.EMOTIONS) out_stream << "nan,";
             for (const auto& expression : viz.EXPRESSIONS) out_stream << "nan,";
@@ -113,9 +113,11 @@ public:
 
         for (auto & face_id_pair : faces) {
             vision::Face f = face_id_pair.second;
+            std::vector<vision::Point> bbox(f.getBoundingBox());
 
             out_stream << timeStamp << ","
                 << f.getId() << ","
+                << std::setprecision(0) << bbox[0].x << "," << bbox[0].y << "," << bbox[1].x << "," << bbox[1].y << "," << std::setprecision(4)
                 << f.getConfidence() << ","
                 << viz.LOCATIONS[f.getOccupantLocation()] << ","
                 << f.getMeasurements().at(vision::Measurement::INTEROCULAR_DISTANCE) << ",";
