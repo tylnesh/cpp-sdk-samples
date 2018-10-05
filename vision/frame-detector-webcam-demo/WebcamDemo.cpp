@@ -12,6 +12,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <iomanip>
 
 using namespace std;
 using namespace affdex;
@@ -35,10 +36,12 @@ int main(int argsc, char ** argsv) {
         unsigned int num_faces;
         bool draw_display = true;
         bool sync = false;
+        bool draw_id = false;
+        bool enable_logging = false;
 
         const int precision = 2;
-        std::cerr.precision(precision);
-        std::cout.precision(precision);
+        std::cerr << std::fixed << std::setprecision(precision);
+        std::cout << std::fixed << std::setprecision(precision);
 
         po::options_description description("Project for demoing the Affdex SDK FrameDetector class (grabbing and processing frames from the camera).");
         description.add_options()
@@ -60,7 +63,8 @@ int main(int argsc, char ** argsv) {
 #else //  _WIN32
             ("locations", po::value< affdex::path >(&locations_file), "Path to the file containing occupant location configurations.")
 #endif // _WIN32
-
+            ("log", po::bool_switch(&enable_logging)->default_value(false), "Enable logging to console")
+            ("face_id", po::bool_switch(&draw_id)->default_value(false), "Draw face id on screen. Note: Drawing to screen must be enabled.")
         ;
         po::variables_map args;
         try {
@@ -95,6 +99,12 @@ int main(int argsc, char ** argsv) {
             return 1;
         }
 
+        if (draw_id && !draw_display) {
+            std::cerr << "Can't draw face id while drawing to screen is disabled" << std::endl;
+            std::cerr << description << std::endl;
+            return 1;
+        }
+
         // create the FrameDetector
         unique_ptr<vision::Detector> frame_detector;
         if (sync) {
@@ -106,7 +116,7 @@ int main(int argsc, char ** argsv) {
 
         // prepare listeners
         std::ofstream csvFileStream;
-        PlottingImageListener image_listener(csvFileStream, draw_display);
+        PlottingImageListener image_listener(csvFileStream, draw_display, enable_logging, draw_id);
         AFaceListener face_listener;
         StatusListener status_listener;
 

@@ -19,15 +19,19 @@ class PlottingImageListener : public vision::ImageListener {
 
 public:
 
-    PlottingImageListener(std::ofstream &csv, bool draw_display) :
+    PlottingImageListener(std::ofstream &csv, bool draw_display, bool enable_logging, bool draw_face_id) :
         draw_display(draw_display),
         capture_last_ts(0),
         capture_fps(-1.0f),
         process_last_ts(0),
         process_fps(-1.0f),
         out_stream(csv),
-        start(std::chrono::system_clock::now()) {
-        out_stream << "TimeStamp,faceId,upperLeftX,upperLeftY,lowerRightX,lowerRightY,confidence,interocularDistance,";
+        start(std::chrono::system_clock::now()),
+        processed_frames(0),
+        frames_with_faces(0),
+        draw_face_id(draw_face_id),
+        logging_enabled(enable_logging) {
+        out_stream << "TimeStamp,faceId,bbox_UL_X,bbox_UL_Y,bbox_BR_X,bbox_BR_Y,confidence,location,interocularDistance,";
         for (const auto& angle : viz.HEAD_ANGLES) out_stream << angle.second << ",";
         for (const auto& emotion : viz.EMOTIONS) out_stream << emotion.second << ",";
         for (const auto& expression : viz.EXPRESSIONS) out_stream << expression.second << ",";
@@ -51,6 +55,18 @@ public:
         return results.size();
     }
 
+    unsigned int getProcessedFrames() {
+        return processed_frames;
+    }
+
+    unsigned int getFramesWithFaces() {
+        return frames_with_faces;
+    }
+
+    double getFramesWithFacesPercent() {
+        return (static_cast<double>(frames_with_faces) / processed_frames) * 100;
+    }
+
     std::pair<vision::Frame, std::map<vision::FaceId, vision::Face>> getData() {
         std::lock_guard<std::mutex> lg(mtx);
         std::pair<vision::Frame, std::map<vision::FaceId, vision::Face>> dpoint = results.front();
@@ -68,6 +84,13 @@ public:
         results.emplace_back(image, faces);
         process_fps = 1000.0f / (image.getTimestamp() - process_last_ts) ;
         process_last_ts = image.getTimestamp();
+
+        processed_frames++;
+        if (faces.size() > 0)
+        {
+            frames_with_faces++;
+        }
+
         std::unique_lock< std::mutex > lock(result_mtx);
         result_received.notify_one();
     };
@@ -81,7 +104,7 @@ public:
     void outputToFile(const std::map<vision::FaceId, vision::Face> faces, const double timeStamp) {
         if (faces.empty()) {
             out_stream << timeStamp
-                << ",nan,nan,nan,nan,nan,nan,nan,"; // face ID, bbox UL X, UL Y, BR X, BR Y, confidence, interocular distance
+                << ",nan,nan,nan,nan,nan,nan,nan,nan,"; // face ID, bbox UL X, UL Y, BR X, BR Y, confidence, location, interocular distance
             for (const auto& angle : viz.HEAD_ANGLES) out_stream << "nan,";
             for (const auto& emotion : viz.EMOTIONS) out_stream << "nan,";
             for (const auto& expression : viz.EXPRESSIONS) out_stream << "nan,";
@@ -137,7 +160,7 @@ public:
             viz.drawBoundingBox(bbox, valence);
 
             // Draw a face on screen
-            viz.drawFaceMetrics(f, bbox);
+            viz.drawFaceMetrics(f, bbox, draw_face_id);
         }
 
         viz.showImage();
@@ -154,6 +177,13 @@ public:
             }
 
             outputToFile(faces, frame.getTimestamp());
+
+            if (logging_enabled) {
+                std::cout << "timestamp: " << frame.getTimestamp()
+                << " cfps: " << getCaptureFrameRate()
+                << " pfps: " << getProcessingFrameRate()
+                << " faces: "<< faces.size() << std::endl;
+            }
         }
     }
 
@@ -191,6 +221,18 @@ public:
         return viz.LOCATIONS;
     }
 
+    void reset() {
+        std::lock_guard<std::mutex> lg(mtx);
+        capture_last_ts = 0;
+        capture_fps = -1.0f;
+        process_last_ts = 0;
+        process_fps = -1.0f;
+        start = std::chrono::system_clock::now();
+        processed_frames = 0;
+        frames_with_faces = 0;
+        results.clear();
+    }
+
 private:
     bool draw_display;
     std::mutex mtx;
@@ -207,4 +249,8 @@ private:
 
     Visualizer viz;
 
+    unsigned int processed_frames;
+    unsigned int frames_with_faces;
+    bool draw_face_id;
+    bool logging_enabled;
 };

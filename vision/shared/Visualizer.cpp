@@ -59,7 +59,7 @@ Visualizer::Visualizer():
     };
 }
 
-void Visualizer::drawFaceMetrics(Face face, std::vector<Point> bounding_box)
+void Visualizer::drawFaceMetrics(Face face, std::vector<Point> bounding_box, bool draw_face_id)
 {
     //Draw Right side metrics
     int padding = bounding_box[0].y; //Top left Y
@@ -82,6 +82,9 @@ void Visualizer::drawFaceMetrics(Face face, std::vector<Point> bounding_box)
     }
 
     padding = bounding_box[0].y;  //Top right Y
+    if (draw_face_id) {
+        drawText("ID", std::to_string(face.getId()), cv::Point(bounding_box[0].x, padding + spacing), false, cv::Scalar(255, 255, 255));
+    }
     //Draw Head Angles
     drawHeadOrientation(face.getMeasurements(), bounding_box[0].x - spacing, padding);
 

@@ -44,8 +44,9 @@ public:
     /** @brief DrawFaceMetrics Displays all facial metrics and associated value
     * @param face         -- The affdex::Face object to display
     * @param bounding_box -- The bounding box coordinates
+    * @param draw_face_id -- Whether to draw the face id
     */
-    void drawFaceMetrics(affdex::vision::Face face, std::vector<affdex::vision::Point> bounding_box);
+    void drawFaceMetrics(affdex::vision::Face face, std::vector<affdex::vision::Point> bounding_box, bool draw_face_id = false);
 
     /** @brief ShowImage displays image on screen
     */
