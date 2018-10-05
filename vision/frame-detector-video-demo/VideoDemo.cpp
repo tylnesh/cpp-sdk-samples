@@ -18,7 +18,7 @@ using namespace affdex;
 
 class VideoReader {
 public:
-    VideoReader(const boost::filesystem::path& video_file, const unsigned int sampling_frame_rate) :
+    VideoReader(const boost::filesystem::path& file_path, const unsigned int sampling_frame_rate) :
         sampling_frame_rate(sampling_frame_rate) {
 
         if (!(sampling_frame_rate == -1 || sampling_frame_rate > 0))
@@ -26,9 +26,38 @@ public:
 
         last_timestamp_ms = 0 - 1 / sampling_frame_rate; // Initialize it so we still get timestamp 0 with sampling
 
-        cap.open(video_file.string());
+
+        std::set<boost::filesystem::path> SUPPORTED_EXTS = {
+            // Videos
+            boost::filesystem::path(".avi"),
+            boost::filesystem::path(".mov"),
+            boost::filesystem::path(".flv"),
+            boost::filesystem::path(".webm"),
+            boost::filesystem::path(".wmv"),
+            boost::filesystem::path(".mp4"),
+
+            // Supported image formats
+            // check https://docs.opencv.org/2.4/modules/highgui/doc/reading_and_writing_images_and_video.html#imread
+            boost::filesystem::path(".bmp"),
+            boost::filesystem::path(".jpeg"),
+            boost::filesystem::path(".jpg"),
+            boost::filesystem::path(".png"),
+            boost::filesystem::path(".pbm"),
+            boost::filesystem::path(".pgm"),
+            boost::filesystem::path(".sr"),
+            boost::filesystem::path(".ras"),
+            boost::filesystem::path(".tiff"),
+            boost::filesystem::path(".tif")
+        };
+
+        boost::filesystem::path ext = file_path.extension();
+        if (SUPPORTED_EXTS.find(ext) == SUPPORTED_EXTS.end()) {
+            throw runtime_error("Unsupported file extension: " + ext.string());
+        }
+
+        cap.open(file_path.string());
         if (!cap.isOpened())
-            throw runtime_error("Error opening video/image file: " + video_file.string());
+            throw runtime_error("Error opening video/image file: " + file_path.string());
     }
 
     bool GetFrame(cv::Mat &bgr_frame, timestamp& timestamp_ms) {
@@ -164,6 +193,13 @@ int main(int argsc, char ** argsv) {
         return 1;
     }
 
+    if (draw_id && !draw_display) {
+        std::cerr << "Can't draw face id while drawing to screen is disabled" << std::endl;
+        std::cerr << description << std::endl;
+        return 1;
+    }
+
+    unique_ptr<vision::Detector> detector;
     try {
         //initialize the output file
         boost::filesystem::path csv_path(video_path);
@@ -183,7 +219,6 @@ int main(int argsc, char ** argsv) {
 
 
         // create the FrameDetector
-        unique_ptr<vision::Detector> detector;
         if (sync) {
             detector = std::unique_ptr<vision::Detector>(new vision::SyncFrameDetector(data_dir, processing_frame_rate, num_faces));
         }
@@ -272,6 +307,7 @@ int main(int argsc, char ** argsv) {
     }
     catch (std::exception& ex) {
         std::cerr << ex.what();
+        detector->stop();
         return 1;
     }
 

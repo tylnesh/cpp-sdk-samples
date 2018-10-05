@@ -99,6 +99,12 @@ int main(int argsc, char ** argsv) {
             return 1;
         }
 
+        if (draw_id && !draw_display) {
+            std::cerr << "Can't draw face id while drawing to screen is disabled" << std::endl;
+            std::cerr << description << std::endl;
+            return 1;
+        }
+
         // create the FrameDetector
         unique_ptr<vision::Detector> frame_detector;
         if (sync) {
