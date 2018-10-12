@@ -156,7 +156,6 @@ int main(int argsc, char ** argsv) {
         ("locations", po::value< affdex::path >(&locations_file), "Path to the file containing occupant location configurations.")
 #endif // _WIN32
     ("loop", po::bool_switch(&loop)->default_value(false), "Loop over the video being processed.")
-    ("log", po::bool_switch(&enable_logging)->default_value(false), "Enable logging to console")
     ("face_id", po::bool_switch(&draw_id)->default_value(false), "Draw face id on screen. Note: Drawing to screen should be enabled.")
     ;
 

@@ -36,8 +36,8 @@ int main(int argsc, char ** argsv) {
         unsigned int num_faces;
         bool draw_display = true;
         bool sync = false;
-        bool draw_id = false;
-        bool enable_logging = false;
+        bool draw_id = true;
+        bool disable_logging = false;
 
         const int precision = 2;
         std::cerr << std::fixed << std::setprecision(precision);
@@ -63,8 +63,8 @@ int main(int argsc, char ** argsv) {
 #else //  _WIN32
             ("locations", po::value< affdex::path >(&locations_file), "Path to the file containing occupant location configurations.")
 #endif // _WIN32
-            ("log", po::bool_switch(&enable_logging)->default_value(false), "Enable logging to console")
-            ("face_id", po::bool_switch(&draw_id)->default_value(false), "Draw face id on screen. Note: Drawing to screen must be enabled.")
+            ("quiet,q", po::bool_switch(&disable_logging)->default_value(false), "Enable logging to console")
+            ("face_id", po::value< bool >(&draw_id)->default_value(true), "Draw face id on screen. Note: Drawing to screen must be enabled.")
         ;
         po::variables_map args;
         try {
@@ -116,7 +116,7 @@ int main(int argsc, char ** argsv) {
 
         // prepare listeners
         std::ofstream csvFileStream;
-        PlottingImageListener image_listener(csvFileStream, draw_display, enable_logging, draw_id);
+        PlottingImageListener image_listener(csvFileStream, draw_display, !disable_logging, draw_id);
         AFaceListener face_listener;
         StatusListener status_listener;
 

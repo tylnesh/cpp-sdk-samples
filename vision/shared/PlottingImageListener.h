@@ -36,16 +36,16 @@ public:
         for (const auto& emotion : viz.EMOTIONS) out_stream << emotion.second << ",";
         for (const auto& expression : viz.EXPRESSIONS) out_stream << expression.second << ",";
         out_stream << std::endl;
-        out_stream.precision(4);
+        out_stream.precision(2);
         out_stream << std::fixed;
     }
 
-    double getProcessingFrameRate() {
+    unsigned int getProcessingFrameRate() {
         std::lock_guard<std::mutex> lg(mtx);
         return process_fps;
     }
 
-    double getCaptureFrameRate() {
+    unsigned int getCaptureFrameRate() {
         std::lock_guard<std::mutex> lg(mtx);
         return capture_fps;
     }
@@ -82,7 +82,7 @@ public:
     void onImageResults(std::map<vision::FaceId, vision::Face> faces, vision::Frame image) override {
         std::lock_guard<std::mutex> lg(mtx);
         results.emplace_back(image, faces);
-        process_fps = 1000.0f / (image.getTimestamp() - process_last_ts) ;
+        process_fps = 1000 / (image.getTimestamp() - process_last_ts) ;
         process_last_ts = image.getTimestamp();
 
         processed_frames++;
@@ -97,7 +97,7 @@ public:
 
     void onImageCapture(vision::Frame image) override {
         std::lock_guard<std::mutex> lg(mtx);
-        capture_fps = 1000.0f / (image.getTimestamp() - capture_last_ts);
+        capture_fps = 1000 / (image.getTimestamp() - capture_last_ts);
         capture_last_ts = image.getTimestamp();
     };
 
@@ -241,9 +241,9 @@ private:
     std::deque<std::pair<vision::Frame, std::map<vision::FaceId, vision::Face> > > results;
 
     timestamp capture_last_ts;
-    double capture_fps;
+    unsigned int capture_fps;
     timestamp process_last_ts;
-    double process_fps;
+    unsigned int process_fps;
     std::ofstream &out_stream;
     std::chrono::time_point<std::chrono::system_clock> start;
 
