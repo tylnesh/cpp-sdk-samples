@@ -27,7 +27,7 @@ The header row is required, but its content is ignored.  There should be at leas
 
 For example:
 
-    location,top_left_x,top_left_y,bottom_right_x,bottom_right_y
+    location,upperLeftX,upperLeftY,lowerRightX,lowerRightY
     FIRST_ROW_DRIVER_SIDE,852,512,1280,768
     FIRST_ROW_CENTER,426,512,852,768
     FIRST_ROW_PASSENGER_SIDE,0,512,426,768
