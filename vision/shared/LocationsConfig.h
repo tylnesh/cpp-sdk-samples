@@ -49,7 +49,7 @@ public:
             << "-the top left X and Y coordinates of the location bounding box\n"
             << "-the bottom right X and Y coordinates of the location bounding box\n\n"
             << "For example:\n\n"
-            << "location,top_left_x,top_left_y,bottom_right_x,bottom_right_y\n"
+            << "location,upperLeftX,upperLeftY,lowerRightX,lowerRightY\n"
             << "FIRST_ROW_DRIVER_SIDE,852,512,1280,768\n"
             << "FIRST_ROW_CENTER,426,512,852,768\n"
             << "FIRST_ROW_PASSENGER_SIDE,0,512,426,768\n"

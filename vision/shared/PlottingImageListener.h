@@ -22,9 +22,9 @@ public:
     PlottingImageListener(std::ofstream &csv, bool draw_display, bool enable_logging, bool draw_face_id) :
         draw_display(draw_display),
         capture_last_ts(0),
-        capture_fps(-1.0f),
+        capture_fps(-1),
         process_last_ts(0),
-        process_fps(-1.0f),
+        process_fps(-1),
         out_stream(csv),
         start(std::chrono::system_clock::now()),
         processed_frames(0),
@@ -82,7 +82,7 @@ public:
     void onImageResults(std::map<vision::FaceId, vision::Face> faces, vision::Frame image) override {
         std::lock_guard<std::mutex> lg(mtx);
         results.emplace_back(image, faces);
-        process_fps = 1000 / (image.getTimestamp() - process_last_ts) ;
+        process_fps = 1000.0f / (image.getTimestamp() - process_last_ts) ;
         process_last_ts = image.getTimestamp();
 
         processed_frames++;
@@ -97,7 +97,7 @@ public:
 
     void onImageCapture(vision::Frame image) override {
         std::lock_guard<std::mutex> lg(mtx);
-        capture_fps = 1000 / (image.getTimestamp() - capture_last_ts);
+        capture_fps = 1000.0f / (image.getTimestamp() - capture_last_ts);
         capture_last_ts = image.getTimestamp();
     };
 
