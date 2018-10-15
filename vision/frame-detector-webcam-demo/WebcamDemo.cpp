@@ -63,7 +63,7 @@ int main(int argsc, char ** argsv) {
 #else //  _WIN32
             ("locations", po::value< affdex::path >(&locations_file), "Path to the file containing occupant location configurations.")
 #endif // _WIN32
-            ("quiet,q", po::bool_switch(&disable_logging)->default_value(false), "Enable logging to console")
+            ("quiet,q", po::bool_switch(&disable_logging)->default_value(false), "Disable logging to console")
             ("face_id", po::value< bool >(&draw_id)->default_value(true), "Draw face id on screen. Note: Drawing to screen must be enabled.")
         ;
         po::variables_map args;

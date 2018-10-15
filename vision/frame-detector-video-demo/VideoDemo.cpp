@@ -157,7 +157,7 @@ int main(int argsc, char ** argsv) {
 #endif // _WIN32
     ("loop", po::bool_switch(&loop)->default_value(false), "Loop over the video being processed.")
     ("face_id", po::bool_switch(&draw_id)->default_value(false), "Draw face id on screen. Note: Drawing to screen should be enabled.")
-    ("quiet,q", po::bool_switch(&disable_logging)->default_value(false), "Enable logging to console")
+    ("quiet,q", po::bool_switch(&disable_logging)->default_value(false), "Disable logging to console")
 
     ;
 
