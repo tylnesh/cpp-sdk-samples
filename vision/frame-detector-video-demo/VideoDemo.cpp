@@ -231,7 +231,7 @@ int main(int argsc, char ** argsv) {
         detector->enable({ vision::Feature::EMOTIONS, vision::Feature::EXPRESSIONS });
 
         // prepare listeners
-        PlottingImageListener image_listener(csv_file_stream, draw_display, disable_logging, draw_id);
+        PlottingImageListener image_listener(csv_file_stream, draw_display, !disable_logging, draw_id);
         StatusListener status_listener;
 
         if (!image_listener.validate(detector->getSupportedExpressions()) ||
