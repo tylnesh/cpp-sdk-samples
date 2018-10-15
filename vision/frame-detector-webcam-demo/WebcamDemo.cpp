@@ -185,7 +185,7 @@ int main(int argsc, char ** argsv) {
 #ifdef _WIN32
         while (!GetAsyncKeyState(VK_ESCAPE) && status_listener.isRunning());
 #else //  _WIN32
-        while (status_listener.isRunning());//(cv::waitKey(20) != -1);
+        while (status_listener.isRunning() && (cv::waitKey(20) != 27)); // ascii for ESC
 #endif
         frame_detector->stop();
     }
