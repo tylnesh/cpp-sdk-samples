@@ -131,7 +131,7 @@ int main(int argsc, char ** argsv) {
     bool sync = false;
     bool loop = false;
     bool draw_id = false;
-    bool enable_logging = false;
+    bool disable_logging = false;
 
     namespace po = boost::program_options; // abbreviate namespace
 
@@ -157,6 +157,8 @@ int main(int argsc, char ** argsv) {
 #endif // _WIN32
     ("loop", po::bool_switch(&loop)->default_value(false), "Loop over the video being processed.")
     ("face_id", po::bool_switch(&draw_id)->default_value(false), "Draw face id on screen. Note: Drawing to screen should be enabled.")
+    ("quiet,q", po::bool_switch(&disable_logging)->default_value(false), "Enable logging to console")
+
     ;
 
     po::variables_map args;
@@ -229,7 +231,7 @@ int main(int argsc, char ** argsv) {
         detector->enable({ vision::Feature::EMOTIONS, vision::Feature::EXPRESSIONS });
 
         // prepare listeners
-        PlottingImageListener image_listener(csv_file_stream, draw_display, enable_logging, draw_id);
+        PlottingImageListener image_listener(csv_file_stream, draw_display, disable_logging, draw_id);
         StatusListener status_listener;
 
         if (!image_listener.validate(detector->getSupportedExpressions()) ||
