@@ -32,7 +32,7 @@ else( DEFINED OpenCV_DIR )
 endif( DEFINED OpenCV_DIR )
 
 # Boost
-ADD_BOOST(${rootProject} filesystem program_options)
+ADD_BOOST(${rootProject} system filesystem program_options)
 
 # Affectiva SDK
 if(NOT DEFINED AFFECTIVA_SDK_DIR )
