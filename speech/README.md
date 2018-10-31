@@ -74,21 +74,21 @@ If you are building the `mic` app:
 
 Note: for the \*\_LIBRARY and \*\_LIBRARY_DEBUG values, you only need to provide one or the other, as appropriate to the type of build you're doing (i.e. Release or Debug, as indicated by CMAKE_BUILD_TYPE).
 
-#### Linux
+#### Linux (x86_64, aarch64)
 
 For building under Linux, type the following command:
 
 `$ cmake . -DCMAKE_BUILD_TYPE=[Release,Debug] <other args>`
 
-Example (replace directories starting with `/path/to` as appropriate):
+Example (replace directories starting with `/path/to` as appropriate and `${platform-type}` to either `x86_64` or `aarch64`):
 ```
 CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release \
 -DBUILD_MIC=ON \
 -DBUILD_WAV=ON \
 -DAFFECTIVA_SDK_DIR=/path/to/auto-sdk \
 -DBOOST_ROOT=/path/to/boost-build \
--DPortAudio_INCLUDE=/usr/include -DPortAudio_LIBRARY=/usr/lib/x86_64-linux-gnu/libportaudio.so.2 \
--DLibSndFile_INCLUDE=/usr/include -DLibSndFile_LIBRARY=/usr/lib/x86_64-linux-gnu/libsndfile.so \
+-DPortAudio_INCLUDE=/usr/include -DPortAudio_LIBRARY=/usr/lib/${platform-type}-linux-gnu/libportaudio.so.2 \
+-DLibSndFile_INCLUDE=/usr/include -DLibSndFile_LIBRARY=/usr/lib/${platform-type}-linux-gnu/libsndfile.so \
 -DCMAKE_INSTALL_PREFIX=/path/to/install"
 
 # create a build directory

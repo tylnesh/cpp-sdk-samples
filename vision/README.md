@@ -14,7 +14,7 @@ This sample demonstrates use of the [FrameDetector class](https://auto.affectiva
 After building, run the command `./frame-detector-video-demo --help` for information on its command line options.
 
 ---
-Note: Both of these sample apps take a command line parameter (`-d/--data`) which is used to specify the path to the data directory for the Affectiva Vision library.  This directory is named `data/vision`, and is located under the folder where you installed the Affectiva Automotive SDK (e.g. `/path/to/affectiva-sdk/vision/data`). 
+Note: Both of these sample apps take a command line parameter (`-d/--data`) which is used to specify the path to the data directory for the Affectiva Vision library.  This directory is named `data/vision`, and is located under the folder where you installed the Affectiva Automotive SDK (e.g. `/path/to/affectiva-sdk/vision/data`).
 
 ---
 Both sample apps also accept an optional command line parameter `--locations <filename>`, which if specified, identifies a file which configures occupant location regions.  This file should contain comma-separated values, with a header row followed by one or more data rows. Each data row should specify the following values:
@@ -74,7 +74,7 @@ Specify the the following CMake variables to identify the locations of various d
 - **BOOST_ROOT** path to the Boost src tree
 
 
-#### Linux
+#### Linux (x86_64, aarch64)
 
 For building under Linux, type the following command:
 
