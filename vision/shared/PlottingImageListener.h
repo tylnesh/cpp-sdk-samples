@@ -148,9 +148,9 @@ public:
 
         for (auto & face_id_pair : faces) {
             vision::Face f = face_id_pair.second;
-            
+
             std::map<vision::FacePoint, vision::Point> points = f.getFacePoints();
-            
+
             // Draw Facial Landmarks Points
             viz.drawPoints(f.getFacePoints());
 
@@ -196,7 +196,7 @@ public:
         }
         return true;
     }
-    
+
     bool validate(std::set<vision::Emotion> supported) {
         for (auto pair: viz.EMOTIONS) {
             if (supported.find(pair.first) == supported.end()) {
