@@ -7,6 +7,16 @@
 #
 # run interactively:
 # $ docker run -it --rm v1.1.0:affectiva-auto
+#
+# run webcam-demo interactively:
+# $ docker run -it --privileged --rm --net=host \
+#        -v /tmp/.X11-unix:/tmp/.X11-unix  \
+#        -v $XAUTHORITY:/root/.Xauthority \
+#        -e DISPLAY=$DISPLAY     \
+#        --device=/dev/video0:/dev/video0 \
+#        v1.1.0:affectiva-auto
+# Then from the shell, run:
+# /opt/testapp-artifact/build/vision/bin/frame-detector-webcam-demo -d $AUTO_SDK_DIR/data/vision
 
 FROM ubuntu:16.04
 
