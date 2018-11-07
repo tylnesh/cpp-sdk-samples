@@ -16,7 +16,7 @@
 #        --device=/dev/video0:/dev/video0 \
 #        v1.1.0:affectiva-auto
 # Then from the shell, run:
-# /opt/testapp-artifact/build/vision/bin/frame-detector-webcam-demo -d $AUTO_SDK_DIR/data/vision
+# $ /opt/testapp-artifact/build/vision/bin/frame-detector-webcam-demo -d $AUTO_SDK_DIR/data/vision
 
 FROM ubuntu:16.04
 
