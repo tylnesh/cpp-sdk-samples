@@ -135,11 +135,11 @@ int main(int argsc, char ** argsv)
         std::cout << "Face detector mode set to: " << mode << std::endl;
         shared_ptr<PlottingImageListener> listenPtr(new PlottingImageListener(csvFileStream, draw_display));
 
+	detector->setClassifierPath(DATA_FOLDER);
         detector->setDetectAllEmotions(true);
         detector->setDetectAllExpressions(true);
-		detector->setDetectAllEmojis(true);
+	detector->setDetectAllEmojis(true);
         detector->setDetectAllAppearances(true);
-        detector->setClassifierPath(DATA_FOLDER);
         detector->setImageListener(listenPtr.get());
 
 
