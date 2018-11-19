@@ -234,12 +234,6 @@ int main(int argsc, char ** argsv) {
         PlottingImageListener image_listener(csv_file_stream, draw_display, !disable_logging, draw_id);
         StatusListener status_listener;
 
-        if (!image_listener.validate(detector->getSupportedExpressions()) ||
-            !image_listener.validate(detector->getSupportedEmotions()) ||
-            !image_listener.validate(detector->getSupportedMeasurements())) {
-            return 1;
-        }
-
         // if a locations config file was specified on the command line, parse its contents
         if (!locations_file.empty()) {
             if (!boost::filesystem::exists(locations_file)) {

@@ -120,12 +120,6 @@ int main(int argsc, char ** argsv) {
         AFaceListener face_listener;
         StatusListener status_listener;
 
-        if (!image_listener.validate(frame_detector->getSupportedExpressions()) ||
-            !image_listener.validate(frame_detector->getSupportedEmotions()) ||
-            !image_listener.validate(frame_detector->getSupportedMeasurements())) {
-            return 1;
-        }
-
         // if a locations config file was specified on the command line, parse its contents
         if (!locations_file.empty()) {
             if (!boost::filesystem::exists(locations_file)) {
