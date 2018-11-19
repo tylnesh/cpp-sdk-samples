@@ -113,11 +113,11 @@ int main(int argsc, char ** argsv)
         frameDetector = make_shared<FrameDetector>(buffer_length, process_framerate, nFaces, (affdex::FaceDetectorMode) faceDetectorMode);        // Init the FrameDetector Class
 
         //Initialize detectors
+        frameDetector->setClassifierPath(DATA_FOLDER);
         frameDetector->setDetectAllEmotions(true);
         frameDetector->setDetectAllExpressions(true);
         frameDetector->setDetectAllEmojis(true);
         frameDetector->setDetectAllAppearances(true);
-        frameDetector->setClassifierPath(DATA_FOLDER);
         frameDetector->setImageListener(listenPtr.get());
         frameDetector->setFaceListener(faceListenPtr.get());
         frameDetector->setProcessStatusListener(videoListenPtr.get());
