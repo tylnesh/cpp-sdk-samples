@@ -21,15 +21,6 @@ public:
         m.unlock();
     };
 
-    void onProcessingFinished() override
-    {
-        std::cerr << "Processing finished successfully" << std::endl;
-        m.lock();
-        is_running = false;
-        m.unlock();
-
-    };
-
     bool isRunning()
     {
         bool ret = true;
