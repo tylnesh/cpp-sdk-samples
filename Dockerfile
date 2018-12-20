@@ -5,8 +5,21 @@
 #
 # the result will be an image that has the tar'ed artifact of the sample app and all of its dependencies installed
 #
-# run interactively:
+# run this container interactively:
 # $ docker run -it --rm v1.1.0:affectiva-auto
+#
+# running the webcam or mic demos interactively requires some privileges, devices, and access to the X11 socket:
+# $ docker run -it --privileged --rm --net=host \
+#        -v /tmp/.X11-unix:/tmp/.X11-unix  \
+#        -v $XAUTHORITY:/root/.Xauthority \
+#        -e DISPLAY=$DISPLAY     \
+#        --device=/dev/video0 \
+#        --device=/dev/snd \
+#        v1.1.0:affectiva-auto
+# Then from the shell, run the following for the webcam demo:
+# $ /opt/testapp-artifact/build/vision/bin/frame-detector-webcam-demo -d $AUTO_SDK_DIR/data/vision
+# or for the mic demo:
+# $ /opt/testapp-artifact/build/speech/bin/mic -d $AUTO_SDK_DIR/data/speech
 
 FROM ubuntu:16.04
 
@@ -22,7 +35,9 @@ RUN apt-get update &&\
                         libopencv-dev \
                         cmake \
                         libsndfile1-dev \
-                        portaudio19-dev > /dev/null
+                        portaudio19-dev \
+                        alsa-base \
+                        alsa-utils > /dev/null
 
 ENV SRC_DIR /opt/src
 ENV BUILD_DIR /opt/build
