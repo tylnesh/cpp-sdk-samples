@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 2.6)
 set(rootProject cpp-sdk-samples)
 project(${rootProject})
 
+
+
 # CMake includes
 include(cmake_modules/Macros.cmake)         # Some custom macros we have writtens
 
@@ -53,6 +55,10 @@ endif( NOT RUNTIME_INSTALL_DIRECTORY )
 # --------------------
 # LOCATE DEPENDENCIES
 # --------------------
+
+
+
+
 
 # OpenCV
 # ----------------------------------------------------------------------------
@@ -125,7 +131,7 @@ endif (DEFINED AFFDEX_DIR)
 
 
 add_subdirectory(opencv-webcam-demo)
-add_subdirectory(video-demo)
+#add_subdirectory(video-demo)
 
 # --------------------
 # SUMMARY

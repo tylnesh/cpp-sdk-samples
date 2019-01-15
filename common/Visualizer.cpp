@@ -2,8 +2,19 @@
 #include <boost/format.hpp>
 #include "affdex_small_logo.h"
 #include <algorithm>
+#include <iostream>
+#include <zmq.hpp>
+#include <msgpack.hpp>
+#include <vector>
+
+
+//String msge;
+std::vector<double> messageEmotions;
+
 
 Visualizer::Visualizer():
+   
+
   GREEN_COLOR_CLASSIFIERS({
     "joy"
   }),
@@ -11,6 +22,14 @@ Visualizer::Visualizer():
     "anger", "disgust", "sadness", "fear", "contempt"
   })
 {
+    
+   
+    
+    
+    
+
+    for (int i=0; i<9 ;i++) messageEmotions.push_back(0); 
+
     logo_resized = false;
     logo = cv::imdecode(cv::InputArray(small_logo), CV_LOAD_IMAGE_UNCHANGED);
 
@@ -101,6 +120,8 @@ void Visualizer::drawValues(const float * first, const std::vector<std::string> 
     {
         drawClassifierOutput(name, (*first), cv::Point(x, padding += spacing), align_right);
         first++;
+// My additions to the code for EmoSens to work
+        if (name == "joy") std::cout  << name << ":" << (*first) << std::endl;
     }
 }
 
@@ -184,6 +205,7 @@ void Visualizer::drawClassifierOutput(const std::string& classifier,
     cv::Scalar color = cv::Scalar(255, 255, 255);
     if( classifier == "valence")
     {
+        
         color = valence_color_generator( value );
     }
     else if( RED_COLOR_CLASSIFIERS.count(classifier) )
@@ -201,6 +223,45 @@ void Visualizer::drawClassifierOutput(const std::string& classifier,
         equalizer_magnitude = std::fabs(value);
     }
     drawEqualizer(classifier, equalizer_magnitude, loc, align_right, color );
+
+    //std::cout  << classifier << ":" << value << std::endl;
+
+
+//ZeroMQ additions to allow Emosens to pull data
+
+	if( classifier == "joy")
+	messageEmotions.at(0) = value;
+ 	if( classifier == "fear") 
+	messageEmotions.at(1) = value;
+	if( classifier == "disgust") 
+	messageEmotions.at(2) = value;
+	if( classifier == "sadness")
+	messageEmotions.at(3) = value;
+        if( classifier == "anger")
+	messageEmotions.at(4) = value;
+        if( classifier == "surprise")
+	messageEmotions.at(5) = value;		
+  	if( classifier == "contempt") 
+	messageEmotions.at(6) = value;
+	if( classifier == "valence")
+	messageEmotions.at(7) = value;		
+	if( classifier == "engagement")
+	messageEmotions.at(8) = value;
+
+	//msge << messageEmotions[0] << " " << messageEmotions[1];
+        
+ 	//msgpack::sbuffer sbuf;
+        //msgpack::pack(sbuf, messageEmotions);
+        //zmq::context_t context (1);
+        //zmq::socket_t publisher (context, ZMQ_PUB);
+        //publisher.bind("tcp://*:5555"); 
+        
+	//zmq::message_t message(sizeof(sbuf));
+
+        //std::memcpy (message.data(), sbuf, sizeof(sbuf));
+	//publisher.send(message);
+	//message << messageEmotions;
+	//std::cout << message.data();
 }
 
 void Visualizer::drawEqualizer(const std::string& name, const float value, const cv::Point2f& loc,

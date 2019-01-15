@@ -6,6 +6,7 @@
 #include <boost/timer/timer.hpp>
 #include <boost/program_options.hpp>
 #include <boost/algorithm/string.hpp>
+#include <string>
 
 #include "Frame.h"
 #include "Face.h"
@@ -15,9 +16,14 @@
 #include "AFaceListener.hpp"
 #include "PlottingImageListener.hpp"
 #include "StatusListener.hpp"
+#include <zmq.hpp>
+#include <msgpack.hpp>
+//#include <zmq.h>
 
 using namespace std;
 using namespace affdex;
+
+float emosens[9] = {0,0,0,0,0,0,0,0,0};
 
 /// <summary>
 /// Project for demoing the Windows SDK CameraDetector class (grabbing and processing frames from the camera).
@@ -25,8 +31,20 @@ using namespace affdex;
 int main(int argsc, char ** argsv)
 {
     namespace po = boost::program_options; // abbreviate namespace
+  
+    zmq::context_t context (1);
+    zmq::socket_t publisher (context, ZMQ_PUB);
+    publisher.bind("tcp://*:5555");
 
-    std::cerr << "Hit ESCAPE key to exit app.." << endl;
+    //char *address = "tcp://*:5555";
+ 
+    //void *context = zmq_ctx_new();
+    //void *publisher = (void*) zmq_socket(context, ZMQ_PUB);
+ 
+    //zmq_bind(socket, address);
+    //printf("Bound to address %s\n", address);
+
+    //std::cerr << "Hit ESCAPE key to exit app.." << endl;
     shared_ptr<FrameDetector> frameDetector;
 
     try{
@@ -177,6 +195,80 @@ int main(int argsc, char ** argsv)
                 std::pair<Frame, std::map<FaceId, Face> > dataPoint = listenPtr->getData();
                 Frame frame = dataPoint.first;
                 std::map<FaceId, Face> faces = dataPoint.second;
+		 
+		//EmoSens
+
+		//std::cout << faces.at(0). << std::endl;
+
+		for(auto elem : faces)
+{
+   std::cout << "Face ID: " << elem.first << " Detected Joy: " << elem.second.emotions.joy << "\n";
+         
+        emosens[0] = elem.second.emotions.joy;
+	emosens[1] = elem.second.emotions.fear;
+	emosens[2] = elem.second.emotions.disgust;
+	emosens[3] = elem.second.emotions.sadness;
+	emosens[4] = elem.second.emotions.anger;
+	emosens[5] = elem.second.emotions.surprise;
+	emosens[6] = elem.second.emotions.contempt;
+	emosens[7] = elem.second.emotions.valence;
+	emosens[8] = elem.second.emotions.engagement;
+
+ 
+        //"joy", "fear", "disgust", "sadness", "anger",
+        //"surprise", "contempt", "valence", "engagement"
+        std::string hd = "aff"; 
+        zmq::message_t message(hd.size());
+        memcpy (message.data(), hd.data(), hd.size());
+
+        publisher.send (message, ZMQ_SNDMORE);
+
+       std::ostringstream ss;
+       ss << emosens[0] << ";" <<
+				emosens[1] << ";" <<
+				emosens[2] << ";" <<
+				emosens[3] << ";" <<
+				emosens[4] << ";" <<
+				emosens[5] << ";" <<
+				emosens[6] << ";" <<
+				emosens[7] << ";" <<
+				emosens[8];
+	
+        std::string emostring(ss.str()); 
+	//char buffer[emostring.size()];
+        //sprintf(buffer, emostring.size(), emostring.c_str());
+        //printf("Sending message '%s'\n", buffer);
+        zmq::message_t msg(emostring.size());
+        memcpy (msg.data(), emostring.data(), emostring.size()); 
+        publisher.send(msg);
+
+
+        //zmq_send(publisher, buffer, strlen(buffer), 0);
+        //sleep(1);
+
+         //msgpack::sbuffer sbuf;
+         //msgpack::pack(sbuf, emostring);
+	 //zmq::message_t message(sizeof(sbuf));
+         //std::memcpy (message.data(), sbuf, sizeof(sbuf));
+	 //publisher.send(message);
+
+  //msgpack::sbuffer packed;
+  //msgpack::pack(&packed, emostring);
+  //std::string tag = "affectiva";
+  //zmq::message_t tag_msg(tag.size());
+  //std::memcpy(tag_msg.data(), tag.data(), tag.size());
+
+  //zmq::message_t body_msg(packed.size());
+  //std::memcpy(body_msg.data(), packed.data(), packed.size());
+
+ // publisher.send(tag_msg, ZMQ_SNDMORE);
+ // publisher.send(body_msg);
+
+}
+                
+
+
+
 
                 // Draw metrics to the GUI
                 if (draw_display)
@@ -188,6 +280,14 @@ int main(int argsc, char ** argsv)
                     << " cfps: " << listenPtr->getCaptureFrameRate()
                     << " pfps: " << listenPtr->getProcessingFrameRate()
                     << " faces: " << faces.size() << endl;
+
+                  
+
+                
+		//auto search = faces.find("joy"); 
+		//std::cout << "Faces" << faces.find("joy") << std::endl;
+
+
 
                 //Output metrics to the file
                 //listenPtr->outputToFile(faces, frame.getTimestamp());

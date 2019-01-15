@@ -23,8 +23,9 @@ file(GLOB COMMON_CPP_FILES ${COMMON_HDRS}/*.c*)
 add_executable(${subProject} ${SRCS} ${HDRS} ${COMMON_HDRS_FILES} ${COMMON_CPP_FILES})
 
 target_include_directories(${subProject} PRIVATE ${Boost_INCLUDE_DIRS} ${AFFDEX_INCLUDE_DIR} ${COMMON_HDRS})
+find_package(cppzmq)
+target_link_libraries( ${subProject} ${AFFDEX_LIBRARIES} ${OpenCV_LIBS} ${Boost_LIBRARIES} cppzmq )
 
-target_link_libraries( ${subProject} ${AFFDEX_LIBRARIES} ${OpenCV_LIBS} ${Boost_LIBRARIES} )
 
 #Add to the apps list
 list( APPEND ${rootProject}_APPS ${subProject} )

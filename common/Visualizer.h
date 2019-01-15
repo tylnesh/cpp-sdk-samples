@@ -3,6 +3,7 @@
 #include <Frame.h>
 #include <Face.h>
 #include <set>
+#include <zmq.hpp>
 
 /** @brief Plot the face metrics using opencv highgui
  */
@@ -82,6 +83,9 @@ public:
   std::map<affdex::Gender, std::string> GENDER_MAP;
   std::map<affdex::Age, std::string> AGE_MAP;
   std::map<affdex::Ethnicity, std::string> ETHNICITY_MAP;
+
+  zmq::context_t context();  
+  zmq::socket_t publisher();
 
 private:
 
